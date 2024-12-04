@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+"""
+Ce module contient une fonction permettant de
+déterminer la forme d'une matrice.
+"""
+
 
 def matrix_shape(matrix):
     """
