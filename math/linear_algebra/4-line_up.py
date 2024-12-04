@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+"""
+fonction qui ajoute deux tableaux par élément
+"""
+
 
 def add_arrays(arr1, arr2):
     """

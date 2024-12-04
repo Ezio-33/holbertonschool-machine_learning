@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+"""
+def matrix_transpose(matrix) : renvoie la fonction
+transposée d'une matrice 2D.
+"""
+
 
 def matrix_transpose(matrix):
     """

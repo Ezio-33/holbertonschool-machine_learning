@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+"""fonction qui ajoute deux matrices par élément"""
+
 
 def add_matrices2D(mat1, mat2):
     """
