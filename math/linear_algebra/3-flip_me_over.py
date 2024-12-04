@@ -1,6 +1,15 @@
 #!/usr/bin/env python3
 
 def matrix_transpose(matrix):
+    """
+    Transpose une matrice 2D.
+
+    Args:
+        matrix: La matrice 2D à transposer.
+
+    Return:
+        Une nouvelle matrice qui est la transposée de la matrice d'entrée.
+    """
     # Obtenir les dimensions de la matrice
     rows = len(matrix)
     cols = len(matrix[0])

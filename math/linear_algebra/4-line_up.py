@@ -1,7 +1,18 @@
 #!/usr/bin/env python3
 
 def add_arrays(arr1, arr2):
-    # Vérifier si les tableaux ont la même taille
+    """
+    Ajoute deux tableaux élément par élément.
+
+    Args:
+        arr1 (list): Le premier tableau.
+        arr2 (list): Le deuxième tableau.
+
+    Return:
+         Un nouveau tableau contenant la somme des éléments,
+         None si les tableaux ont des tailles différentes.
+    """
+# Vérifier si les tableaux ont la même taille
     if len(arr1) != len(arr2):
         return None
 
