@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 """Module pour calculer la forme d'un tableau NumPy"""
+
+
 def np_shape(matrix):
     """
     Calcule la forme d'un tableau NumPy.
