@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import numpy as np
-
 matrix = np.array([[1, 2, 3, 4, 5, 6], [7, 8, 9, 10, 11, 12],
                    [13, 14, 15, 16, 17, 18], [19, 20, 21, 22, 23, 24]])
 mat1 = matrix[1:3]  # Sélectionne les lignes 1 et 2 (index 1 et 2)
