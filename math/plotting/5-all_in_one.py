@@ -13,8 +13,8 @@ def all_in_one():
     avec un espacement optimal
     """
     # Configuration initiale de la figure
-    plt.figure(figsize=(8, 8))
-    plt.suptitle('All in One', fontsize='x-small')
+    plt.figure(figsize=(6.4, 4.8))
+    plt.suptitle('All in One', fontsize='x-large')
 
     # Graphique 1
     plt.subplot(3, 2, 1)
