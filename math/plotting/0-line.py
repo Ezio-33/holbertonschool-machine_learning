@@ -15,5 +15,8 @@ def line():
     y = np.arange(0, 11) ** 3
     plt.figure(figsize=(6.4, 4.8))
     x = np.arange(0, 11)
+    plt.yticks([0, 200, 400, 600, 800, 1000])
+    plt.xticks([0, 2, 4, 6, 8, 10])
     plt.plot(x, y, 'r-')
+    plt.xlim(0, 10)
     plt.show()
