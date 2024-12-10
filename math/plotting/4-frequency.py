@@ -22,7 +22,7 @@ def frequency():
     plt.ylabel('Number of Students', fontsize='x-small')
     plt.title('Project A', fontsize='x-small')
     plt.ylim(0, 30)
-    plt.yticks(range(0, 31, 5))
+    plt.yticks([0, 10, 20, 30])
     plt.xlim(0, 100)
     plt.xticks(range(0, 101, 10))
     plt.tick_params(axis='both', labelsize='x-small')
