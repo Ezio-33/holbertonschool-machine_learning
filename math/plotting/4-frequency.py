@@ -24,6 +24,6 @@ def frequency():
     plt.ylim(0, 30)
     plt.yticks([0, 10, 20, 30])
     plt.xlim(0, 100)
-    plt.xticks(range(0, 101, 10))
+    plt.xticks([0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100])
     plt.tick_params(axis='both', labelsize='x-small')
     plt.show()
