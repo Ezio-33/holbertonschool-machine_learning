@@ -51,6 +51,7 @@ def all_in_one():
     plt.xlabel('Time (years)', fontsize='x-small')
     plt.ylabel('Fraction Remaining', fontsize='x-small')
     plt.title('Exponential Decay of C-14', fontsize='x-small')
+    plt.xlim(0, 28650)
 
     # Graphique 4
     plt.subplot(3, 2, 4)
