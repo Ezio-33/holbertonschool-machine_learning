@@ -27,7 +27,6 @@ def poly_integral(poly, C=0):
         # Si le coefficient est un entier, le convertir
         if coef.is_integer():
             coef = int(coef)
-        if coef != 0:
-            integral.append(coef)
+        integral.append(coef)
 
     return integral
