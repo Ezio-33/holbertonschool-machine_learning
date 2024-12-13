@@ -6,6 +6,8 @@ Module qui calcule l'intégrale d'un polynôme
 
 def poly_integral(poly, C=0):
     """
+    Calcule l'intégrale d'un polynôme
+
     Args:
         poly: Liste des coefficients du polynôme
         C: Constante d'intégration (par défaut 0)
@@ -17,16 +19,23 @@ def poly_integral(poly, C=0):
     if not isinstance(poly, list) or not isinstance(C, int):
         return None
 
-    if len(poly) == 0:
+    if not poly:
         return None
 
-    # Calcul de l'intégrale
-    integral = [C]  # Commence avec la constante d'intégration
-    for i in range(len(poly)):
-        coef = poly[i] / (i + 1)
-        # Si le coefficient est un entier, le convertir
-        if coef.is_integer():
-            coef = int(coef)
-        integral.append(coef)
+    # Cas spécial pour polynôme nul
+    if len(poly) == 1 and poly[0] == 0:
+        return [0]
 
-    return integral
+    # Calcul de l'intégrale
+    result = [C]
+    for power, coef in enumerate(poly):
+        # Division par la puissance + 1
+        term = coef / (power + 1)
+        # Conversion en entier si possible
+        result.append(int(term) if term.is_integer() else term)
+
+    # Suppression des zéros non significatifs à la fin que si nécessaire.
+    while len(result) > 1 and result[-1] == 0:
+        result.pop()
+
+    return result
