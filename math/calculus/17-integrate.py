@@ -3,6 +3,7 @@
 Module qui calcule l'intégrale d'un polynôme
 """
 
+
 def poly_integral(poly, C=0):
     """
     Args:
@@ -15,13 +16,9 @@ def poly_integral(poly, C=0):
     """
     if not isinstance(poly, list) or not isinstance(C, int):
         return None
-    
+
     if len(poly) == 0:
         return None
-
-    # L'intégrale d'une constante est Cx + C
-    if len(poly) == 1:
-        return [C, poly[0]]
 
     # Calcul de l'intégrale
     integral = [C]  # Commence avec la constante d'intégration
@@ -30,6 +27,7 @@ def poly_integral(poly, C=0):
         # Si le coefficient est un entier, le convertir
         if coef.is_integer():
             coef = int(coef)
-        integral.append(coef)
+        if coef != 0:
+            integral.append(coef)
 
     return integral
