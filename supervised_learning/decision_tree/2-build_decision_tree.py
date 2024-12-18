@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-Module implémentant les classes pour construire et manipuler un arbre de décision.
+Module implémentant les classes pour construire et
+manipuler un arbre de décision.
 """
 
 import numpy as np
@@ -10,6 +11,7 @@ class Node:
     """
     Classe représentant un nœud dans un arbre de décision.
     """
+
     def __init__(self, feature=None, threshold=None, left_child=None,
                  right_child=None, is_root=False, depth=0):
         """
@@ -39,18 +41,18 @@ class Node:
         Args:
             only_leaves (bool): Si True, ne compte que les feuilles.
 
-        Returns:
-            int: Le nombre de nœuds ou de feuilles.
+        Return:
+            Le nombre de nœuds ou de feuilles.
         """
         if self.is_leaf:
             return 1
-        
+
         count = 0 if only_leaves else 1
         if self.left_child:
             count += self.left_child.count_nodes_below(only_leaves)
         if self.right_child:
             count += self.right_child.count_nodes_below(only_leaves)
-        
+
         return count
 
     def left_child_add_prefix(self, text):
@@ -75,22 +77,24 @@ class Node:
 
     def __str__(self):
         """
-        Retourne une représentation textuelle de l'arbre.
+        Return:
+            une représentation textuelle de l'arbre.
         """
-        node_desc = f"node [feature={self.feature}, threshold={self.threshold}]"
+        node_desc = "node [feature=" + str(self.feature)
+        node_desc += ", threshold=" + str(self.threshold) + "]"
         if self.is_root:
             node_desc = "root " + node_desc
-        
+
         result = node_desc + "\n"
-        
+
         if self.left_child:
             left_str = self.left_child.__str__()
             result += self.left_child_add_prefix(left_str)
-        
+
         if self.right_child:
             right_str = self.right_child.__str__()
             result += self.right_child_add_prefix(right_str)
-        
+
         return result.rstrip()
 
 
@@ -98,6 +102,7 @@ class Leaf(Node):
     """
     Classe représentant une feuille dans un arbre de décision.
     """
+
     def __init__(self, value, depth=None):
         """
         Initialise une feuille de l'arbre de décision.
@@ -113,7 +118,8 @@ class Leaf(Node):
 
     def __str__(self):
         """
-        Retourne une représentation textuelle de la feuille.
+        Return:
+            une représentation textuelle de la feuille.
         """
         return f"-> leaf [value={self.value}]"
 
@@ -122,6 +128,7 @@ class Decision_Tree:
     """
     Classe représentant un arbre de décision complet.
     """
+
     def __init__(self, max_depth=10, min_pop=1, seed=0,
                  split_criterion="random", root=None):
         """
@@ -139,9 +146,10 @@ class Decision_Tree:
             self.root = root
         else:
             self.root = Node(is_root=True)
-        
+
     def __str__(self):
-         """
-         Retourne une représentation textuelle de l'arbre de décision.
-         """
-         return str(self.root)
+        """
+        Return:
+            une représentation textuelle de l'arbre de décision.
+        """
+        return str(self.root)

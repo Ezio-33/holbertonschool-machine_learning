@@ -1,14 +1,21 @@
 #!/usr/bin/env python3
 
-Decision_Tree = __import__('7-build_decision_tree').Decision_Tree
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+Decision_Tree = __import__('7-build_decision_tree').Decision_Tree
 
 #                                     #########################
 #                                     # Generating examples : #
 #                                     #########################
 
-def circle_of_clouds(n_clouds, n_objects_by_cloud, radius=1, sigma=None, seed=0, angle=0):
+
+def circle_of_clouds(
+        n_clouds,
+        n_objects_by_cloud,
+        radius=1,
+        sigma=None,
+        seed=0,
+        angle=0):
     """
     This function returns a dataset made of 'n_clouds' classes.
     Each class is a small gaussian cloud containing 'n_objects_by_cloud' points.
@@ -21,20 +28,25 @@ def circle_of_clouds(n_clouds, n_objects_by_cloud, radius=1, sigma=None, seed=0,
 
     def rotate(x, k):
         theta = 2 * k * np.pi / n_clouds + angle
-        m = np.matrix([[np.cos(theta), np.sin(theta)], [-np.sin(theta), np.cos(theta)]])
+        m = np.matrix([[np.cos(theta), np.sin(theta)],
+                      [-np.sin(theta), np.cos(theta)]])
         return np.matmul(x, m)
 
     def cloud():
-        return (rng.normal(size=2 * n_objects_by_cloud) * sigma).reshape(n_objects_by_cloud, 2) + np.array([radius, 0])
+        return (rng.normal(size=2 * n_objects_by_cloud) *
+                sigma).reshape(n_objects_by_cloud, 2) + np.array([radius, 0])
 
     def target():
-        return np.array(([[i] * n_objects_by_cloud for i in range(n_clouds)]), dtype="int32").ravel()
+        return np.array(
+            ([[i] * n_objects_by_cloud for i in range(n_clouds)]), dtype="int32").ravel()
 
-    return np.concatenate([np.array(rotate(cloud(), k)) for k in range(n_clouds)], axis=0), target()
+    return np.concatenate([np.array(rotate(cloud(), k))
+                          for k in range(n_clouds)], axis=0), target()
 
 #                                     #########################
 #                                     #    2D Visualization   #
 #                                     #########################
+
 
 def np_extrema(arr):
     return np.min(arr), np.max(arr)
@@ -56,7 +68,8 @@ def visualize_bassins(ax, model, x_min, x_max, y_min, y_max, cmap):
 def visualize_training_dataset_2D(ax, model, cmap):
     """ color the points of the 'explanatory' array
     with the color corresponding to the class stored in 'target' """
-    ax.scatter(model.explanatory[:, 0], model.explanatory[:, 1], c=model.target, cmap=cmap)
+    ax.scatter(model.explanatory[:, 0],
+               model.explanatory[:, 1], c=model.target, cmap=cmap)
 
 
 def visualize_model_2D(model, cmap=plt.cm.Set1):
@@ -74,8 +87,9 @@ def visualize_model_2D(model, cmap=plt.cm.Set1):
     plt.savefig("bassins2.png")
     plt.show()
 
-#Main 2
-explanatory,target = circle_of_clouds(10,30)
-T=Decision_Tree(split_criterion="random")
-T.fit(explanatory,target,verbose=0)
+
+# Main 2
+explanatory, target = circle_of_clouds(10, 30)
+T = Decision_Tree(split_criterion="random")
+T.fit(explanatory, target, verbose=0)
 visualize_model_2D(T)
