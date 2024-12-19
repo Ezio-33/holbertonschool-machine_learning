@@ -39,10 +39,10 @@ class Node:
         Ajoute les préfixes pour l'enfant gauche.
 
         Args:
-            text (str): Représentation textuelle de l'enfant gauche.
+            Représentation textuelle de l'enfant gauche.
 
-        Returns:
-            str: Texte avec préfixes ajoutés.
+        Return:
+            Texte avec préfixes ajoutés.
         """
         lines = text.split("\n")
         new_text = "    +--" + lines[0] + "\n"
@@ -55,10 +55,10 @@ class Node:
         Ajoute les préfixes pour l'enfant droit.
 
         Args:
-            text (str): Représentation textuelle de l'enfant droit.
+            Représentation textuelle de l'enfant droit.
 
-        Returns:
-            str: Texte avec préfixes ajoutés.
+        Return:
+            Texte avec préfixes ajoutés.
         """
         lines = text.split("\n")
         new_text = "    +--" + lines[0] + "\n"
@@ -72,8 +72,8 @@ class Node:
             Représentation textuelle du nœud.
         """
         node_type = "root" if self.is_root else "node"
-        details = f"{node_type} [feature={self.feature},\n"
-        details += f"threshold={self.threshold}]\n"
+        details = f"{node_type} [feature={self.feature},"
+        details += f" threshold={self.threshold}]\n"
 
         if self.left_child:
             left_str = self.left_child.__str__().replace("\n", "\n    |  ")
@@ -137,7 +137,7 @@ class Decision_Tree:
 
     def __str__(self):
         """
-        Returns:
+        Return:
             Représentation textuelle complète de l'arbre.
         """
         return self.root.__str__() + "\n"
