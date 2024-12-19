@@ -34,68 +34,56 @@ class Node:
         self.sub_population = None
         self.depth = depth
 
-    def count_nodes_below(self, only_leaves=False):
-        """
-        Compte le nombre de nœuds ou de feuilles sous ce nœud.
-
-        Args:
-            only_leaves (bool): Si True, ne compte que les feuilles.
-
-        Return:
-            Le nombre de nœuds ou de feuilles.
-        """
-        if self.is_leaf:
-            return 1
-
-        count = 0 if only_leaves else 1
-        if self.left_child:
-            count += self.left_child.count_nodes_below(only_leaves)
-        if self.right_child:
-            count += self.right_child.count_nodes_below(only_leaves)
-
-        return count
-
     def left_child_add_prefix(self, text):
         """
         Ajoute les préfixes pour l'enfant gauche.
+
+        Args:
+            text (str): Représentation textuelle de l'enfant gauche.
+
+        Returns:
+            str: Texte avec préfixes ajoutés.
         """
         lines = text.split("\n")
         new_text = "    +--" + lines[0] + "\n"
         for x in lines[1:]:
-            new_text += ("    |  " + x) + "\n"
+            new_text += "    |  " + x + "\n"
         return new_text
 
     def right_child_add_prefix(self, text):
         """
         Ajoute les préfixes pour l'enfant droit.
+
+        Args:
+            text (str): Représentation textuelle de l'enfant droit.
+
+        Returns:
+            str: Texte avec préfixes ajoutés.
         """
         lines = text.split("\n")
         new_text = "    +--" + lines[0] + "\n"
         for x in lines[1:]:
-            new_text += ("       " + x) + "\n"
+            new_text += "       " + x + "\n"
         return new_text
 
     def __str__(self):
         """
         Return:
-            une représentation textuelle de l'arbre.
+            Représentation textuelle du nœud.
         """
-        node_desc = "node [feature=" + str(self.feature)
-        node_desc += ", threshold=" + str(self.threshold) + "]"
-        if self.is_root:
-            node_desc = "root " + node_desc
-
-        result = node_desc + "\n"
+        node_type = "root" if self.is_root else "node"
+        details = f"{node_type} [feature={self.feature},\n"
+        details += f"threshold={self.threshold}]\n"
 
         if self.left_child:
-            left_str = self.left_child.__str__()
-            result += self.left_child_add_prefix(left_str)
+            left_str = self.left_child.__str__().replace("\n", "\n    |  ")
+            details += f"    +---> {left_str}"
 
         if self.right_child:
-            right_str = self.right_child.__str__()
-            result += self.right_child_add_prefix(right_str)
+            right_str = self.right_child.__str__().replace("\n", "\n       ")
+            details += f"\n    +---> {right_str}"
 
-        return result.rstrip()
+        return details.rstrip()
 
 
 class Leaf(Node):
@@ -119,9 +107,9 @@ class Leaf(Node):
     def __str__(self):
         """
         Return:
-            une représentation textuelle de la feuille.
+            Représentation textuelle de la feuille.
         """
-        return f"-> leaf [value={self.value}]"
+        return f"leaf [value={self.value}]"
 
 
 class Decision_Tree:
@@ -149,7 +137,7 @@ class Decision_Tree:
 
     def __str__(self):
         """
-        Return:
-            une représentation textuelle de l'arbre de décision.
+        Returns:
+            Représentation textuelle complète de l'arbre.
         """
-        return str(self.root)
+        return self.root.__str__() + "\n"
