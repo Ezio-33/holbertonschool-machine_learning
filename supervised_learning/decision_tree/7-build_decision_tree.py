@@ -352,8 +352,6 @@ class Decision_Tree():
                   f"{self.count_nodes(only_leaves=True)}")
             print(f" - Accuracy on training data : "
                   f"{self.accuracy(self.explanatory, self.target)}")
-            print(f"     - Accuracy on test          : {accuracy_test}")
-
 
     def np_extrema(self, arr):
         """
