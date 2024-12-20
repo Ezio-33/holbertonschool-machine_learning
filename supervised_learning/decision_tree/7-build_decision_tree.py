@@ -345,12 +345,15 @@ class Decision_Tree():
 
         # Afficher le résumé de l'entraînement si verbose
         if verbose == 1:
-            print(f"""  Entraînement terminé.
-- Profondeur                : { self.depth()       }
-- Nombre de nœuds          : { self.count_nodes() }
-- Nombre de feuilles        : { self.count_nodes(only_leaves=True) }
-- Précision sur les données d'entraînement : { self.accuracy(self.explanatory,
-                                                  self.target)}""")
+            print("  Training finished.")
+            print(f" - Depth                     : {self.depth()}")
+            print(f" - Number of nodes           : {self.count_nodes()}")
+            print(f" - Number of leaves          : "
+                  f"{self.count_nodes(only_leaves=True)}")
+            print(f" - Accuracy on training data : "
+                  f"{self.accuracy(self.explanatory, self.target)}")
+            print(f"     - Accuracy on test          : {accuracy_test}")
+
 
     def np_extrema(self, arr):
         """
