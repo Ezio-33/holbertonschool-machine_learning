@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-
+"""
+Module implémentant les classes pour construire et
+manipuler un arbre de décision.
+"""
 import numpy as np
 
 

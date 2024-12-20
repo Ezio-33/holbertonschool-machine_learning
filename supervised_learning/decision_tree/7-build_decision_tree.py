@@ -2,8 +2,6 @@
 
 """
 Composants de l'Arbre de Décision
-Inclut les classes pour les nœuds (nœuds de décision et nœuds feuilles) et
-l'arbre de décision lui-même.
 """
 import numpy as np
 
