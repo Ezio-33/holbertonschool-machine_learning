@@ -1,15 +1,25 @@
+#!/usr/bin/env python3
+
+"""
+Composants de l'arbre de décision
+Comprend des classes pour les nœuds et l'arbre de décision lui-même.
+"""
 import numpy as np
+
 
 class Node:
     """
-    Représente un nœud de décision dans un arbre de décision, qui peut diviser les données
-    en fonction des caractéristiques et des seuils.
+    Représente un nœud de décision dans un arbre de décision,
+    qui peut diviser les données en fonction des caractéristiques
+    et des seuils.
     """
+
     def __init__(self, feature=None, threshold=None, left_child=None,
                  right_child=None, is_root=False, depth=0):
         """
-        Initialise le nœud avec des divisions de caractéristiques optionnelles, des valeurs de seuil,
-        des enfants, le statut de racine et la profondeur.
+        Initialise le nœud avec des divisions de caractéristiques
+        optionnelles, des valeurs de seuil, des enfants,
+        le statut de racine et la profondeur.
         """
         self.feature = feature
         self.threshold = threshold
@@ -58,7 +68,8 @@ class Node:
 
     def __str__(self):
         """
-        Retourne une représentation sous forme de chaîne de caractères du nœud et de ses enfants.
+        Retourne une représentation sous forme de chaîne de caractères
+        du nœud et de ses enfants.
         """
         node_type = "racine" if self.is_root else "nœud"
         details = (f"{node_type} [feature={self.feature}, "
@@ -86,9 +97,9 @@ class Node:
 
     def update_bounds_below(self):
         """
-        Calcule récursivement, pour chaque nœud, deux dictionnaires stockés comme
-        attributs Node.lower et Node.upper. Ces dictionnaires contiennent
-        les limites pour chaque caractéristique.
+        Calcule récursivement, pour chaque nœud, deux dictionnaires stockés
+        comme attributs Node.lower et Node.upper. Ces dictionnaires
+        contiennent les limites pour chaque caractéristique.
         """
         if self.is_root:
             self.lower = {0: -np.inf}
@@ -122,7 +133,8 @@ class Node:
 
     def update_indicator(self):
         """
-        Met à jour la fonction indicatrice basée sur les limites inférieure et supérieure.
+        Met à jour la fonction indicatrice basée sur
+        les limites inférieure et supérieure.
         """
         def is_large_enough(x):
             comparisons = [x[:, key] > self.lower[key] for key in self.lower]
@@ -148,9 +160,10 @@ class Node:
 
 class Leaf(Node):
     """
-    Représente un nœud feuille dans un arbre de décision, contenant une valeur constante
-    et la profondeur.
+    Représente un nœud feuille dans un arbre de décision,
+    contenant une valeur constante et la profondeur.
     """
+
     def __init__(self, value, depth=None):
         """
         Initialise la feuille avec une valeur spécifique et une profondeur.
@@ -162,8 +175,8 @@ class Leaf(Node):
 
     def max_depth_below(self):
         """
-        Retourne la profondeur de la feuille, car les nœuds feuilles sont les points finaux
-        d'un arbre.
+        Retourne la profondeur de la feuille, car les nœuds
+        feuilles sont les points finaux d'un arbre.
         """
         return self.depth
 
@@ -175,7 +188,8 @@ class Leaf(Node):
 
     def __str__(self):
         """
-        Retourne une représentation sous forme de chaîne de caractères de la feuille.
+        Retourne une représentation sous forme de
+        chaîne de caractères de la feuille.
         """
         return f"-> feuille [value={self.value}] "
 
@@ -187,7 +201,8 @@ class Leaf(Node):
 
     def update_bounds_below(self):
         """
-        Les feuilles n'ont pas besoin de mettre à jour les limites car elles représentent des points finaux.
+        Les feuilles n'ont pas besoin de mettre à jour les limites
+        car elles représentent des points finaux.
         """
         pass
 
@@ -203,11 +218,12 @@ class Decision_Tree:
     Implémente un arbre de décision qui peut être utilisé pour divers
     processus de prise de décision.
     """
+
     def __init__(self, max_depth=10, min_pop=1, seed=0,
                  split_criterion="random", root=None):
         """
-        Initialise l'arbre de décision avec des paramètres pour la construction de l'arbre
-        et la génération de nombres aléatoires.
+        Initialise l'arbre de décision avec des paramètres pour
+        la construction de l'arbre et la génération de nombres aléatoires.
         """
         self.rng = np.random.default_rng(seed)
         if root:
@@ -223,13 +239,15 @@ class Decision_Tree:
 
     def count_nodes(self, only_leaves=False):
         """
-        Compte le nombre total de nœuds ou uniquement les nœuds feuilles dans l'arbre.
+        Compte le nombre total de nœuds ou uniquement les
+        nœuds feuilles dans l'arbre.
         """
         return self.root.count_nodes_below(only_leaves=only_leaves)
 
     def __str__(self):
         """
-        Retourne une représentation sous forme de chaîne de caractères de l'ensemble de l'arbre de décision.
+        Retourne une représentation sous forme de chaîne de
+        caractères de l'ensemble de l'arbre de décision.
         """
         return str(self.root) + "\n"
 
@@ -247,14 +265,16 @@ class Decision_Tree:
 
     def update_predict(self):
         """
-        Met à jour la fonction de prédiction pour utiliser les fonctions indicatrices des feuilles.
+        Met à jour la fonction de prédiction pour utiliser
+        les fonctions indicatrices des feuilles.
         """
         self.update_bounds()
         leaves = self.get_leaves()
         for leaf in leaves:
             leaf.update_indicator()
-        
-        self.predict = lambda A: np.sum([leaf.indicator(A) * leaf.value for leaf in leaves], axis=0)
+
+        self.predict = lambda A: np.sum(
+            [leaf.indicator(A) * leaf.value for leaf in leaves], axis=0)
 
     def pred(self, x):
         """

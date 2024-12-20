@@ -1,9 +1,15 @@
 #!/usr/bin/env python3
-
+"""
+Représente un nœud dans un arbre de décision.
+"""
 import numpy as np
 
 
 class Node:
+    """
+    Classe représentant un nœud dans un arbre de décision.
+    """
+
     def __init__(
             self,
             feature=None,
