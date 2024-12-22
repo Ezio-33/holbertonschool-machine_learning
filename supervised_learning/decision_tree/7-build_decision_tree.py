@@ -724,4 +724,3 @@ class Decision_Tree():
         return np.sum(
             np.equal(self.predict(test_explanatory), test_target)
         ) / test_target.size
-    
