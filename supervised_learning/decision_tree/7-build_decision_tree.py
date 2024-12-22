@@ -1,20 +1,20 @@
 #!/usr/bin/env python3
-""" Task 1: 1. Number of nodes/leaves in a decision tree"""
+""" Tâche 7"""
 import numpy as np
 
 
 def left_child_add_prefix(text):
     """
-    Adds a prefix to each line of the text to
-    indicate it is the left child in the tree structure.
+    Ajoute un préfixe à chaque ligne du texte pour
+    indiquer qu'il s'agit de l'enfant de gauche dans l'arborescence.
 
-    Parameters:
+    Paramètres:
     text : str
-        The text to which the prefix will be added.
+        Texte auquel le préfixe sera ajouté.
 
-    Returns:
+    Retourne:
     str
-        The text with the left child prefix added to each line.
+        Le texte avec le préfixe enfant gauche ajouté à chaque ligne.
     """
     lines = text.split("\n")
     new_text = "    +--" + lines[0] + "\n"
@@ -25,15 +25,15 @@ def left_child_add_prefix(text):
 
 def right_child_add_prefix(text):
     """
-    Adds a prefix to each line of the text to indicate
-    it is the right child in the tree structure.
+    Ajoute un préfixe à chaque ligne du texte pour indiquer
+    qu'il s'agit de l'enfant de droite dans l'arborescence.
 
-    Parameters:
+    Paramètres:
     text : str
-    The text to which the prefix will be added.
-    Returns:
+        Texte auquel le préfixe sera ajouté.
+    Retourne:
     str
-        The text with the right child prefix added to each line.
+        Le texte avec le préfixe enfant de droite ajouté à chaque ligne.
     """
     lines = text.split("\n")
     new_text = "    +--" + lines[0] + "\n"
@@ -44,49 +44,53 @@ def right_child_add_prefix(text):
 
 class Node:
     """
-    A class representing a node in a decision tree.
+    Classe représentant un nœud dans un arbre de décision.
 
-    Attributes:
-    feature : int or None
-        The feature used for splitting the data.
-    threshold : float or None
-        The threshold value for the split.
-    left_child : Node or None
-        The left child node.
-    right_child : Node or None
-        The right child node.
+    Attributs :
+    feature : int ou None
+        La caractéristique utilisée pour diviser les données.
+    threshold : float ou None
+        La valeur seuil pour la division.
+    left_child : Node ou None
+        Le nœud enfant gauche.
+    right_child : Node ou None
+        Le nœud enfant de droite.
     is_leaf : bool
-        Boolean indicating if the node is a leaf.
+        Booléen indiquant si le nœud est une feuille.
     is_root : bool
-        Boolean indicating if the node is the root.
+        Booléen indiquant si le nœud est la racine.
     sub_population : any
-        The subset of data at this node.
+        Le sous-ensemble de données de ce nœud.
     depth : int
-        The depth of the node in the tree.
+        La profondeur du nœud dans l'arbre.
 
-    Methods:
-    max_depth_below():
-        Calculates the maximum depth of the subtree rooted at this node.
+    Méthodes :
+    max_depth_below() :
+        Calcule la profondeur maximale du sous-arbre dont le
+        point d'ancrage est ce nœud.
     """
 
     def __init__(self, feature=None, threshold=None,
                  left_child=None, right_child=None, is_root=False, depth=0):
         """
-        Initializes a Node with the given parameters.
+        Initialise un nœud avec les paramètres donnés.
 
-        Parameters:
-        feature : int or None, optional
-            The feature used for splitting the data (default is None).
-        threshold : float or None, optional
-            The threshold value for the split (default is None).
-        left_child : Node or None, optional
-            The left child node (default is None).
-        right_child : Node or None, optional
-            The right child node (default is None).
-        is_root : bool, optional
-            Boolean indicating if the node is the root (default is False).
-        depth : int, optional
-            The depth of the node in the tree (default is 0).
+        Paramètres :
+        feature : int ou None, optionnel
+            La caractéristique utilisée pour diviser les données
+            (par défaut, None).
+        threshold : float ou None, optionnel
+            La valeur seuil pour le découpage
+            (par défaut : None).
+        left_child : Node ou None, optionnel
+            Le nœud enfant gauche (par défaut, None).
+        right_child : Node ou None, optionnel
+            Le nœud enfant de droite (par défaut, None).
+        is_root : bool, optionnel
+            Booléen indiquant si le nœud est la racine
+            (False par défaut).
+        depth : int, optionnel
+            La profondeur du nœud dans l'arbre (0 par défaut).
         """
         self.feature = feature
         self.threshold = threshold
@@ -99,11 +103,11 @@ class Node:
 
     def max_depth_below(self):
         """
-        Calculates the maximum depth of the subtree rooted at this node.
+        Calcule la profondeur maximale du sous-arbre enraciné à ce nœud.
 
-        Returns:
+        Retourne :
         int
-            The maximum depth of the subtree.
+            La profondeur maximale du sous-arbre.
         """
         if self.is_leaf:
             return self.depth
@@ -119,24 +123,24 @@ class Node:
 
     def count_nodes_below(self, only_leaves=False):
         """
-        Counts the number of nodes in the subtree rooted at this node.
+        Compte le nombre de nœuds dans le sous-arbre enraciné à ce nœud.
 
-        Parameters:
-        only_leaves : bool, optional
-            If True, count only the leaf nodes (default is False).
+        Paramètres :
+        only_leaves : bool, optionnel
+            Si True, ne compte que les nœuds feuilles (False par défaut).
 
-        Returns:
+        Retourne :
         int
-            The number of nodes in the subtree.
+            Le nombre de nœuds dans le sous-arbre.
         """
         if only_leaves:
-            # Count leaves in both children
+            # Compte les feuilles dans les deux enfants
             return (
                 self.left_child.count_nodes_below(only_leaves=True) +
                 self.right_child.count_nodes_below(only_leaves=True)
             )
         else:
-            # Count all nodes in the subtree
+            # Compte tous les nœuds dans le sous-arbre
             return (
                 1 + self.left_child.count_nodes_below(only_leaves=False) +
                 self.right_child.count_nodes_below(only_leaves=False)
@@ -144,11 +148,12 @@ class Node:
 
     def __str__(self):
         """
-        Provides a string representation of the node, including its children.
+        Fournit une représentation sous forme de chaîne de caractères du nœud,
+        y compris ses enfants.
 
-        Returns:
-        str
-            A formatted string representing the subtree rooted at this node.
+        Retourne :
+        chaîne
+            Une chaîne formatée représentant le sous-arbre enraciné dans ce nœud.
         """
         if self.is_root:
             result = (
@@ -159,12 +164,12 @@ class Node:
                 f"node [feature={self.feature}, threshold={self.threshold}]\n"
             )
 
-        # Add left child with prefix
+        # Ajoute l'enfant gauche avec préfixe
         if self.left_child:
             left_str = self.left_child.__str__()
             result += left_child_add_prefix(left_str)
 
-        # Add right child with prefix
+        # Ajoute l'enfant droit avec préfixe
         if self.right_child:
             right_str = self.right_child.__str__()
             result += right_child_add_prefix(right_str)
@@ -173,11 +178,12 @@ class Node:
 
     def get_leaves_below(self):
         """
-        Returns the list of all leaf nodes in the subtree rooted at this node.
+        Retourne la liste de tous les nœuds feuilles dans le sous-arbre
+        enraciné à ce nœud.
 
-        Returns:
+        Retourne :
         list
-            A list of all leaves in the subtree.
+            Une liste de toutes les feuilles dans le sous-arbre.
         """
         leaves = []
         if self.left_child:
@@ -188,69 +194,68 @@ class Node:
 
     def update_bounds_below(self):
         """
-        Recursively computes and updates the lower
-        and upper bounds dictionaries
-        for each node and its children based on the feature thresholds.
+        Calcule et met à jour récursivement les dictionnaires de
+        bornes inférieures et supérieures pour chaque nœud et ses
+        enfants en fonction des seuils des caractéristiques.
         """
         if self.is_root:
-            # Initialize bounds at the root
+            # Initialise les bornes à la racine
             self.upper = {0: np.inf}
             self.lower = {0: -np.inf}
 
-        # Compute bounds for children
+        # Calcule les bornes pour les enfants
         if self.left_child:
             self.left_child.lower = self.lower.copy()
             self.left_child.upper = self.upper.copy()
-            # Update upper bound for the feature
+            # Met à jour la borne supérieure pour la caractéristique
             self.left_child.lower[self.feature] = self.threshold
 
         if self.right_child:
             self.right_child.lower = self.lower.copy()
             self.right_child.upper = self.upper.copy()
-            # Update lower bound for the feature
+            # Met à jour la borne inférieure pour la caractéristique
             self.right_child.upper[self.feature] = self.threshold
 
-        # Recursively update bounds for children
+        # Met à jour récursivement les bornes pour les enfants
         for child in [self.left_child, self.right_child]:
             if child:
                 child.update_bounds_below()
 
     def update_indicator(self):
         """
-        Compute the indicator function for the current
-        node based on the lower and upper bounds.
+        Calcule la fonction indicatrice pour le nœud actuel
+        basée sur les bornes inférieures et supérieures.
         """
 
         def is_large_enough(x):
             """
-            Check if each individual has all its features
-            greater than the lower bounds.
+            Vérifie si chaque individu a toutes ses caractéristiques
+            supérieures aux bornes inférieures.
 
-            Parameters:
+            Paramètres:
             x : np.ndarray
-                A 2D NumPy array of shape (n_individuals, n_features).
+                Un tableau NumPy 2D de forme (n_individus, n_caractéristiques).
 
-            Returns:
-
+            Retourne:
             np.ndarray
-                A 1D NumPy array of boolean values
-                indicating if each individual meets the condition.
+                Un tableau 1D de valeurs booléennes indiquant si chaque individu
+                satisfait la condition.
             """
             return np.all(np.array([x[:, key] > self.lower[key]
                                     for key in self.lower.keys()]), axis=0)
 
         def is_small_enough(x):
             """
-            Check if each individual has all its features
-            less than or equal to the upper bounds.
+            Vérifie si chaque individu a toutes ses caractéristiques
+            inférieures ou égales aux bornes supérieures.
 
-            Parameters:
+            Paramètres:
             x : np.ndarray
-                A 2D NumPy array of shape (n_individuals, n_features).
+                Un tableau NumPy 2D de forme (n_individus, n_caractéristiques).
 
-            Returns:
+            Retourne:
             np.ndarray
-                A 1D NumPy array of boolean values indicating
+                Un tableau 1D de valeurs booléennes indiquant
             """
             return np.all(np.array([x[:, key] <= self.upper[key]
                                     for key in self.upper.keys()]), axis=0)
@@ -260,15 +265,16 @@ class Node:
 
     def pred(self, x):
         """
-        Predict the class for a single individual at the node.
+        Prédit la classe pour un individu unique au nœud.
 
-        Parameters:
+        Paramètres:
         x : np.ndarray
-            A 1D NumPy array representing the features of a single individual.
+            Un tableau NumPy 1D représentant les caractéristiques
+            d'un individu unique.
 
-        Returns:
+        Retourne:
         int
-            The predicted class for the individual.
+            La classe prédite pour l'individu.
         """
         if self.is_leaf:
             return self.value
@@ -280,28 +286,29 @@ class Node:
 
 class Leaf(Node):
     """
-    A class representing a leaf node in a decision tree, inheriting from Node.
+    Classe représentant un nœud feuille dans un arbre de décision,
+    héritant de Node.
 
-    Attributes:
+    Attributs:
     value : any
-        The value predicted by the leaf.
+        La valeur prédite par la feuille.
     depth : int
-        The depth of the leaf in the tree.
+        La profondeur de la feuille dans l'arbre.
 
-    Methods:
+    Méthodes:
     max_depth_below():
-        Returns the depth of the leaf.
+        Retourne la profondeur de la feuille.
     """
 
     def __init__(self, value, depth=None):
         """
-        Initializes a Leaf with the given parameters.
+        Initialise une feuille avec les paramètres donnés.
 
-        Parameters:
+        Paramètres:
         value : any
-            The value predicted by the leaf.
-        depth : int, optional
-            The depth of the leaf in the tree (default is None).
+            La valeur prédite par la feuille.
+        depth : int, optionnel
+            La profondeur de la feuille dans l'arbre (par défaut, None).
         """
         super().__init__()
         self.value = value
@@ -310,120 +317,117 @@ class Leaf(Node):
 
     def max_depth_below(self):
         """
-        Returns the depth of the leaf.
+        Retourne la profondeur de la feuille.
 
-        Returns:
+        Retourne:
         int
-            The depth of the leaf.
+            La profondeur de la feuille.
         """
         return self.depth
 
     def count_nodes_below(self, only_leaves=False):
         """
-        Counts the number of nodes in the subtree rooted at this leaf.
+        Compte le nombre de nœuds dans le sous-arbre enraciné à cette feuille.
 
-        Parameters:
-        only_leaves : bool, optional
-            If True, count only the leaf nodes (default is False).
+        Paramètres:
+        only_leaves : bool, optionnel
+            Si True, compte seulement les feuilles (False par défaut).
 
-        Returns:
+        Retourne:
         int
-            The number of nodes in the subtree.
+            Le nombre de nœuds dans le sous-arbre.
         """
         return 1
 
     def __str__(self):
         """
-        Returns a string representation of the leaf node.
+        Retourne une représentation en chaîne de caractères du nœud feuille.
 
-        Returns:
+        Retourne:
         str
-            The string representation of the leaf node.
+            La représentation en chaîne de la feuille.
         """
         return f"-> leaf [value={self.value}]"
 
     def get_leaves_below(self):
         """
-        Returns the list of all leaf nodes in the subtree rooted at this leaf.
+        Retourne la feuille elle-même dans une liste.
 
-        Returns:
+        Retourne:
         list
-            A list containing this leaf.
+            Une liste contenant cette feuille.
         """
         return [self]
 
     def update_bounds_below(self):
         """
-        Leaf nodes inherit bounds from their
-        parent nodes and do not propagate further.
+        Les nœuds feuille héritent des bornes de leurs
+        nœuds parents et ne propagent pas plus loin.
         """
-        # Bounds are inherited from the parent node and remain unchanged
+        # Les bornes sont héritées du nœud parent et restent inchangées
         pass
-
-    def get_leaves_below(self):
-        """
-        Returns the leaf node itself in a list.
-        """
-        return [self]
 
     def pred(self, x):
         """
-        Predict the class for a single individual at the leaf node.
+        Prédit la classe pour un individu unique au nœud feuille.
 
-        Parameters:
+        Paramètres:
         x : np.ndarray
-            A 1D NumPy array representing the features of a single individual.
+            Un tableau NumPy 1D représentant les caractéristiques
+            d'un individu unique.
 
-        Returns:
+        Retourne:
         int
-            The predicted class for the individual.
+            La classe prédite pour l'individu.
         """
         return self.value
 
 
 class Decision_Tree():
     """
-    A class representing a decision tree.
+    Classe représentant un arbre de décision.
 
-    Attributes:
+    Attributs:
     rng : numpy.random.Generator
-        Random number generator for reproducibility.
+        Générateur de nombres aléatoires pour la reproductibilité.
     root : Node
-        The root node of the tree.
+        Le nœud racine de l'arbre.
     explanatory : any
-        The explanatory features of the dataset.
+        Les caractéristiques explicatives du jeu de données.
     target : any
-        The target values of the dataset.
+        Les valeurs cibles du jeu de données.
     max_depth : int
-        The maximum depth of the tree.
+        La profondeur maximale de l'arbre.
     min_pop : int
-        The minimum population required to split a node.
+        La population minimale requise pour diviser un nœud.
     split_criterion : str
-        The criterion used to split nodes.
+        Le critère utilisé pour diviser les nœuds.
     predict : any
-        Method to predict the target value for a given set of features.
+        Méthode pour prédire la valeur cible pour un ensemble de caractéristiques.
 
-    Methods:
+    Méthodes:
     depth():
-        Returns the maximum depth of the tree.
+        Retourne la profondeur maximale de l'arbre.
     """
 
     def __init__(self, max_depth=10, min_pop=1, seed=0,
                  split_criterion="random", root=None):
         """
-        Initializes a Decision_Tree with the given parameters.
+        Initialise un arbre de décision avec les paramètres donnés.
 
-        Parameters:
-        max_depth : int, optional
-            The maximum depth of the tree (default is 10).
-        min_pop : int, optional
-            The minimum population required to split a node (default is 1).
-        seed : int, optional
-            Seed for the random number generator (default is 0).
-        split_criterion : str, optional
-            The criterion used to split nodes (default is "random").
-        root : Node or None, optional
-            The root node of the tree (default is None).
+        Paramètres:
+        max_depth : int, optionnel
+            La profondeur maximale de l'arbre (par défaut 10).
+        min_pop : int, optionnel
+            La population minimale requise pour diviser un nœud
+            (par défaut 1).
+        seed : int, optionnel
+            Graine pour le générateur aléatoire (par défaut 0).
+        split_criterion : str, optionnel
+            Le critère utilisé pour diviser les nœuds
+            (par défaut "random").
+        root : Node ou None, optionnel
+            Le nœud racine de l'arbre (par défaut None).
         """
         self.rng = np.random.default_rng(seed)
         if root:
@@ -439,104 +443,99 @@ class Decision_Tree():
 
     def depth(self):
         """
-        Returns the maximum depth of the tree.
+        Retourne la profondeur maximale de l'arbre.
 
-        Returns:
+        Retourne:
         int
-            The maximum depth of the tree.
+            La profondeur maximale de l'arbre.
         """
         return self.root.max_depth_below()
 
     def count_nodes(self, only_leaves=False):
         """
-        Counts the number of nodes in the decision tree.
+        Compte le nombre de nœuds dans l'arbre de décision.
 
-        Parameters:
-        only_leaves : bool, optional
-            If True, count only the leaf nodes (default is False).
+        Paramètres:
+        only_leaves : bool, optionnel
+            Si True, compte seulement les feuilles (False par défaut).
 
-        Returns:
+        Retourne:
         int
-            The number of nodes in the tree.
+            Le nombre de nœuds dans l'arbre.
         """
         return self.root.count_nodes_below(only_leaves=only_leaves)
 
     def __str__(self):
         """
-        Returns a string representation of the decision tree.
+        Retourne une représentation en chaîne de caractères de l'arbre de décision.
 
-        Returns:
+        Retourne:
         str
-            The string representation of the decision tree.
+            La représentation en chaîne de l'arbre de décision.
         """
         return self.root.__str__() + "\n"
 
     def get_leaves(self):
         """
-        Returns the list of all leaf nodes in the decision tree.
+        Retourne la liste de toutes les feuilles dans l'arbre de décision.
 
-        Returns:
+        Retourne:
         list
-            A list of all leaves in the tree.
-        """
-        return self.root.get_leaves_below()
-
-    def get_leaves(self):
-        """
-        Returns a list of all leaf nodes in the decision tree.
+            Une liste de toutes les feuilles dans l'arbre.
         """
         return self.root.get_leaves_below()
 
     def update_bounds(self):
         """
-        Updates the bounds for all nodes in the decision tree.
+        Met à jour les bornes pour tous les nœuds dans l'arbre de décision.
         """
         self.root.update_bounds_below()
 
     def update_predict(self):
         """
-        Updates the predict function for efficient batch predictions.
+        Met à jour la fonction de prédiction pour des prédictions par lots efficaces.
         """
-        # Update bounds for each node
+        # Met à jour les bornes pour chaque nœud
         self.update_bounds()
 
-        # Get all the leaves
+        # Récupère toutes les feuilles
         leaves = self.get_leaves()
 
-        # Update indicator for each leaf and store its contribution
+        # Met à jour l'indicateur pour chaque feuille et stocke sa contribution
         for leaf in leaves:
             leaf.update_indicator()
 
-        # Define the efficient predict function
+        # Définit la fonction de prédiction efficace
         self.predict = lambda A: np.sum(
             [leaf.indicator(A) * leaf.value for leaf in leaves], axis=0
         )
 
     def pred(self, x):
         """
-        Predict the class for a single individual using the decision tree.
+        Prédit la classe pour un individu unique en utilisant l'arbre de décision.
 
-        Parameters:
+        Paramètres:
         x : np.ndarray
-            A 1D NumPy array representing the features of a single individual.
+            Un tableau NumPy 1D représentant les caractéristiques
+            d'un individu unique.
 
-        Returns:
+        Retourne:
         int
-            The predicted class for the individual.
+            La classe prédite pour l'individu.
         """
         return self.root.pred(x)
 
     def random_split_criterion(self, node):
         """
-        Determines a random split criterion for a given node.
+        Détermine un critère de division aléatoire pour un nœud donné.
 
-        Parameters
+        Paramètres:
         node : Node
-            The node for which the split criterion is determined.
+            Le nœud pour lequel le critère de division est déterminé.
 
-        Returns
+        Retourne:
         tuple
-            A tuple containing the feature index and the threshold value.
+            Un tuple contenant l'index de la caractéristique et la valeur seuil.
         """
         diff = 0
         while diff == 0:
@@ -551,17 +550,18 @@ class Decision_Tree():
 
     def fit(self, explanatory, target, verbose=0):
         """
-        Fits the decision tree to the provided explanatory and target data.
+        Ajuste l'arbre de décision aux données explicatives et cibles fournies.
 
-        Parameters
+        Paramètres:
         explanatory : array-like
-            The explanatory variables.
+            Les variables explicatives.
         target : array-like
-            The target variable.
-        verbose : int, optional
-            If set to 1, prints training details (default is 0).
+            La variable cible.
+        verbose : int, optionnel
+            Si défini à 1, imprime les détails de l'entraînement
+            (par défaut 0).
         """
-        # Set the split criterion method
+        # Définit la méthode de critère de division
         if self.split_criterion == "random":
             self.split_criterion = self.random_split_criterion
         else:
@@ -576,34 +576,34 @@ class Decision_Tree():
         self.update_predict()
 
         if verbose == 1:
-            print(f"""  Training finished.
-    - Depth                     : {self.depth()}
-    - Number of nodes           : {self.count_nodes()}
-    - Number of leaves          : {self.count_nodes(only_leaves=True)}""")
-            print(f"    - Accuracy on training data : "
+            print(f"""  Entraînement terminé.
+        - Profondeur                : {self.depth()}
+        - Nombre de nœuds          : {self.count_nodes()}
+        - Nombre de feuilles        : {self.count_nodes(only_leaves=True)}""")
+            print(f"    - Précision sur les données d'entraînement : "
                   f"{self.accuracy(self.explanatory, self.target)}")
 
     def np_extrema(self, arr):
         """
-        Returns the minimum and maximum values of the array.
+        Retourne les valeurs minimale et maximale du tableau.
 
-        Parameters:
+        Paramètres:
         arr : array-like
-            The input array.
+            Le tableau d'entrée.
 
-        Returns:
+        Retourne:
         tuple
-            A tuple containing the minimum and maximum values of the array.
+            Un tuple contenant les valeurs minimale et maximale du tableau.
         """
         return np.min(arr), np.max(arr)
 
     def fit_node(self, node):
         """
-        Recursively fits the decision tree nodes.
+        Ajuste récursivement les nœuds de l'arbre de décision.
 
-        Parameters
+        Paramètres:
         node : Node
-            The current node being fitted.
+            Le nœud actuel en cours d'ajustement.
         """
         node.feature, node.threshold = self.split_criterion(node)
 
@@ -613,13 +613,13 @@ class Decision_Tree():
         if len(left_population) != len(self.target):
             left_population = np.pad(
                 left_population,
-                (0, len(self.target) - len(self.left_population)),
+                (0, len(self.target) - len(left_population)),
                 'constant', constant_values=(0)
             )
         if len(right_population) != len(self.target):
             right_population = np.pad(
                 right_population,
-                (0, len(self.target) - len(self.right_population)),
+                (0, len(self.target) - len(right_population)),
                 'constant', constant_values=(0)
             )
         is_left_leaf = (
@@ -648,17 +648,17 @@ class Decision_Tree():
 
     def get_leaf_child(self, node, sub_population):
         """
-        Creates a leaf child node.
+        Crée un nœud feuille enfant.
 
-        Parameters
+        Paramètres:
         node : Node
-            The parent node.
+            Le nœud parent.
         sub_population : array-like
-            The sub-population for the leaf node.
+            La sous-population pour le nœud feuille.
 
-        Returns
+        Retourne:
         Leaf
-            The created leaf node.
+            Le nœud feuille créé.
         """
         value = np.argmax(np.bincount(self.target[sub_population]))
         leaf_child = Leaf(value)
@@ -668,39 +668,17 @@ class Decision_Tree():
 
     def get_node_child(self, node, sub_population):
         """
-        Creates a leaf child node.
+        Crée un nœud enfant non-feuille.
 
-        Parameters
+        Paramètres:
         node : Node
-            The parent node.
+            Le nœud parent.
         sub_population : array-like
-            The sub-population for the leaf node.
+            La sous-population pour le nœud enfant.
 
-        Returns
-        Leaf
-            The created leaf node.
-        """
-        A = self.target[sub_population]
-        B, C = np.unique(A, return_counts=True)
-        value = B[np.argmax(C)]
-        leaf_child = Leaf(value)
-        leaf_child.depth = node.depth + 1
-        leaf_child.sub_population = sub_population
-        return leaf_child
-
-    def get_node_child(self, node, sub_population):
-        """
-        Creates a non-leaf child node.
-
-        Parameters
-        node : Node
-            The parent node.
-        sub_population : array-like
-            The sub-population for the child node.
-
-        Returns
+        Retourne:
         Node
-            The created non-leaf child node.
+            Le nœud enfant créé.
         """
         n = Node()
         n.depth = node.depth + 1
@@ -709,17 +687,17 @@ class Decision_Tree():
 
     def accuracy(self, test_explanatory, test_target):
         """
-        Calculates the accuracy of the decision tree on the test data.
+        Calcule la précision de l'arbre de décision sur les données de test.
 
-        Parameters
+        Paramètres:
         test_explanatory : array-like
-            The explanatory variables for the test data.
+            Les variables explicatives pour les données de test.
         test_target : array-like
-            The target variable for the test data.
+            La variable cible pour les données de test.
 
-        Returns:
+        Retourne:
         float
-            The accuracy of the decision tree on the test data.
+            La précision de l'arbre de décision sur les données de test.
         """
         return np.sum(
             np.equal(self.predict(test_explanatory), test_target)

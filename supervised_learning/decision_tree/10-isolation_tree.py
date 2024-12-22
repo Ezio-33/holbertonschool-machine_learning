@@ -1,304 +1,304 @@
 #!/usr/bin/env python3
-""" Task 10: 10. IRF 1 : isolation random trees """
+""" Tâche 10"""
 import numpy as np
 Node = __import__('8-build_decision_tree').Node
 Leaf = __import__('8-build_decision_tree').Leaf
 
 
 class Isolation_Random_Tree:
-    """
-    Isolation_Random_Tree class implements an
-    isolation tree for detecting outliers.
+	"""
+	La classe Isolation_Random_Tree implémente un
+	arbre d'isolation pour détecter les valeurs aberrantes.
 
-    Attributes:
-    rng : numpy.random.Generator
-        Random number generator initialized with a seed.
-    root : Node or Leaf
-        Root node of the tree, which can either be a Node or a Leaf.
-    explanatory : array-like
-        Explanatory variables used for training the tree.
-    max_depth : int
-        Maximum depth of the tree.
-    predict : function
-        Function to predict the depth of a given data point.
-    min_pop : int
-        Minimum population at a node for it to split.
+	Attributs :
+	rng : numpy.random.Generator
+		Générateur de nombres aléatoires initialisé avec une graine.
+	root : Node ou Leaf
+		Noeud racine de l'arbre, qui peut être un Node ou un Leaf.
+	explanatory : similaire à un tableau
+		Variables explicatives utilisées pour entraîner l'arbre.
+	max_depth : int
+		Profondeur maximale de l'arbre.
+	predict : fonction
+		Fonction pour prédire la profondeur d'un point de données.
+	min_pop : int
+		Population minimale à un noeud pour qu'il se sépare.
 
-    Methods:
-    __init__(self, max_depth=10, seed=0, root=None):
-        Initializes the Isolation_Random_Tree with specified parameters.
+	Méthodes :
+	__init__(self, max_depth=10, seed=0, root=None):
+		Initialise l'Isolation_Random_Tree avec les paramètres spécifiés.
 
-    __str__(self):
-        Returns a string representation of the tree.
+	__str__(self):
+		Retourne une représentation en chaîne de l'arbre.
 
-    depth(self):
-        Returns the depth of the tree.
+	depth(self):
+		Retourne la profondeur de l'arbre.
 
-    count_nodes(self, only_leaves=False):
-        Returns the count of nodes in the tree, optionally only leaves.
+	count_nodes(self, only_leaves=False):
+		Retourne le nombre de noeuds dans l'arbre, optionnellement seulement les feuilles.
 
-    update_bounds(self):
-        Updates the bounds of the tree.
+	update_bounds(self):
+		Met à jour les limites de l'arbre.
 
-    get_leaves(self):
-        Returns a list of leaves in the tree.
+	get_leaves(self):
+		Retourne une liste des feuilles de l'arbre.
 
-    update_predict(self):
-        Updates the predict function of the tree.
+	update_predict(self):
+		Met à jour la fonction de prédiction de l'arbre.
 
-    np_extrema(self, arr):
-        Returns the minimum and maximum of an array.
+	np_extrema(self, arr):
+		Retourne le minimum et le maximum d'un tableau.
 
-    random_split_criterion(self, node):
-        Generates a random split criterion for the node.
+	random_split_criterion(self, node):
+		Génère un critère de séparation aléatoire pour le noeud.
 
-    get_leaf_child(self, node, sub_population):
-        Returns a leaf child node given a parent node and its subpopulation.
+	get_leaf_child(self, node, sub_population):
+		Retourne un noeud enfant feuille donné un noeud parent et sa sous-population.
 
-    get_node_child(self, node, sub_population):
-        Returns a node child given a parent node and its subpopulation.
+	get_node_child(self, node, sub_population):
+		Retourne un noeud enfant non-feuille donné un noeud parent et sa sous-population.
 
-    fit_node(self, node):
-        Recursively fits the node with its children based on random splits.
+	fit_node(self, node):
+		Ajuste récursivement le noeud avec ses enfants basés sur des séparations aléatoires.
 
-    fit(self, explanatory, verbose=0):
-        Fits the entire tree on the given explanatory data.
-    """
+	fit(self, explanatory, verbose=0):
+		Ajuste l'ensemble de l'arbre sur les données explicatives données.
+	"""
 
-    def __init__(self, max_depth=10, seed=0, root=None):
-        """
-        Initializes the Isolation_Random_Tree with specified parameters.
+	def __init__(self, max_depth=10, seed=0, root=None):
+		"""
+		Initialise l'Isolation_Random_Tree avec les paramètres spécifiés.
 
-        Parameters:
-        max_depth : int, optional
-            Maximum depth of the tree (default is 10).
-        seed : int, optional
-            Seed for random number generation (default is 0).
-        root : Node or Leaf, optional
-            Root node of the tree (default is None, which creates a new Node).
-        """
-        self.rng = np.random.default_rng(seed)
-        self.root = root if root else Node(is_root=True)
-        self.explanatory = None
-        self.max_depth = max_depth
-        self.predict = None
-        self.min_pop = 1
+		Paramètres :
+		max_depth : int, optionnel
+			Profondeur maximale de l'arbre (par défaut 10).
+		seed : int, optionnel
+			Graine pour la génération de nombres aléatoires (par défaut 0).
+		root : Node ou Leaf, optionnel
+			Noeud racine de l'arbre (par défaut None, ce qui crée un nouveau Node).
+		"""
+		self.rng = np.random.default_rng(seed)
+		self.root = root if root else Node(is_root=True)
+		self.explanatory = None
+		self.max_depth = max_depth
+		self.predict = None
+		self.min_pop = 1
 
-    def __str__(self):
-        """
-        Returns a string representation of the decision tree.
+	def __str__(self):
+		"""
+		Retourne une représentation en chaîne de l'arbre de décision.
 
-        Returns:
-        str
-            The string representation of the decision tree.
-        """
-        return self.root.__str__() + "\n"
+		Retourne :
+		str
+			La représentation en chaîne de l'arbre de décision.
+		"""
+		return self.root.__str__() + "\n"
 
-    def depth(self):
-        """
-        Returns the maximum depth of the tree.
+	def depth(self):
+		"""
+		Retourne la profondeur maximale de l'arbre.
 
-        Returns:
-        int
-            The maximum depth of the tree.
-        """
-        return self.root.max_depth_below()
+		Retourne :
+		int
+			La profondeur maximale de l'arbre.
+		"""
+		return self.root.max_depth_below()
 
-    def count_nodes(self, only_leaves=False):
-        """
-        Counts the number of nodes in the decision tree.
+	def count_nodes(self, only_leaves=False):
+		"""
+		Compte le nombre de noeuds dans l'arbre de décision.
 
-        Parameters:
-        only_leaves : bool, optional
-            If True, count only the leaf nodes (default is False).
+		Paramètres :
+		only_leaves : bool, optionnel
+			Si True, compte seulement les noeuds feuilles (par défaut False).
 
-        Returns:
-        int
-            The number of nodes in the tree.
-        """
-        return self.root.count_nodes_below(only_leaves=only_leaves)
+		Retourne :
+		int
+			Le nombre de noeuds dans l'arbre.
+		"""
+		return self.root.count_nodes_below(only_leaves=only_leaves)
 
-    def update_bounds(self):
-        """
-        Update the bounds for the entire
-        tree starting from the root node.
-        """
-        self.root.update_bounds_below()
+	def update_bounds(self):
+		"""
+		Met à jour les limites pour l'ensemble
+		de l'arbre en partant du noeud racine.
+		"""
+		self.root.update_bounds_below()
 
-    def get_leaves(self):
-        """
-        Returns a list of all leaves in the tree.
+	def get_leaves(self):
+		"""
+		Retourne une liste de toutes les feuilles de l'arbre.
 
-        Returns:
-        list
-            The list of all leaves in the tree.
-        """
-        return self.root.get_leaves_below()
+		Retourne :
+		list
+			La liste de toutes les feuilles de l'arbre.
+		"""
+		return self.root.get_leaves_below()
 
-    def update_predict(self):
-        """
-        Update the prediction function for the decision tree.
-        """
-        self.update_bounds()
-        leaves = self.get_leaves()
-        for leaf in leaves:
-            leaf.update_indicator()
+	def update_predict(self):
+		"""
+		Met à jour la fonction de prédiction pour l'arbre de décision.
+		"""
+		self.update_bounds()
+		leaves = self.get_leaves()
+		for leaf in leaves:
+			leaf.update_indicator()
 
-        def predict(A):
-            """
-            Predict the class for each individual in the input
-            array A using the decision tree.
+		def predict(A):
+			"""
+			Prédit la classe pour chaque individu dans le
+			tableau d'entrée A en utilisant l'arbre de décision.
 
-            Parameters:
-            A : np.ndarray
-                A 2D NumPy array of shape (n_individuals,
-                n_features), where each row
-                represents an individual with its features.
+			Paramètres :
+			A : np.ndarray
+				Un tableau NumPy 2D de forme (n_individuals,
+				n_features), où chaque ligne
+				représente un individu avec ses caractéristiques.
 
-            Returns:
-            np.ndarray
-                A 1D NumPy array of shape (n_individuals,),
-                where each element is the predicted
-                class for the corresponding individual in A.
-            """
-            predictions = np.zeros(A.shape[0], dtype=int)
-            for i, x in enumerate(A):
-                for leaf in leaves:
-                    if leaf.indicator(np.array([x])):
-                        predictions[i] = leaf.value
-                        break
-            return predictions
-        self.predict = predict
+			Retourne :
+			np.ndarray
+				Un tableau NumPy 1D de forme (n_individuals,),
+				où chaque élément est la classe prédite
+				pour l'individu correspondant dans A.
+			"""
+			predictions = np.zeros(A.shape[0], dtype=int)
+			for i, x in enumerate(A):
+				for leaf in leaves:
+					if leaf.indicator(np.array([x])):
+						predictions[i] = leaf.value
+						break
+			return predictions
+		self.predict = predict
 
-    def np_extrema(self, arr):
-        """
-        Returns the minimum and maximum values of an array.
+	def np_extrema(self, arr):
+		"""
+		Retourne les valeurs minimale et maximale d'un tableau.
 
-        Parameters:
-        arr : array-like
-            Array from which to find the extrema.
+		Paramètres :
+		arr : similaire à un tableau
+			Tableau dont on veut trouver les extrema.
 
-        Returns:
-        tuple
-            Minimum and maximum values of the array.
-        """
-        return np.min(arr), np.max(arr)
+		Retourne :
+		tuple
+			Valeurs minimale et maximale du tableau.
+		"""
+		return np.min(arr), np.max(arr)
 
-    def random_split_criterion(self, node):
-        """
-        Determines a random split criterion for a given node.
+	def random_split_criterion(self, node):
+		"""
+		Détermine un critère de séparation aléatoire pour un noeud donné.
 
-        Parameters
-        node : Node
-            The node for which the split criterion is determined.
+		Paramètres
+		node : Node
+			Le noeud pour lequel le critère de séparation est déterminé.
 
-        Returns
-        tuple
-            A tuple containing the feature index and the threshold value.
-        """
-        diff = 0
-        while diff == 0:
-            feature = self.rng.integers(0, self.explanatory.shape[1])
-            feature_min, feature_max = self.np_extrema(self.explanatory
-                                                       [:, feature]
-                                                       [node.sub_population])
-            diff = feature_max - feature_min
-        x = self.rng.uniform()
-        threshold = (1 - x) * feature_min + x * feature_max
-        return feature, threshold
+		Retourne
+		tuple
+			Un tuple contenant l'index de la caractéristique et la valeur du seuil.
+		"""
+		diff = 0
+		while diff == 0:
+			feature = self.rng.integers(0, self.explanatory.shape[1])
+			feature_min, feature_max = self.np_extrema(
+				self.explanatory[:, feature][node.sub_population]
+			)
+			diff = feature_max - feature_min
+		x = self.rng.uniform()
+		threshold = (1 - x) * feature_min + x * feature_max
+		return feature, threshold
 
-    def get_leaf_child(self, node, sub_population):
-        """
-        Returns a leaf child node given a parent node and its subpopulation.
+	def get_leaf_child(self, node, sub_population):
+		"""
+		Retourne un noeud enfant feuille donné un noeud parent et sa sous-population.
 
-        Parameters:
-        node : Node
-            The parent node.
-        sub_population : array-like
-            Subpopulation of the explanatory data for the child node.
+		Paramètres :
+		node : Node
+			Le noeud parent.
+		sub_population : similaire à un tableau
+			Sous-population des données explicatives pour le noeud enfant.
 
-        Returns:
-        Leaf
-            A leaf child node with the updated depth and subpopulation.
-        """
-        value = node.depth + 1
-        leaf_child = Leaf(value)
-        leaf_child.depth = node.depth + 1
-        leaf_child.subpopulation = sub_population
-        return leaf_child
+		Retourne :
+		Leaf
+			Un noeud enfant feuille avec la profondeur et la sous-population mises à jour.
+		"""
+		value = node.depth + 1
+		leaf_child = Leaf(value)
+		leaf_child.depth = node.depth + 1
+		leaf_child.subpopulation = sub_population
+		return leaf_child
 
-    def get_node_child(self, node, sub_population):
-        """
-        Creates a non-leaf child node.
+	def get_node_child(self, node, sub_population):
+		"""
+		Crée un noeud enfant non-feuille.
 
-        Parameters
-        node : Node
-            The parent node.
-        sub_population : array-like
-            The sub-population for the child node.
+		Paramètres
+		node : Node
+			Le noeud parent.
+		sub_population : similaire à un tableau
+			La sous-population pour le noeud enfant.
 
-        Returns
-        Node
-            The created non-leaf child node.
-        """
-        n = Node()
-        n.depth = node.depth + 1
-        n.sub_population = sub_population
-        return n
+		Retourne
+		Node
+			Le noeud enfant non-feuille créé.
+		"""
+		n = Node()
+		n.depth = node.depth + 1
+		n.sub_population = sub_population
+		return n
 
-    def fit_node(self, node):
-        """
-        Recursively fits the node with its children based on random splits.
+	def fit_node(self, node):
+		"""
+		Ajuste récursivement le noeud avec ses enfants basés sur des séparations aléatoires.
 
-        Parameters:
-        node : Node
-            The node to fit.
-        """
+		Paramètres :
+		node : Node
+			Le noeud à ajuster.
+		"""
 
-        node.feature, node.threshold = self.split_criterion(node)
+		node.feature, node.threshold = self.split_criterion(node)
 
-        left_population = node.sub_population & \
-            (self.explanatory[:, node.feature] > node.threshold)
-        right_population = node.sub_population & ~left_population
+		left_population = node.sub_population & \
+			(self.explanatory[:, node.feature] > node.threshold)
+		right_population = node.sub_population & ~left_population
 
-        is_left_leaf = (node.depth == self.max_depth - 1 or
-                        np.sum(left_population) <= self.min_pop)
-        is_right_leaf = (node.depth == self.max_depth - 1 or
-                         np.sum(right_population) <= self.min_pop)
+		is_left_leaf = (node.depth == self.max_depth - 1 or
+						np.sum(left_population) <= self.min_pop)
+		is_right_leaf = (node.depth == self.max_depth - 1 or
+						 np.sum(right_population) <= self.min_pop)
 
-        if is_left_leaf:
-            node.left_child = self.get_leaf_child(node, left_population)
-        else:
-            node.left_child = self.get_node_child(node, left_population)
-            node.left_child.depth = node.depth + 1
-            self.fit_node(node.left_child)
+		if is_left_leaf:
+			node.left_child = self.get_leaf_child(node, left_population)
+		else:
+			node.left_child = self.get_node_child(node, left_population)
+			node.left_child.depth = node.depth + 1
+			self.fit_node(node.left_child)
 
-        if is_right_leaf:
-            node.right_child = self.get_leaf_child(node, right_population)
-        else:
-            node.right_child = self.get_node_child(node, right_population)
-            node.right_child.depth = node.depth + 1
-            self.fit_node(node.right_child)
+		if is_right_leaf:
+			node.right_child = self.get_leaf_child(node, right_population)
+		else:
+			node.right_child = self.get_node_child(node, right_population)
+			node.right_child.depth = node.depth + 1
+			self.fit_node(node.right_child)
 
-    def fit(self, explanatory, verbose=0):
-        """
-        Fits the entire Isolation_Random_Tree on the given explanatory data.
+	def fit(self, explanatory, verbose=0):
+		"""
+		Ajuste l'ensemble de l'Isolation_Random_Tree sur les données explicatives données.
 
-        Parameters:
-        explanatory : array-like
-            Explanatory variables used for training.
-        verbose : int, optional
-            If set to 1, prints training statistics (default is 0).
-        """
-        self.split_criterion = self.random_split_criterion
-        self.explanatory = explanatory
-        self.root.sub_population = np.ones(explanatory.shape[0], dtype='bool')
+		Paramètres :
+		explanatory : similaire à un tableau
+			Variables explicatives utilisées pour l'entraînement.
+		verbose : int, optionnel
+			Si défini à 1, imprime les statistiques de l'entraînement (par défaut 0).
+		"""
+		self.split_criterion = self.random_split_criterion
+		self.explanatory = explanatory
+		self.root.sub_population = np.ones(explanatory.shape[0], dtype='bool')
 
-        self.fit_node(self.root)
-        self.update_predict()
+		self.fit_node(self.root)
+		self.update_predict()
 
-        if verbose == 1:
-            print(f"""  Training finished.
-    - Depth                     : {self.depth()}
-    - Number of nodes           : {self.count_nodes()}
-    - Number of leaves          : {self.count_nodes(only_leaves=True)}""")
+		if verbose == 1:
+			print(f"""  Entraînement terminé.
+		- Profondeur                : {self.depth()}
+		- Nombre de noeuds          : {self.count_nodes()}
+		- Nombre de feuilles        : {self.count_nodes(only_leaves=True)}""")
