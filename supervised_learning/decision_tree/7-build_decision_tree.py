@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+a#!/usr/bin/env python3
 """ Tâche 7"""
 import numpy as np
 

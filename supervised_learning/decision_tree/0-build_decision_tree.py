@@ -10,13 +10,15 @@ class Node:
     Classe représentant un nœud interne dans un arbre de décision.
 
     Attributs :
-        feature (int or None): Indice de la caractéristique utilisée pour diviser les données.
+        feature (int or None): Indice de la caractéristique utilisée pour
+            diviser les données.
         threshold (float or None): Valeur seuil pour la division.
         left_child (Node or None): Nœud enfant gauche.
         right_child (Node or None): Nœud enfant droit.
         is_leaf (bool): Indique si le nœud est une feuille.
         is_root (bool): Indique si le nœud est la racine de l'arbre.
-        sub_population (np.ndarray or None): Masque booléen indiquant les échantillons dans ce nœud.
+        sub_population (np.ndarray or None): Masque booléen indiquant
+            les échantillons dans ce nœud.
         depth (int): Profondeur du nœud dans l'arbre.
         lower (dict or None): Bornes inférieures pour les caractéristiques.
         upper (dict or None): Bornes supérieures pour les caractéristiques.
@@ -34,12 +36,18 @@ class Node:
         Initialise un nœud dans l'arbre de décision.
 
         Paramètres :
-            feature (int or None, optionnel): Indice de la caractéristique utilisée pour diviser (default : None).
-            threshold (float or None, optionnel): Valeur seuil pour la division (default : None).
-            left_child (Node or None, optionnel): Nœud enfant gauche (default : None).
-            right_child (Node or None, optionnel): Nœud enfant droit (default : None).
-            is_root (bool, optionnel): Indique si le nœud est la racine (default : False).
-            depth (int, optionnel): Profondeur du nœud dans l'arbre (default : 0).
+            feature (int or None, optionnel): Indice de la
+                caractéristique utilisée pour diviser (default : None).
+            threshold (float or None, optionnel): Valeur seuil pour
+                la division (default : None).
+            left_child (Node or None, optionnel): Nœud enfant gauche
+                (default : None).
+            right_child (Node or None, optionnel): Nœud enfant droit
+                (default : None).
+            is_root (bool, optionnel): Indique si le nœud est la racine
+                (default : False).
+            depth (int, optionnel): Profondeur du nœud dans l'arbre
+                (default : 0).
 
         Retourne :
             None
@@ -91,7 +99,8 @@ class Leaf(Node):
 
         Paramètres :
             value (int or any): Valeur prédite par la feuille.
-            depth (int or None, optionnel): Profondeur de la feuille dans l'arbre (default : None).
+            depth (int or None, optionnel): Profondeur de la feuille dans
+                l'arbre (default : None).
 
         Retourne :
             None
@@ -116,13 +125,17 @@ class Decision_Tree:
     Classe représentant un arbre de décision pour la classification.
 
     Attributs :
-        rng (np.random.Generator): Générateur de nombres aléatoires pour la reproductibilité.
+        rng (np.random.Generator): Générateur de nombres aléatoires
+            pour la reproductibilité.
         root (Node): Nœud racine de l'arbre.
-        explanatory (np.ndarray or None): Données explicatives d'entraînement.
+        explanatory (np.ndarray or None): Données explicatives
+            d'entraînement.
         target (np.ndarray or None): Cibles d'entraînement.
         max_depth (int): Profondeur maximale de l'arbre.
-        min_pop (int): Population minimale requise pour diviser un nœud.
-        split_criterion (str): Critère de division des nœuds ("random" ou autre).
+        min_pop (int): Population minimale requise pour diviser
+            un nœud.
+        split_criterion (str): Critère de division des nœuds
+            ("random" ou autre).
         predict (callable or None): Fonction de prédiction basée sur l'arbre.
     """
 
@@ -137,11 +150,16 @@ class Decision_Tree:
         Initialise un arbre de décision avec les paramètres spécifiés.
 
         Paramètres :
-            max_depth (int, optionnel): Profondeur maximale de l'arbre (default : 10).
-            min_pop (int, optionnel): Population minimale pour diviser un nœud (default : 1).
-            seed (int, optionnel): Graine pour le générateur aléatoire (default : 0).
-            split_criterion (str, optionnel): Critère de division des nœuds (default : "random").
-            root (Node or None, optionnel): Nœud racine de l'arbre (default : None).
+            max_depth (int, optionnel): Profondeur maximale de l'arbre
+                (default : 10).
+            min_pop (int, optionnel): Population minimale pour diviser
+                un nœud (default : 1).
+            seed (int, optionnel): Graine pour le générateur aléatoire
+                (default : 0).
+            split_criterion (str, optionnel): Critère de division des
+                nœuds (default : "random").
+            root (Node or None, optionnel): Nœud racine de l'arbre
+                (default : None).
 
         Retourne :
             None
