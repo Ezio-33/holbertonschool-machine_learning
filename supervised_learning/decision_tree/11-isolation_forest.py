@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-""" Task 11: 11. IRF 2 : isolation random forests """
+""" Task 11"""
 import numpy as np
 Isolation_Random_Tree = __import__('10-isolation_tree').Isolation_Random_Tree
 
@@ -115,12 +115,12 @@ class Isolation_Random_Forest():
             depths.append(T.depth())
             nodes.append(T.count_nodes())
             leaves.append(T.count_nodes(only_leaves=True))
-        self.target = self.predict(explanatory)
         if verbose == 1:
             print(f"""  Training finished.
-    - Mean depth                     : {np.array(depths).mean()}
-    - Mean number of nodes           : {np.array(nodes).mean()}
-    - Mean number of leaves          : {np.array(leaves).mean()}""")
+    - Mean depth                     : {np.array(depths).mean():.1f}
+    - Mean number of nodes           : {np.array(nodes).mean():.2f}
+    - Mean number of leaves          : {np.array(leaves).mean():.2f}""")
+
 
     def suspects(self, explanatory, n_suspects):
         """
@@ -141,4 +141,6 @@ class Isolation_Random_Forest():
         """
         depths = self.predict(explanatory)
         suspect_indices = np.argsort(depths)[:n_suspects]
-        return explanatory[suspect_indices], depths[suspect_indices]
+        suspects = explanatory[suspect_indices]
+        suspect_depths = depths[suspect_indices]
+        return suspects, suspect_depths
