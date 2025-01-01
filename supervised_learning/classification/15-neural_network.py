@@ -12,6 +12,7 @@ class NeuralNetwork:
     Classe définissant un réseau de neurones avec une couche cachée
     et des attributs privés pour la classification binaire
     """
+
     def __init__(self, nx, nodes):
         """
         Initialise le réseau de neurones
@@ -159,12 +160,12 @@ class NeuralNetwork:
         self.__b2 = self.__b2 - alpha * db2
         self.__W1 = self.__W1 - alpha * dW1
         self.__b1 = self.__b1 - alpha * db1
-        
-    def train(self, X, Y, iterations=5000, alpha=0.05, verbose=True, 
+
+    def train(self, X, Y, iterations=5000, alpha=0.05, verbose=True,
               graph=True, step=100):
         """
         Entraîne le réseau de neurones
-        
+
         Args:
             X (numpy.ndarray): données d'entrée (nx, m)
             Y (numpy.ndarray): étiquettes correctes (1, m)
@@ -173,10 +174,10 @@ class NeuralNetwork:
             verbose (bool): affiche le coût pendant l'entraînement
             graph (bool): affiche le graphique d'apprentissage
             step (int): pas entre les affichages
-            
+
         Returns:
             tuple: (prédictions finales, coût final)
-            
+
         Raises:
             TypeError: si les paramètres ne sont pas du bon type
             ValueError: si les paramètres ne sont pas dans les bonnes plages
@@ -197,11 +198,11 @@ class NeuralNetwork:
 
         costs = []
         steps = []
-        
+
         for i in range(iterations + 1):
             # Propagation avant
             A1, A2 = self.forward_prop(X)
-            
+
             # Affichage du coût
             if i % step == 0 or i == iterations:
                 cost = self.cost(Y, A2)
@@ -209,7 +210,7 @@ class NeuralNetwork:
                 steps.append(i)
                 if verbose:
                     print(f"Cost after {i} iterations: {cost}")
-            
+
             if i < iterations:
                 # Descente de gradient
                 self.gradient_descent(X, Y, A1, A2, alpha)
