@@ -37,15 +37,17 @@ class DeepNeuralNetwork:
         self.__cache = {}
         self.__weights = {}
 
-        for index_couche in range(self.__L):
-            couche_size = layers[index_couche]
-            input_size = nx if index_couche == 0 else layers[index_couche - 1]
+        for i in range(len(layers)):
+            if type(layers[i]) is not int or layers[i] < 0:
+                raise TypeError("layers must be a list of positive integers")
 
-            # Initialisation He et al.
-            self.__weights[f'W{index_couche+1}'] = np.random.randn(
-                couche_size, input_size
-            ) * np.sqrt(2 / input_size)
-            self.__weights[f'b{index_couche+1}'] = np.zeros((couche_size, 1))
+            if i == 0:
+                self.__weights['W1'] = np.random.randn(
+                    layers[i], nx) * np.sqrt(2 / nx)
+            else:
+                self.__weights[f'W{i + 1}'] = np.random.randn(
+                    layers[i], layers[i - 1]) * np.sqrt(2 / layers[i - 1])
+            self.__weights[f'b{i + 1}'] = np.zeros((layers[i], 1))
 
     @property
     def L(self):
