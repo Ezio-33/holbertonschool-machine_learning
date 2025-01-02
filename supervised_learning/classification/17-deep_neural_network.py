@@ -1,65 +1,77 @@
 #!/usr/bin/env python3
 """
 Module définissant un réseau de neurones profond
-pour la classification binaire
+pour la classification binaire.
 """
+
 import numpy as np
 
 
 class DeepNeuralNetwork:
     """
     Classe définissant un réseau de neurones profond
-    avec des attributs privés pour la classification binaire
+    pour la classification binaire.
+
+    Attributs privés :
+        __L (int): Nombre de couches dans le réseau de neurones.
+        __cache (dict): Dictionnaire pour stocker les valeurs intermédiaires.
+        __weights (dict): Dictionnaire pour stocker les poids
+        et biais du réseau de neurones.
     """
 
     def __init__(self, nx, layers):
         """
-        Initialise un réseau de neurones profond
+        Initialise un réseau de neurones profond.
 
         Args:
-        nx (int): nombre de caractéristiques d'entrée
-        layers (list): liste contenant le nombre de nœuds pour chaque couche
+            nx (int): Nombre de caractéristiques d'entrée.
+            layers (list): Liste contenant le nombre de nœuds
+            pour chaque couche du réseau.
 
         Raises:
-        TypeError: si nx n'est pas un entier ou si layers n'est pas une liste
-        ValueError: si nx ou un élément de layers est inférieur à 1
+            TypeError: Si nx n'est pas un entier.
+            ValueError: Si nx est inférieur à 1.
+            TypeError: Si layers n'est pas une liste de nombres positifs.
         """
+        # Vérifications des paramètres
         if not isinstance(nx, int):
             raise TypeError("nx must be an integer")
         if nx < 1:
             raise ValueError("nx must be a positive integer")
         if not isinstance(layers, list) or len(layers) == 0:
             raise TypeError("layers must be a list of positive integers")
-        if not all(isinstance(n, int) and n > 0 for n in layers):
-            raise TypeError("layers must be a list of positive integers")
 
         self.__L = len(layers)
         self.__cache = {}
         self.__weights = {}
 
-        for i in range(len(layers)):
-            if type(layers[i]) is not int or layers[i] < 0:
+        # Initialisation des poids et biais
+        for i in range(self.__L):
+            layer_num = i + 1
+            if not isinstance(layers[i], int) or layers[i] < 1:
                 raise TypeError("layers must be a list of positive integers")
 
             if i == 0:
-                self.__weights['W1'] = np.random.randn(
-                    layers[i], nx) * np.sqrt(2 / nx)
+                self.__weights[f'W{layer_num}'] = (
+                    np.random.randn(layers[i], nx) * np.sqrt(2 / nx)
+                )
             else:
-                self.__weights[f'W{i + 1}'] = np.random.randn(
-                    layers[i], layers[i - 1]) * np.sqrt(2 / layers[i - 1])
-            self.__weights[f'b{i + 1}'] = np.zeros((layers[i], 1))
+                self.__weights[f'W{layer_num}'] = (np.random.randn(
+                    layers[i], layers[i - 1]) * np.sqrt(2 / layers[i - 1]))
+            self.__weights[f'b{layer_num}'] = np.zeros((layers[i], 1))
 
     @property
     def L(self):
-        """Getter pour L"""
+        """Retourne le nombre de couches du réseau de neurones."""
         return self.__L
 
     @property
     def cache(self):
-        """Getter pour cache"""
+        """Retourne le dictionnaire de cache du réseau de neurones."""
         return self.__cache
 
     @property
     def weights(self):
-        """Getter pour weights"""
+        """Retourne le dictionnaire des poids et biais
+        du réseau de neurones."""
         return self.__weights
