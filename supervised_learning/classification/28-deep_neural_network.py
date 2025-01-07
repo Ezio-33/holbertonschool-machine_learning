@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """
 Module 28-deep_neural_network
-Définit un réseau de neurones profond réalisant une classification multi-classes,
-avec la possibilité de choisir l'activation (sigmoid ou tanh) pour les couches cachées.
+Définit un réseau de neurones profond pour la classification
+multi-classes, avec la possibilité de choisir l'activation
+(sigmoid ou tanh) pour les couches cachées.
 """
 
 import numpy as np
-import matplotlib.pyplot as plt
 import pickle
+import matplotlib.pyplot as plt
 
 
 class DeepNeuralNetwork:
@@ -28,7 +29,7 @@ class DeepNeuralNetwork:
         layers : list
             liste contenant le nombre de neurones par couche
         activation : str
-            'sig' (sigmoïde par défaut) ou 'tanh' (hyperbolique)
+            'sig' (sigmoïde par défaut) ou 'tanh'
             pour les couches cachées
 
         Exceptions:
@@ -58,18 +59,20 @@ class DeepNeuralNetwork:
         self.__weights = {}
         self.__activation = activation
 
-        # Initialisation He
-        for i, nb_neurons in enumerate(layers):
+        # Initialisation Xavier
+        for i, neurons in enumerate(layers):
+            layer_num = i + 1
             if i == 0:
-                he_init = np.sqrt(2 / nx)
-                W = np.random.randn(nb_neurons, nx) * he_init
+                xavier_init = np.sqrt(1 / nx)
+                self.__weights['W' + str(layer_num)] = (
+                    np.random.randn(neurons, nx) * xavier_init
+                )
             else:
-                he_init = np.sqrt(2 / layers[i - 1])
-                W = np.random.randn(nb_neurons, layers[i - 1]) * he_init
-
-            b = np.zeros((nb_neurons, 1))
-            self.__weights['W' + str(i + 1)] = W
-            self.__weights['b' + str(i + 1)] = b
+                xavier_init = np.sqrt(1 / layers[i - 1])
+                self.__weights['W' + str(layer_num)] = (
+                    np.random.randn(neurons, layers[i - 1]) * xavier_init
+                )
+            self.__weights['b' + str(layer_num)] = np.zeros((neurons, 1))
 
     @property
     def L(self):
@@ -88,7 +91,8 @@ class DeepNeuralNetwork:
 
     @property
     def activation(self):
-        """Getter : indique l'activation ('sig' ou 'tanh') pour les couches cachées"""
+        """Getter : indique l'activation ('sig' ou 'tanh')
+        pour les couches cachées"""
         return self.__activation
 
     def sigmoid(self, Z):
@@ -102,6 +106,18 @@ class DeepNeuralNetwork:
             numpy.ndarray: Sortie après sigmoïde.
         """
         return 1 / (1 + np.exp(-Z))
+
+    def tanh_activation(self, Z):
+        """
+        Applique la fonction d'activation tanh.
+
+        Args:
+            Z (numpy.ndarray): Valeurs d'entrée.
+
+        Returns:
+            numpy.ndarray: Sortie après tanh.
+        """
+        return np.tanh(Z)
 
     def softmax(self, Z):
         """
@@ -120,7 +136,8 @@ class DeepNeuralNetwork:
         """
         Calcule la propagation avant du réseau.
 
-        - Les couches cachées utilisent l'activation choisie (sigmoid ou tanh).
+        - Les couches cachées utilisent l'activation choisie
+          (sigmoid ou tanh).
         - La couche de sortie utilise softmax (multi-classes).
 
         Paramètres:
@@ -130,10 +147,11 @@ class DeepNeuralNetwork:
 
         Returns:
         --------
-        A : ndarray
-            Activation de la dernière couche
-        cache : dict
-            Dictionnaire contenant toutes les activations intermédiaires.
+        tuple
+            (A, cache)
+            - A : Activation de la dernière couche
+            - cache : Dictionnaire contenant toutes
+            les activations intermédiaires.
         """
         self.__cache['A0'] = X
 
@@ -147,7 +165,7 @@ class DeepNeuralNetwork:
                 A = self.softmax(Z)
             else:
                 if self.__activation == 'tanh':
-                    A = np.tanh(Z)
+                    A = self.tanh_activation(Z)
                 else:  # 'sig'
                     A = self.sigmoid(Z)
 
@@ -157,7 +175,8 @@ class DeepNeuralNetwork:
 
     def cost(self, Y, A):
         """
-        Calcule le coût (cross-entropy catégorique) pour la classification multi-classes.
+        Calcule le coût (cross-entropy catégorique) pour la classification
+        multi-classes.
 
         Paramètres:
         -----------
@@ -189,14 +208,11 @@ class DeepNeuralNetwork:
         Returns:
         --------
         tuple
-            (prédictions, coût, exactitude)
+            (A, coût)
         """
         A, _ = self.forward_prop(X)
         cost = self.cost(Y, A)
-        predictions = np.argmax(A, axis=0).reshape(1, -1)
-        labels = np.argmax(Y, axis=0).reshape(1, -1)
-        accuracy = np.sum(predictions == labels) / Y.shape[1] * 100
-        return predictions, cost, accuracy
+        return A, cost
 
     def gradient_descent(self, Y, cache, alpha=0.05):
         """
@@ -234,13 +250,12 @@ class DeepNeuralNetwork:
 
             if i > 1:
                 A_prev_activ = cache['A' + str(i - 1)]
+                W_prev = self.__weights['W' + str(i)]
                 if self.__activation == 'tanh':
-                    # Dérivée tanh = 1 - A^2
-                    dA_prev = np.matmul(W.T, dZ)
-                    dZ = dA_prev * (1 - A_prev_activ**2)
-                else:
-                    # Dérivée sigmoïde = A * (1 - A)
-                    dA_prev = np.matmul(W.T, dZ)
+                    dA_prev = np.matmul(W_prev.T, dZ)
+                    dZ = dA_prev * (1 - A_prev_activ ** 2)
+                else:  # 'sig'
+                    dA_prev = np.matmul(W_prev.T, dZ)
                     dZ = dA_prev * (A_prev_activ * (1 - A_prev_activ))
 
     def train(self, X, Y, iterations=5000, alpha=0.05,
@@ -268,7 +283,7 @@ class DeepNeuralNetwork:
         Returns:
         --------
         tuple
-            (prédictions, coût, exactitude)
+            (A, coût)
         """
         if not isinstance(iterations, int):
             raise TypeError("iterations must be an integer")
@@ -307,7 +322,7 @@ class DeepNeuralNetwork:
             plt.title('Training Cost')
             plt.show()
 
-        return self.evaluate(X, Y)
+        return A, cost_i
 
     def save(self, filename):
         """
@@ -319,14 +334,14 @@ class DeepNeuralNetwork:
             nom du fichier, on ajoute .pkl si absent
         """
         if not isinstance(filename, str):
-            return None
+            return
         if not filename.endswith(".pkl"):
             filename += ".pkl"
         try:
             with open(filename, 'wb') as f:
                 pickle.dump(self, f)
         except Exception:
-            return None
+            return
 
     @staticmethod
     def load(filename):
