@@ -66,10 +66,14 @@ class DeepNeuralNetwork:
             layer_num = i + 1
             if i == 0:
                 xavier_init = np.sqrt(1 / nx)
-                self.__weights['W' + str(layer_num)] = np.random.randn(neurons, nx) * xavier_init
+                self.__weights['W' + str(layer_num)] = (
+                    np.random.randn(neurons, nx) * xavier_init
+                )
             else:
                 xavier_init = np.sqrt(1 / layers[i - 1])
-                self.__weights['W' + str(layer_num)] = np.random.randn(neurons, layers[i - 1]) * xavier_init
+                self.__weights['W' + str(layer_num)] = (
+                    np.random.randn(neurons, layers[i - 1]) * xavier_init
+                )
             self.__weights['b' + str(layer_num)] = np.zeros((neurons, 1))
 
     @property
@@ -89,7 +93,8 @@ class DeepNeuralNetwork:
 
     @property
     def activation(self):
-        """Getter : indique l'activation ('sig' ou 'tanh') pour les couches cachées"""
+        """Getter : indique l'activation ('sig' ou 'tanh')
+        pour les couches cachées"""
         return self.__activation
 
     def sigmoid(self, Z):
@@ -133,7 +138,8 @@ class DeepNeuralNetwork:
         """
         Calcule la propagation avant du réseau.
 
-        - Les couches cachées utilisent l'activation choisie (sigmoid ou tanh).
+        - Les couches cachées utilisent l'activation choisie
+          (sigmoid ou tanh).
         - La couche de sortie utilise softmax (multi-classes).
 
         Paramètres:
@@ -146,8 +152,11 @@ class DeepNeuralNetwork:
         tuple
             (A, cache)
             - A : Activation de la dernière couche
-            - cache : Dictionnaire contenant toutes les activations intermédiaires.
+            - cache : Dictionnaire contenant toutes
+            les activations intermédiaires.
         """
+        if not isinstance(X, np.ndarray):
+            raise TypeError("X must be a numpy.ndarray")
         self.__cache['A0'] = X
 
         for i in range(1, self.__L + 1):
@@ -170,7 +179,8 @@ class DeepNeuralNetwork:
 
     def cost(self, Y, A):
         """
-        Calcule le coût (cross-entropy catégorique) pour la classification multi-classes.
+        Calcule le coût (cross-entropy catégorique) pour la classification
+        multi-classes.
 
         Paramètres:
         -----------
@@ -184,6 +194,8 @@ class DeepNeuralNetwork:
         float
             Coût moyen.
         """
+        if not isinstance(Y, np.ndarray) or not isinstance(A, np.ndarray):
+            raise TypeError("Y and A must be numpy.ndarray")
         m = Y.shape[1]
         cost = -np.sum(Y * np.log(A + 1e-15)) / m
         return cost
@@ -204,6 +216,8 @@ class DeepNeuralNetwork:
         tuple
             (A, coût)
         """
+        if not isinstance(X, np.ndarray) or not isinstance(Y, np.ndarray):
+            raise TypeError("X and Y must be numpy.ndarray")
         A, _ = self.forward_prop(X)
         cost = self.cost(Y, A)
         return A, cost
@@ -225,6 +239,12 @@ class DeepNeuralNetwork:
         alpha : float
             taux d'apprentissage
         """
+        if not isinstance(Y, np.ndarray) or not isinstance(cache, dict):
+            raise TypeError("Y must be a numpy.ndarray"
+                            "and cache must be a dict")
+        if not isinstance(alpha, float):
+            raise TypeError("alpha must be a float")
+
         m = Y.shape[1]
         L = self.__L
 
@@ -298,7 +318,7 @@ class DeepNeuralNetwork:
                 raise ValueError("step must be positive and <= iterations")
 
         costs = []
-        steps = []
+        steps_list = []
 
         for i in range(iterations + 1):
             A, cache = self.forward_prop(X)
@@ -306,7 +326,7 @@ class DeepNeuralNetwork:
 
             if i % step == 0 or i == iterations:
                 costs.append(cost_i)
-                steps.append(i)
+                steps_list.append(i)
                 if verbose:
                     print(f"Cost after {i} iterations: {cost_i}")
 
@@ -314,7 +334,7 @@ class DeepNeuralNetwork:
                 self.gradient_descent(Y, cache, alpha)
 
         if graph:
-            plt.plot(steps, costs, 'b-')
+            plt.plot(steps_list, costs, 'b-')
             plt.xlabel('iteration')
             plt.ylabel('cost')
             plt.title('Training Cost')
