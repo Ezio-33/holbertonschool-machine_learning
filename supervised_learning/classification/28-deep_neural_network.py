@@ -51,6 +51,8 @@ class DeepNeuralNetwork:
             raise TypeError("layers must be a list of positive integers")
         if any(not isinstance(n, int) or n <= 0 for n in layers):
             raise TypeError("layers must be a list of positive integers")
+        if not isinstance(activation, str):
+            raise TypeError("activation must be a string")
         if activation not in ('sig', 'tanh'):
             raise ValueError("activation must be 'sig' or 'tanh'")
 
@@ -64,14 +66,10 @@ class DeepNeuralNetwork:
             layer_num = i + 1
             if i == 0:
                 xavier_init = np.sqrt(1 / nx)
-                self.__weights['W' + str(layer_num)] = (
-                    np.random.randn(neurons, nx) * xavier_init
-                )
+                self.__weights['W' + str(layer_num)] = np.random.randn(neurons, nx) * xavier_init
             else:
                 xavier_init = np.sqrt(1 / layers[i - 1])
-                self.__weights['W' + str(layer_num)] = (
-                    np.random.randn(neurons, layers[i - 1]) * xavier_init
-                )
+                self.__weights['W' + str(layer_num)] = np.random.randn(neurons, layers[i - 1]) * xavier_init
             self.__weights['b' + str(layer_num)] = np.zeros((neurons, 1))
 
     @property
@@ -91,8 +89,7 @@ class DeepNeuralNetwork:
 
     @property
     def activation(self):
-        """Getter : indique l'activation ('sig' ou 'tanh')
-        pour les couches cachées"""
+        """Getter : indique l'activation ('sig' ou 'tanh') pour les couches cachées"""
         return self.__activation
 
     def sigmoid(self, Z):
@@ -136,8 +133,7 @@ class DeepNeuralNetwork:
         """
         Calcule la propagation avant du réseau.
 
-        - Les couches cachées utilisent l'activation choisie
-          (sigmoid ou tanh).
+        - Les couches cachées utilisent l'activation choisie (sigmoid ou tanh).
         - La couche de sortie utilise softmax (multi-classes).
 
         Paramètres:
@@ -150,8 +146,7 @@ class DeepNeuralNetwork:
         tuple
             (A, cache)
             - A : Activation de la dernière couche
-            - cache : Dictionnaire contenant toutes
-            les activations intermédiaires.
+            - cache : Dictionnaire contenant toutes les activations intermédiaires.
         """
         self.__cache['A0'] = X
 
@@ -175,8 +170,7 @@ class DeepNeuralNetwork:
 
     def cost(self, Y, A):
         """
-        Calcule le coût (cross-entropy catégorique) pour la classification
-        multi-classes.
+        Calcule le coût (cross-entropy catégorique) pour la classification multi-classes.
 
         Paramètres:
         -----------
@@ -293,6 +287,10 @@ class DeepNeuralNetwork:
             raise TypeError("alpha must be a float")
         if alpha <= 0:
             raise ValueError("alpha must be positive")
+        if not isinstance(verbose, bool):
+            raise TypeError("verbose must be a boolean")
+        if not isinstance(graph, bool):
+            raise TypeError("graph must be a boolean")
         if (verbose or graph):
             if not isinstance(step, int):
                 raise TypeError("step must be an integer")
