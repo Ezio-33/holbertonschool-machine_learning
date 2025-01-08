@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Module 28-deep_neural_network
-Réseau de neurones profond pour classification multi-classes
+Réseau de neurones profond pour classification multiclasse
 avec choix d'activation (sigmoïde ou tanh).
 """
 
@@ -12,46 +12,53 @@ import matplotlib.pyplot as plt
 
 class DeepNeuralNetwork:
     """
-    Réseau de neurones profond pour classification multi-classes.
+    Classe DeepNeuralNetwork qui définit un réseau de neurones profond
+    réalisant une classification multiclasse.
     """
 
     def __init__(self, nx, layers, activation='sig'):
         """
         Initialise le réseau.
+
         Args:
             nx (int): Nombre de caractéristiques en entrée
             layers (list): Nombre de neurones par couche
             activation (str): 'sig' ou 'tanh'
+
+        Raises:
+            TypeError: Si les paramètres ne sont pas du bon type.
+            ValueError: Si les paramètres ont des valeurs inappropriées.
         """
         if not isinstance(nx, int):
-            raise TypeError("nx must be an integer")
+            raise TypeError("nx doit être un entier")
         if nx < 1:
-            raise ValueError("nx must be a positive integer")
+            raise ValueError("nx doit être un entier positif")
         if not isinstance(layers, list) or len(layers) == 0:
-            raise TypeError("layers must be a list of positive integers")
+            raise TypeError("layers doit être une liste d'entiers positifs")
         if any(not isinstance(n, int) or n <= 0 for n in layers):
-            raise TypeError("layers must be a list of positive integers")
+            raise TypeError("layers doit être une liste d'entiers positifs")
         if not isinstance(activation, str):
-            raise TypeError("activation must be a string")
+            raise TypeError("activation doit être une chaîne de caractères")
         if activation not in ('sig', 'tanh'):
-            raise ValueError("activation must be 'sig' or 'tanh'")
+            raise ValueError("activation doit être 'sig' ou 'tanh'")
 
         self.__L = len(layers)
         self.__cache = {}
         self.__weights = {}
         self.__activation = activation
 
+        # Initialisation He
         for i, neurons in enumerate(layers):
             layer_num = i + 1
             if i == 0:
-                xavier_init = np.sqrt(1 / nx)
+                he_init = np.sqrt(2 / nx)
                 self.__weights['W' + str(layer_num)] = (
-                    np.random.randn(neurons, nx) * xavier_init
+                    np.random.randn(neurons, nx) * he_init
                 )
             else:
-                xavier_init = np.sqrt(1 / layers[i - 1])
+                he_init = np.sqrt(2 / layers[i - 1])
                 self.__weights['W' + str(layer_num)] = (
-                    np.random.randn(neurons, layers[i - 1]) * xavier_init
+                    np.random.randn(neurons, layers[i - 1]) * he_init
                 )
             self.__weights['b' + str(layer_num)] = np.zeros((neurons, 1))
 
@@ -78,10 +85,10 @@ class DeepNeuralNetwork:
     def forward_prop(self, X):
         """
         Calcule la propagation avant.
-        - Couches cachées : 'sig' ou 'tanh'
-        - Dernière couche : softmax
+
         Args:
             X (ndarray): Données d'entrée (nx, m)
+
         Returns:
             tuple: Activation de la dernière couche et cache
         """
@@ -92,44 +99,60 @@ class DeepNeuralNetwork:
             A_prev = self.__cache['A' + str(i - 1)]
             Z = np.matmul(W, A_prev) + b
             if i == self.__L:
-                A = self.softmax(Z)
+                expZ = np.exp(Z - np.max(Z, axis=0, keepdims=True))
+                A = expZ / np.sum(expZ, axis=0, keepdims=True)
             else:
                 if self.__activation == 'tanh':
-                    A = self.tanh_activation(Z)
+                    A = np.tanh(Z)
                 else:
-                    A = self.sigmoid(Z)
+                    A = 1 / (1 + np.exp(-Z))
             self.__cache['A' + str(i)] = A
         return A, self.__cache
 
     def sigmoid(self, z):
-        """Fonction sigmoïde."""
+        """Calcule la fonction sigmoïde."""
         return 1 / (1 + np.exp(-z))
 
     def tanh_activation(self, z):
-        """Fonction tanh."""
+        """Calcule la fonction tanh."""
         return np.tanh(z)
 
-    def softmax(self, z):
-        """Fonction softmax."""
-        exp_z = np.exp(z - np.max(z, axis=0, keepdims=True))
-        return exp_z / np.sum(exp_z, axis=0, keepdims=True)
-
     def cost(self, Y, A):
-        """Coût cross-entropy pour classification multi-classes."""
+        """
+        Calcule le coût cross-entropy pour classification multiclasse.
+
+        Args:
+            Y (ndarray): Étiquettes one-hot encodées (classes, m)
+            A (ndarray): Prédictions du modèle (classes, m)
+
+        Returns:
+            float: Coût moyen
+        """
         m = Y.shape[1]
-        return -np.sum(Y * np.log(A + 1e-15)) / m
+        return -np.sum(Y * np.log(A)) / m
 
     def evaluate(self, X, Y):
-        """Évalue les prédictions et calcule le coût."""
+        """
+        Évalue les prédictions et calcule le coût.
+
+        Args:
+            X (ndarray): Données d'entrée
+            Y (ndarray): Étiquettes
+
+        Returns:
+            tuple: Prédictions one-hot et coût
+        """
         A, _ = self.forward_prop(X)
         cost = self.cost(Y, A)
-        return A, cost
+        predictions = np.argmax(A, axis=0)
+        A_pred = np.zeros_like(A)
+        A_pred[predictions, np.arange(A.shape[1])] = 1
+        return A_pred, cost
 
     def gradient_descent(self, Y, cache, alpha=0.05):
         """
         Descente de gradient (rétropropagation).
-        - Couches cachées : dérivée sig/tanh
-        - Dernière couche : softmax
+
         Args:
             Y (ndarray): Étiquettes one-hot encodées (classes, m)
             cache (dict): Dictionnaire des activations
@@ -137,27 +160,31 @@ class DeepNeuralNetwork:
         """
         m = Y.shape[1]
         L = self.__L
-        dZ = cache['A' + str(L)] - Y
+        dZ = cache['A' + str(L)] - Y  # Softmax derivative for multiclass
 
         for i in range(L, 0, -1):
             A_prev = cache['A' + str(i - 1)]
+            W = self.__weights['W' + str(i)]
             dW = (1 / m) * np.matmul(dZ, A_prev.T)
             db = (1 / m) * np.sum(dZ, axis=1, keepdims=True)
             self.__weights['W' + str(i)] -= alpha * dW
             self.__weights['b' + str(i)] -= alpha * db
+
             if i > 1:
                 W_prev = self.__weights['W' + str(i)]
-                dA_prev = np.matmul(W_prev.T, dZ)
+                A_prev = cache['A' + str(i - 1)]
                 if self.__activation == 'tanh':
-                    dZ = dA_prev * (1 - cache['A' + str(i - 1)] ** 2)
+                    dA_prev = np.matmul(W_prev.T, dZ)
+                    dZ = dA_prev * (1 - A_prev ** 2)
                 else:
-                    A_prev_activ = cache['A' + str(i - 1)]
-                    dZ = dA_prev * (A_prev_activ * (1 - A_prev_activ))
+                    dA_prev = np.matmul(W_prev.T, dZ)
+                    dZ = dA_prev * (A_prev * (1 - A_prev))
 
     def train(self, X, Y, iterations=5000, alpha=0.05,
               verbose=True, graph=True, step=100):
         """
-        Entraîne le réseau.
+        Entraîne le réseau de neurones.
+
         Args:
             X (ndarray): Données d'entrée
             Y (ndarray): Étiquettes one-hot
@@ -166,63 +193,82 @@ class DeepNeuralNetwork:
             verbose (bool): Affiche le coût régulièrement
             graph (bool): Trace le coût en fonction des itérations
             step (int): Intervalle d'affichage
+
         Returns:
             tuple: Prédictions et coût final
         """
         if not isinstance(iterations, int):
-            raise TypeError("iterations must be an integer")
+            raise TypeError("iterations doit être un entier")
         if iterations <= 0:
-            raise ValueError("iterations must be a positive integer")
+            raise ValueError("iterations doit être un entier positif")
         if not isinstance(alpha, float):
-            raise TypeError("alpha must be a float")
+            raise TypeError("alpha doit être un float")
         if alpha <= 0:
-            raise ValueError("alpha must be positive")
+            raise ValueError("alpha doit être positif")
         if not isinstance(verbose, bool):
-            raise TypeError("verbose must be a boolean")
+            raise TypeError("verbose doit être un booléen")
         if not isinstance(graph, bool):
-            raise TypeError("graph must be a boolean")
+            raise TypeError("graph doit être un booléen")
         if (verbose or graph):
             if not isinstance(step, int):
-                raise TypeError("step must be an integer")
+                raise TypeError("step doit être un entier")
             if step <= 0 or step > iterations:
-                raise ValueError("step must be positive and <= iterations")
+                raise ValueError("step doit être positif et <= iterations")
 
         costs = []
         steps_list = []
 
-        for i in range(iterations + 1):
+        for i in range(iterations):
             A, cache = self.forward_prop(X)
-            cost_i = self.cost(Y, A)
-            if i % step == 0 or i == iterations:
-                costs.append(cost_i)
+            self.gradient_descent(Y, cache, alpha)
+            cost = self.cost(Y, A)
+            if i % step == 0:
+                costs.append(cost)
                 steps_list.append(i)
                 if verbose:
-                    print(f"Coût après {i} itérations: {cost_i}")
-            if i < iterations:
-                self.gradient_descent(Y, cache, alpha)
+                    print(f"Coût après {i} itérations: {cost}")
+
         if graph:
             plt.plot(steps_list, costs, 'b-')
             plt.xlabel('itération')
             plt.ylabel('coût')
-            plt.title('Coût d\'entraînement')
+            plt.title("Coût d'entraînement")
             plt.show()
+
         return self.evaluate(X, Y)
 
     def save(self, filename):
-        """Sauvegarde l'instance dans un fichier pickle."""
+        """
+        Sauvegarde l'instance dans un fichier pickle.
+
+        Args:
+            filename (str): Nom du fichier
+
+        Raises:
+            TypeError: Si filename n'est pas une chaîne de caractères
+            ValueError: Si la sauvegarde échoue
+        """
         if not isinstance(filename, str):
-            return
+            raise TypeError("filename doit être une chaîne de caractères")
         if not filename.endswith(".pkl"):
             filename += ".pkl"
         try:
             with open(filename, 'wb') as f:
                 pickle.dump(self, f)
         except Exception:
-            return
+            raise ValueError("Impossible de sauvegarder l'objet")
 
     @staticmethod
     def load(filename):
-        """Charge une instance depuis un fichier pickle."""
+        """
+        Charge une instance depuis un fichier pickle.
+
+        Args:
+            filename (str): Nom du fichier
+
+        Returns:
+            DeepNeuralNetwork: Instance chargée ou None en cas d'erreur
+        """
         if not isinstance(filename, str):
             return None
         try:
