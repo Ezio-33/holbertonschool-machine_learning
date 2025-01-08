@@ -19,8 +19,8 @@ class DeepNeuralNetwork:
         """
         Initialise le réseau.
         Args:
-            nx (int): Nombre de features
-            layers (list): Neurones par couche
+            nx (int): Nombre de caractéristiques en entrée
+            layers (list): Nombre de neurones par couche
             activation (str): 'sig' ou 'tanh'
         """
         if not isinstance(nx, int):
@@ -57,22 +57,22 @@ class DeepNeuralNetwork:
 
     @property
     def L(self):
-        """Nombre de couches."""
+        """Nombre total de couches."""
         return self.__L
 
     @property
     def cache(self):
-        """Dictionnaire des activations."""
+        """Dictionnaire des activations (A0, A1, ...)."""
         return self.__cache
 
     @property
     def weights(self):
-        """Dictionnaire des poids et biais."""
+        """Dictionnaire des poids et biais (W1, b1, ...)."""
         return self.__weights
 
     @property
     def activation(self):
-        """Activation choisie ('sig' ou 'tanh')."""
+        """Fonction d'activation choisie ('sig' ou 'tanh')."""
         return self.__activation
 
     def forward_prop(self, X):
@@ -80,6 +80,10 @@ class DeepNeuralNetwork:
         Calcule la propagation avant.
         - Couches cachées : 'sig' ou 'tanh'
         - Dernière couche : softmax
+        Args:
+            X (ndarray): Données d'entrée (nx, m)
+        Returns:
+            tuple: Activation de la dernière couche et cache
         """
         self.__cache['A0'] = X
         for i in range(1, self.__L + 1):
@@ -126,6 +130,10 @@ class DeepNeuralNetwork:
         Descente de gradient (rétropropagation).
         - Couches cachées : dérivée sig/tanh
         - Dernière couche : softmax
+        Args:
+            Y (ndarray): Étiquettes one-hot encodées (classes, m)
+            cache (dict): Dictionnaire des activations
+            alpha (float): Taux d'apprentissage
         """
         m = Y.shape[1]
         L = self.__L
@@ -153,9 +161,35 @@ class DeepNeuralNetwork:
         Args:
             X (ndarray): Données d'entrée
             Y (ndarray): Étiquettes one-hot
+            iterations (int): Nombre d'itérations
+            alpha (float): Taux d'apprentissage
+            verbose (bool): Affiche le coût régulièrement
+            graph (bool): Trace le coût en fonction des itérations
+            step (int): Intervalle d'affichage
+        Returns:
+            tuple: Prédictions et coût final
         """
+        if not isinstance(iterations, int):
+            raise TypeError("iterations must be an integer")
+        if iterations <= 0:
+            raise ValueError("iterations must be a positive integer")
+        if not isinstance(alpha, float):
+            raise TypeError("alpha must be a float")
+        if alpha <= 0:
+            raise ValueError("alpha must be positive")
+        if not isinstance(verbose, bool):
+            raise TypeError("verbose must be a boolean")
+        if not isinstance(graph, bool):
+            raise TypeError("graph must be a boolean")
+        if (verbose or graph):
+            if not isinstance(step, int):
+                raise TypeError("step must be an integer")
+            if step <= 0 or step > iterations:
+                raise ValueError("step must be positive and <= iterations")
+
         costs = []
         steps_list = []
+
         for i in range(iterations + 1):
             A, cache = self.forward_prop(X)
             cost_i = self.cost(Y, A)
@@ -170,7 +204,7 @@ class DeepNeuralNetwork:
             plt.plot(steps_list, costs, 'b-')
             plt.xlabel('itération')
             plt.ylabel('coût')
-            plt.title("Coût d'entraînement")
+            plt.title('Coût d\'entraînement')
             plt.show()
         return self.evaluate(X, Y)
 
