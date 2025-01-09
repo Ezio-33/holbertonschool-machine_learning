@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-module
+Module implémentant un réseau de neurones profond avec activation configurable
+pour la classification multiclasse.
 """
 
 
@@ -12,7 +13,7 @@ import pickle
 class DeepNeuralNetwork:
     """
     Classe DeepNeuralNetwork qui définit un réseau de neurones profond
-    réalisant une classification binaire [..]
+    réalisant une classification binaire
     """
 
     def __init__(self, nx, layers, activation='sig'):
@@ -178,7 +179,7 @@ class DeepNeuralNetwork:
     def train(self, X, Y, iterations=5000, alpha=0.05, verbose=True,
               graph=True, step=100):
         """
-        Entraîne le réseau de neurones sur un ensemble de données.
+        Entraîne le réseau de neurones sur un certain nombre d'itérations.
         """
         if type(iterations) is not int:
             raise TypeError("iterations must be an integer")
