@@ -9,24 +9,25 @@ tf.disable_eager_execution()
 def train(X_train, Y_train, X_valid, Y_valid, layer_sizes, activations, alpha,
           iterations, save_path="/tmp/model.ckpt"):
     """
-    Function that builds, trains, and saves a neural network classifier
+    Fonction qui construit, entraîne et enregistre un classificateur
+    de réseau neuronal
 
-    Args:
-        X_train (ndarray): Training input data
-        Y_train (ndarray): Training labels
-        X_valid (ndarray): Validation input data
-        Y_valid (ndarray): Validation labels
-        layer_sizes (list): Number of nodes in each layer
-        activations (list): Activation functions for each layer
-        alpha (float): Learning rate
-        iterations (int): Number of training iterations
-        save_path (str): Path to save the model
+    Args :
+        X_train (ndarray) : Données d'entrée d'entraînement
+        Y_train (ndarray) : Étiquettes d'entraînement
+        X_valid (ndarray) : Données d'entrée de validation
+        Y_valid (ndarray) : Étiquettes de validation
+        layer_sizes (liste) : Nombre de nœuds dans chaque couche
+        activations (liste) : Fonctions d'activation pour chaque couche
+        alpha (float) : Taux d'apprentissage
+        itérations (int) : Nombre d'itérations d'apprentissage
+        save_path (str) : Chemin pour sauvegarder le modèle
 
-    Returns:
-        str: Path where the model was saved
+    Returns :
+        str : Chemin où le modèle a été sauvegardé
     """
-    create_placeholders = __import__(
-        '0-create_placeholders').create_placeholders
+    create_placeholders = __import__('0-create_placeholders')\
+        .create_placeholders
     forward_prop = __import__('2-forward_prop').forward_prop
     calculate_accuracy = __import__('3-calculate_accuracy').calculate_accuracy
     calculate_loss = __import__('4-calculate_loss').calculate_loss
