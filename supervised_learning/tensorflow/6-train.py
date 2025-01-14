@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Module pour construire, entraîner et sauvegarder un réseau neuronal
+Module that builds, trains, and saves a neural network classifier
 """
 import tensorflow.compat.v1 as tf
 tf.disable_eager_execution()
@@ -9,80 +9,66 @@ tf.disable_eager_execution()
 def train(X_train, Y_train, X_valid, Y_valid, layer_sizes, activations, alpha,
           iterations, save_path="/tmp/model.ckpt"):
     """
-    Construit, entraîne et sauvegarde un réseau neuronal classifieur
-
+    Function that builds, trains, and saves a neural network classifier
+    
     Args:
-        X_train: données d'entraînement
-        Y_train: étiquettes d'entraînement
-        X_valid: données de validation
-        Y_valid: étiquettes de validation
-        layer_sizes: tailles des couches
-        activations: fonctions d'activation
-        alpha: taux d'apprentissage
-        iterations: nombre d'itérations
-        save_path: chemin de sauvegarde
-
+        X_train (ndarray): Training input data
+        Y_train (ndarray): Training labels
+        X_valid (ndarray): Validation input data
+        Y_valid (ndarray): Validation labels  
+        layer_sizes (list): Number of nodes in each layer
+        activations (list): Activation functions for each layer
+        alpha (float): Learning rate
+        iterations (int): Number of training iterations
+        save_path (str): Path to save the model
+        
     Returns:
-        chemin où le modèle a été sauvegardé
+        str: Path where the model was saved
     """
-    # Import des fonctions nécessaires
-    create_placeholders = __import__(
-        '0-create_placeholders').create_placeholders
+    create_placeholders = __import__('0-create_placeholders').create_placeholders
     forward_prop = __import__('2-forward_prop').forward_prop
     calculate_accuracy = __import__('3-calculate_accuracy').calculate_accuracy
     calculate_loss = __import__('4-calculate_loss').calculate_loss
     create_train_op = __import__('5-create_train_op').create_train_op
 
-    # Création du graphe
-    x, y = create_placeholders(X_train.shape[1], layer_sizes[-1])
-    y_pred = forward_prop(x, layer_sizes, activations)
-    loss = calculate_loss(y, y_pred)
-    accuracy = calculate_accuracy(y, y_pred)
-    train_op = create_train_op(loss, alpha)
-
-    # Ajout au graphe
+    x, y = create_placeholders(X_train.shape[1], Y_train.shape[1])
     tf.add_to_collection('x', x)
     tf.add_to_collection('y', y)
+    
+    y_pred = forward_prop(x, layer_sizes, activations)
     tf.add_to_collection('y_pred', y_pred)
-    tf.add_to_collection('loss', loss)
+    
+    accuracy = calculate_accuracy(y, y_pred)
     tf.add_to_collection('accuracy', accuracy)
+    
+    loss = calculate_loss(y, y_pred)
+    tf.add_to_collection('loss', loss)
+    
+    train_op = create_train_op(loss, alpha)
     tf.add_to_collection('train_op', train_op)
 
-    # Initialisation et création du saver
     init = tf.global_variables_initializer()
     saver = tf.train.Saver()
 
-    # Création de la session et entraînement
     with tf.Session() as sess:
         sess.run(init)
-
-        # Boucle d'entraînement
         for i in range(iterations + 1):
-            # Calcul des métriques d'entraînement
-            train_cost, train_accuracy = sess.run(
+            cost_train, accuracy_train = sess.run(
                 [loss, accuracy],
-                feed_dict={x: X_train, y: Y_train}
-            )
-
-            # Calcul des métriques de validation
-            valid_cost, valid_accuracy = sess.run(
+                feed_dict={x: X_train, y: Y_train})
+            cost_valid, accuracy_valid = sess.run(
                 [loss, accuracy],
-                feed_dict={x: X_valid, y: Y_valid}
-            )
-
-            # Affichage des métriques
+                feed_dict={x: X_valid, y: Y_valid})
+            
             if i % 100 == 0 or i == iterations:
                 print("After {} iterations:".format(i))
-                print("\tTraining Cost: {}".format(train_cost))
-                print("\tTraining Accuracy: {}".format(train_accuracy))
-                print("\tValidation Cost: {}".format(valid_cost))
-                print("\tValidation Accuracy: {}".format(valid_accuracy))
-
+                print("\tTraining Cost: {}".format(cost_train))
+                print("\tTraining Accuracy: {}".format(accuracy_train))
+                print("\tValidation Cost: {}".format(cost_valid))
+                print("\tValidation Accuracy: {}".format(accuracy_valid))
+            
             if i < iterations:
-                # Exécution d'une étape d'entraînement
                 sess.run(train_op, feed_dict={x: X_train, y: Y_train})
-
-        # Sauvegarde du modèle
+                
         save_path = saver.save(sess, save_path)
-
     return save_path
