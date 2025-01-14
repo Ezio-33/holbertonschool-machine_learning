@@ -3,6 +3,7 @@
 Module pour construire, entraîner et sauvegarder un réseau neuronal
 """
 import tensorflow.compat.v1 as tf
+tf.disable_eager_execution()
 
 
 def train(X_train, Y_train, X_valid, Y_valid, layer_sizes, activations, alpha,
