@@ -4,22 +4,22 @@ Main file
 """
 
 # Force Seed - fix for Keras
+import tensorflow as tf
+import numpy as np
+import random
+import os
 SEED = 8
 
-import os
 os.environ['PYTHONHASHSEED'] = str(SEED)
-os.environ['TF_ENABLE_ONEDNN_OPTS']= '0'
-import random
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 random.seed(SEED)
-import numpy as np
 np.random.seed(SEED)
-import tensorflow as tf
 tf.random.set_seed(SEED)
 
 
 # Imports
 one_hot = __import__('3-one_hot').one_hot
-train_model = __import__('8-train').train_model 
+train_model = __import__('8-train').train_model
 model = __import__('9-model')
 
 if __name__ == '__main__':
