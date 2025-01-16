@@ -3,7 +3,6 @@
 Module pour sauvegarder et charger la configuration d'un modèle Keras
 """
 import tensorflow.keras as K
-import json
 
 
 def save_config(network, filename):
@@ -17,9 +16,9 @@ def save_config(network, filename):
     Returns:
         None
     """
-    config = network.get_config()
+    config = network.to_json()
     with open(filename, 'w') as f:
-        json.dump(config, f)
+        f.write(config)
     return None
 
 
@@ -34,5 +33,5 @@ def load_config(filename):
         Le modèle Keras créé à partir de la configuration
     """
     with open(filename, 'r') as f:
-        config = json.load(f)
-    return K.Model.from_config(config)
+        config = f.read()
+    return K.models.model_from_json(config)
