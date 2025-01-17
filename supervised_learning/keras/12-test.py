@@ -5,23 +5,16 @@ Module pour tester un modèle de deep learning
 import tensorflow.keras as K
 
 
-def test_model(network, data, labels):
+def test_model(network, data, labels, verbose=True):
     """
-    Teste un modèle de deep learning
+    Teste un modèle de deep learning et retourne sa perte et sa précision
 
-    Arguments:
+    Args:
         network: modèle à tester
-        data: numpy.ndarray contenant les données de test
-        labels: numpy.ndarray one-hot contenant les étiquettes de test
+        data: données d'entrée de test
+        labels: étiquettes des données de test
 
     Returns:
-        Les performances du modèle sur les données de test
+        list: [perte, précision] du modèle sur les données de test
     """
-    evaluation = network.evaluate(
-        x=data,
-        y=labels,
-        verbose=0
-    )
-
-    # Conversion explicite en float pour assurer le format exact
-    return [float(evaluation[0]), float(evaluation[1])]
+    return network.evaluate(data, labels, verbose=0)
