@@ -9,16 +9,12 @@ def test_model(network, data, labels):
     """
     Teste un modèle de deep learning
 
-    Arguments:
+    Args:
         network: modèle à tester
-        data: numpy.ndarray contenant les données de test
-        labels: numpy.ndarray one-hot contenant les étiquettes de test
+        data: données d'entrée de test
+        labels: étiquettes des données de test
 
     Returns:
-        Les performances du modèle sur les données de test
+        float: perte et précision du modèle
     """
-    return network.evaluate(
-        x=data,
-        y=labels,
-        verbose=0
-    )
+    return network.evaluate(data, labels, verbose=0)
