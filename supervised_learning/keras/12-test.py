@@ -20,5 +20,5 @@ def test_model(network, data, labels):
     return network.evaluate(
         x=data,
         y=labels,
-        verbose=0
+        verbose=1
     )
