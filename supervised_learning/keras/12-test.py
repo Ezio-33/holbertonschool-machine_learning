@@ -17,8 +17,9 @@ def test_model(network, data, labels):
     Returns:
         Les performances du modèle sur les données de test
     """
-    return network.evaluate(
+    metrics = network.evaluate(
         x=data,
         y=labels,
-        verbose=1
+        verbose=0
     )
+    return [float(m) for m in metrics]
