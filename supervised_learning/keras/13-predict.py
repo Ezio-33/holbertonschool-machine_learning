@@ -18,7 +18,7 @@ def predict(network, data):
     """
     predictions = network.predict(
         x=data,
-        verbose=1
+        verbose=0
     )
-    
+
     return predictions
