@@ -8,7 +8,7 @@ import os
 SEED = 0
 
 os.environ['PYTHONHASHSEED'] = str(SEED)
-os.environ['TF_ENABLE_ONEDNN_OPTS']= '0'
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 random.seed(SEED)
 np.random.seed(SEED)
 tf.random.set_seed(SEED)
@@ -21,6 +21,7 @@ def one_hot(Y, classes):
     one_hot = np.zeros((Y.shape[0], classes))
     one_hot[np.arange(Y.shape[0]), Y] = 1
     return one_hot
+
 
 lib = np.load('MNIST.npz')
 X_3D = lib['X_train']
@@ -55,7 +56,8 @@ for epoch in range(epochs):
     print(f"\tValidation Cost: {valid_loss}")
     print(f"\tValidation Accuracy: {valid_accuracy}")
 
-    for step, (X_batch, Y_batch) in enumerate(create_mini_batches(X, Y_oh, batch_size)):
+    for step, (X_batch, Y_batch) in enumerate(
+            create_mini_batches(X, Y_oh, batch_size)):
         with tf.GradientTape() as tape:
             predictions = model(X_batch)
             loss = loss_fn(Y_batch, predictions)
@@ -77,5 +79,7 @@ final_train_accuracy = np.mean(np.argmax(model(X), axis=1) == Y)
 final_valid_loss = tf.reduce_mean(loss_fn(Y_valid_oh, model(X_valid)))
 final_valid_accuracy = np.mean(np.argmax(model(X_valid), axis=1) == Y_valid)
 
-print(f"\tFinal Training Cost: {final_train_loss}, Accuracy: {final_train_accuracy}")
-print(f"\tFinal Validation Cost: {final_valid_loss}, Accuracy: {final_valid_accuracy}")
+print(
+    f"\tFinal Training Cost: {final_train_loss}, Accuracy: {final_train_accuracy}")
+print(
+    f"\tFinal Validation Cost: {final_valid_loss}, Accuracy: {final_valid_accuracy}")

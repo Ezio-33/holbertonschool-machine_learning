@@ -4,10 +4,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 update_variables_momentum = __import__('5-momentum').update_variables_momentum
 
+
 def forward_prop(X, W, b):
     Z = np.matmul(X, W) + b
     A = 1 / (1 + np.exp(-Z))
     return A
+
 
 def calculate_grads(Y, A, W, b):
     m = Y.shape[0]
@@ -16,12 +18,14 @@ def calculate_grads(Y, A, W, b):
     db = np.sum(dZ, axis=1, keepdims=True) / m
     return dW, db
 
+
 def calculate_cost(Y, A):
     m = Y.shape[0]
     loss = - (Y * np.log(A) + (1 - Y) * np.log(1 - A))
     cost = np.sum(loss) / m
 
     return cost
+
 
 if __name__ == '__main__':
     lib_train = np.load('Binary_Train.npz')

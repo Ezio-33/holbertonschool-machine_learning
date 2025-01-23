@@ -9,12 +9,13 @@ import os
 SEED = 0
 
 os.environ['PYTHONHASHSEED'] = str(SEED)
-os.environ['TF_ENABLE_ONEDNN_OPTS']= '0'
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 random.seed(SEED)
 np.random.seed(SEED)
 tf.random.set_seed(SEED)
 
 create_momentum_op = __import__('6-momentum').create_momentum_op
+
 
 def one_hot(Y, classes):
     """convert an array to a one-hot matrix"""
@@ -22,21 +23,25 @@ def one_hot(Y, classes):
     one_hot[np.arange(Y.shape[0]), Y] = 1
     return one_hot
 
+
 lib = np.load('MNIST.npz')
 X_3D = lib['X_train']
 Y = lib['Y_train']
 X = X_3D.reshape((X_3D.shape[0], -1))
-Y_oh=one_hot(Y,10)
+Y_oh = one_hot(Y, 10)
 
 model = tf.keras.models.load_model('model.h5', compile=False)
 
-optimizer=create_momentum_op(0.01, 0.9)
+optimizer = create_momentum_op(0.01, 0.9)
+
 
 @tf.function
 def train_step(inputs, labels):
     with tf.GradientTape() as tape:
         predictions = model(inputs)
-        loss = tf.reduce_mean(tf.keras.losses.CategoricalCrossentropy()(labels, predictions))
+        loss = tf.reduce_mean(
+            tf.keras.losses.CategoricalCrossentropy()(
+                labels, predictions))
     gradients = tape.gradient(loss, model.trainable_variables)
     optimizer.apply_gradients(zip(gradients, model.trainable_variables))
     return loss

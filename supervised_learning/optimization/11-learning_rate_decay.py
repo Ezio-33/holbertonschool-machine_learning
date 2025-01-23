@@ -21,6 +21,6 @@ def learning_rate_decay(alpha, decay_rate, global_step, decay_step):
     """
     # Calcul du nombre de fois que le taux a été décru
     step = np.floor(global_step / decay_step)
-    
+
     # Application de la formule de décroissance inverse avec le temps
     return alpha / (1 + decay_rate * step)

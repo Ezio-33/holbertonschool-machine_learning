@@ -22,8 +22,8 @@ def update_variables_RMSProp(alpha, beta2, epsilon, var, grad, s):
     """
     # Mise à jour de la moyenne mobile du carré des gradients
     s_new = beta2 * s + (1 - beta2) * (grad ** 2)
-    
+
     # Calcul de la mise à jour de la variable
     var_new = var - alpha * grad / (np.sqrt(s_new) + epsilon)
-    
+
     return var_new, s_new

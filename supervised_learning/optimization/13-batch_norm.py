@@ -23,14 +23,14 @@ def batch_norm(Z, gamma, beta, epsilon):
     """
     # Calcul de la moyenne sur l'axe 0 (pour chaque caractéristique)
     mean = np.mean(Z, axis=0, keepdims=True)
-    
+
     # Calcul de la variance sur l'axe 0
     variance = np.var(Z, axis=0, keepdims=True)
-    
+
     # Normalisation
     Z_norm = (Z - mean) / np.sqrt(variance + epsilon)
-    
+
     # Mise à l'échelle et décalage
     Z_scaled = gamma * Z_norm + beta
-    
+
     return Z_scaled

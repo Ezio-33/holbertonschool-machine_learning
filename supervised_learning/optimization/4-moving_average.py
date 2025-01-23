@@ -18,11 +18,11 @@ def moving_average(data, beta):
     """
     v = 0
     moving_averages = []
-    
+
     for i in range(len(data)):
         v = beta * v + (1 - beta) * data[i]
         # Correction du biais
         correction = 1 - beta ** (i + 1)
         moving_averages.append(v / correction)
-    
+
     return moving_averages

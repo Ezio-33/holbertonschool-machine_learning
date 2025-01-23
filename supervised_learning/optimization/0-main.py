@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
 import numpy as np
-normalization_constants = __import__('0-norm_constants').normalization_constants
+normalization_constants = __import__(
+    '0-norm_constants').normalization_constants
 
 if __name__ == '__main__':
     np.random.seed(0)
