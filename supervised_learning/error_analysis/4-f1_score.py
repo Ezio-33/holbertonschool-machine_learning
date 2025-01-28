@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+"""
+Calcule le score F1 pour chaque classe à partir d'une
+matrice de confusion.
+"""
+
 import numpy as np
 
 

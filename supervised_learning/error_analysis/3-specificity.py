@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+"""
+Calcule la spécificité pour chaque classe à partir
+d'une matrice de confusion.
+"""
+
 import numpy as np
 
 

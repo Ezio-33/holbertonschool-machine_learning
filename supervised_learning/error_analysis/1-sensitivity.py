@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
+"""
+Calcule la sensibilité pour chaque classe à partir
+d'une matrice de confusion.
+"""
+
 import numpy as np
 
 
 def sensitivity(confusion):
     """
-    Calcule la sensibilité pour chaque classe à partir
-    d'une matrice de confusion.
-
     Args:
         confusion (numpy.ndarray): de forme (classes, classes)
                   où les indices des lignes représentent les vraies étiquettes

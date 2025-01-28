@@ -1,4 +1,10 @@
 #!/usr/bin/env python3
+"""
+Module 0-create_confusion
+Ce module contient une fonction pour créer une matrice de confusion
+à partir des étiquettes réelles et prédites.
+"""
+
 import numpy as np
 
 
