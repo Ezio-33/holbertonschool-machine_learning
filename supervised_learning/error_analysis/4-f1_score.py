@@ -8,12 +8,12 @@ def f1_score(confusion):
     matrice de confusion.
 
     Args:
-        confusion: numpy.ndarray de forme (classes, classes)
+        confusion (numpy.ndarray): de forme (classes, classes)
                   où les indices des lignes représentent les vraies étiquettes
                   et les indices des colonnes représentent les prédictions
 
     Returns:
-        numpy.ndarray de forme (classes,) contenant
+        numpy.ndarray: de forme (classes,) contenant
         le score F1 de chaque classe
     """
     # Importer les fonctions précédentes
@@ -22,9 +22,9 @@ def f1_score(confusion):
 
     # Calculer la sensibilité (rappel) et la précision
     recall = sensitivity(confusion)
-    prec = precision(confusion)
+    precision_score = precision(confusion)
 
     # Calculer le score F1
-    f1 = 2 * (prec * recall) / (prec + recall)
+    f1 = 2 * (precision_score * recall) / (precision_score + recall)
 
     return f1

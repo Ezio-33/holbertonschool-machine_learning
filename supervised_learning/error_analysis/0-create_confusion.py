@@ -8,13 +8,13 @@ def create_confusion_matrix(labels, logits):
     et prédites.
 
     Args:
-        labels: numpy.ndarray de forme (m, classes) contenant
+        labels (numpy.ndarray): de forme (m, classes) contenant
         les étiquettes réelles en format one-hot
-        logits: numpy.ndarray de forme (m, classes) contenant les prédictions
+        logits (numpy.ndarray): de forme (m, classes) contenant les prédictions
                en format one-hot
 
     Returns:
-        numpy.ndarray de forme (classes, classes) représentant
+        numpy.ndarray: de forme (classes, classes) représentant
         la matrice de confusion où les lignes correspondent aux
         classes réelles et les colonnes aux prédictions
     """

@@ -8,12 +8,12 @@ def specificity(confusion):
     d'une matrice de confusion.
 
     Args:
-        confusion: numpy.ndarray de forme (classes, classes)
+        confusion (numpy.ndarray): de forme (classes, classes)
                   où les indices des lignes représentent les vraies étiquettes
                   et les indices des colonnes représentent les prédictions
 
     Returns:
-        numpy.ndarray de forme (classes,) contenant la
+        numpy.ndarray: de forme (classes,) contenant la
         spécificité de chaque classe
     """
     # Obtenir le nombre de classes
