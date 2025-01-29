@@ -1,42 +1,22 @@
 #!/usr/bin/env python3
 """
-Module implémentant la descente de gradient avec régularisation L2
+Coût de régularisation L2
 """
 
-import numpy as np
+import tensorflow as tf
 
 
-def l2_reg_gradient_descent(Y, weights, cache, alpha, lambtha, L):
+def l2_reg_cost(cost):
     """
-    Met à jour les poids et biais d'un réseau de neurones en utilisant
-    la descente de gradient avec régularisation L2.
-
-    Parameters:
-        Y (numpy.ndarray): Labels one-hot encodés (classes × m)
-        weights (dict): Poids et biais du réseau
-        cache (dict): Sorties de chaque couche
-        alpha (float): Taux d'apprentissage
-        lambtha (float): Paramètre de régularisation L2
-        L (int): Nombre de couches
-
-    Returns:
-        None: Met à jour les poids et biais in-place
+    Fonction qui calcule le coût d'un réseau de neurones avec
+    régularisation L2
+    Arguments:
+     - cost est un tenseur contenant le coût du réseau sans
+        régularisation L2
+    Renvoie:
+    Un tenseur contenant le coût du réseau en tenant compte de
+    la régularisation L2
     """
-    m = Y.shape[1]
-    dZ = cache['A' + str(L)] - Y
-    
-    for l in range(L, 0, -1):
-        A_prev = cache['A' + str(l-1)]
-        
-        # Calcul des gradients avec régularisation L2
-        dW = (1/m) * np.matmul(dZ, A_prev.T) + (lambtha/m) * weights['W' + str(l)]
-        db = (1/m) * np.sum(dZ, axis=1, keepdims=True)
-        
-        if l > 1:
-            W = weights['W' + str(l)]
-            # Calcul de dZ pour la couche précédente avec activation tanh
-            dZ = np.matmul(W.T, dZ) * (1 - np.square(cache['A' + str(l-1)]))
-        
-        # Mise à jour des poids et biais
-        weights['W' + str(l)] -= alpha * dW
-        weights['b' + str(l)] -= alpha * db
+    L2_cost = cost + tf.losses.get_regularization_losses()
+
+    return L2_cost
