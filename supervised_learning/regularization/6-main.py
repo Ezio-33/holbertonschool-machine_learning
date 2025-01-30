@@ -13,7 +13,8 @@ random.seed(SEED)
 np.random.seed(SEED)
 tf.random.set_seed(SEED)
 
-dropout_create_layer = __import__('6-dropout_create_layer').dropout_create_layer
+dropout_create_layer = __import__(
+    '6-dropout_create_layer').dropout_create_layer
 
 X = np.random.randint(0, 256, size=(10, 784))
 a = dropout_create_layer(X, 256, tf.nn.tanh, 0.8)

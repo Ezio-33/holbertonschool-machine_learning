@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
 import numpy as np
-dropout_forward_prop = __import__('4-dropout_forward_prop').dropout_forward_prop
+dropout_forward_prop = __import__(
+    '4-dropout_forward_prop').dropout_forward_prop
 
 
 def one_hot(Y, classes):
@@ -11,8 +12,9 @@ def one_hot(Y, classes):
     one_hot[Y, np.arange(m)] = 1
     return one_hot
 
+
 if __name__ == '__main__':
-    lib= np.load('MNIST.npz')
+    lib = np.load('MNIST.npz')
     X_train_3D = lib['X_train']
     Y_train = lib['Y_train']
     X_train = X_train_3D.reshape((X_train_3D.shape[0], -1)).T
