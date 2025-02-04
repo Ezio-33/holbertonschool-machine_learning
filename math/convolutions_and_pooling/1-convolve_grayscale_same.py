@@ -36,6 +36,7 @@ def convolve_grayscale_same(images, kernel):
             # Extraction de la fenêtre correspondante
             window = padded_images[:, i:i + kh, j:j + kw]
             # Application du kernel et somme
-            output[:, i, j] = np.sum(window * kernel[np.newaxis, :, :], axis=(1, 2))
+            result = np.sum(window * kernel[np.newaxis, :, :], axis=(1, 2))
+            output[:, i, j] = result
 
     return output
