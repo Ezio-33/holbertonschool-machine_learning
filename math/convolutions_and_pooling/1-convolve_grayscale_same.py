@@ -31,8 +31,11 @@ def convolve_grayscale_same(images, kernel):
     output = np.zeros((m, h, w))
 
     # Convolution valide sur l'image padée
-    for i in range(kh):
-        for j in range(kw):
-            output += padded_images[:, i:i + h, j:j + w] * kernel[i, j]
+    for i in range(h):
+        for j in range(w):
+            # Extraction de la fenêtre correspondante
+            window = padded_images[:, i:i + kh, j:j + kw]
+            # Application du kernel et somme
+            output[:, i, j] = np.sum(window * kernel, axis=(1, 2))
 
     return output
