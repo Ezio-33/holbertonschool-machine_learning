@@ -1,92 +1,83 @@
 #!/usr/bin/env python3
-"""Architecture LeNet-5 avec TensorFlow 1.x"""
+"""Module implémentant LeNet-5 avec TensorFlow 1.x"""
 
 import tensorflow.compat.v1 as tf
 
 
 def lenet5(x, y):
     """
-    Construit l'architecture LeNet-5 modifiée
+    Construit LeNet-5 modifié pour MNIST
+
     Args:
-        x: Placeholder (m, 28, 28, 1) - Images d'entrée
-        y: Placeholder (m, 10) - Labels one-hot
+        x: Images d'entrée (m, 28, 28, 1)
+        y: Labels one-hot (m, 10)
 
     Returns:
-        y_pred: Tenseur de prédiction
+        y_pred: Prédictions (softmax)
         train_op: Opération d'entraînement Adam
-        loss: Tenseur de perte
-        acc: Tenseur de précision
+        loss: Fonction de perte
+        acc: Précision
     """
-    init = tf.keras.initializers.VarianceScaling(
-        scale=2.0)  # Initialisation He
+    # Initialisation He pour les poids
+    init = tf.contrib.layers.variance_scaling_initializer()
 
-    # Couche 1 : Conv2D -> ReLU -> MaxPool
-    conv1 = tf.layers.conv2d(
-        inputs=x,
+    # Première couche convolutive (6 filtres 5x5)
+    conv1 = tf.layers.Conv2D(
         filters=6,
-        kernel_size=(5, 5),
+        kernel_size=5,
         padding='same',
         activation=tf.nn.relu,
-        kernel_initializer=init
-    )
-    pool1 = tf.layers.max_pooling2d(
-        inputs=conv1,
-        pool_size=(2, 2),
-        strides=(2, 2)
-    )
+        kernel_initializer=init)(x)
 
-    # Couche 2 : Conv2D -> ReLU -> MaxPool
-    conv2 = tf.layers.conv2d(
-        inputs=pool1,
+    # Premier pooling (2x2)
+    pool1 = tf.layers.MaxPooling2D(
+        pool_size=[2, 2],
+        strides=2)(conv1)
+
+    # Deuxième couche convolutive (16 filtres 5x5)
+    conv2 = tf.layers.Conv2D(
         filters=16,
-        kernel_size=(5, 5),
+        kernel_size=5,
         padding='valid',
         activation=tf.nn.relu,
-        kernel_initializer=init
-    )
-    pool2 = tf.layers.max_pooling2d(
-        inputs=conv2,
-        pool_size=(2, 2),
-        strides=(2, 2)
-    )
+        kernel_initializer=init)(pool1)
 
-    # Aplatissement
-    flat = tf.layers.flatten(pool2)
+    # Deuxième pooling (2x2)
+    pool2 = tf.layers.MaxPooling2D(
+        pool_size=[2, 2],
+        strides=2)(conv2)
 
-    # Couche 3 : Dense -> ReLU
-    dense1 = tf.layers.dense(
-        inputs=flat,
+    # Aplatissement pour les couches denses
+    flat = tf.layers.Flatten()(pool2)
+
+    # Première couche dense (120 neurones)
+    dense1 = tf.layers.Dense(
         units=120,
         activation=tf.nn.relu,
-        kernel_initializer=init
-    )
+        kernel_initializer=init)(flat)
 
-    # Couche 4 : Dense -> ReLU
-    dense2 = tf.layers.dense(
-        inputs=dense1,
+    # Deuxième couche dense (84 neurones)
+    dense2 = tf.layers.Dense(
         units=84,
         activation=tf.nn.relu,
-        kernel_initializer=init
-    )
+        kernel_initializer=init)(dense1)
 
-    # Couche de sortie : Dense + Softmax
-    y_pred = tf.layers.dense(
-        inputs=dense2,
+    # Couche de sortie (10 classes)
+    logits = tf.layers.Dense(
         units=10,
-        activation=tf.nn.softmax,
-        kernel_initializer=init
-    )
+        kernel_initializer=init)(dense2)
 
-    # Calcul de la perte
-    loss = tf.reduce_mean(tf.losses.softmax_cross_entropy(y, y_pred))
+    # Activation softmax séparée
+    y_pred = tf.nn.softmax(logits)
 
-    # Optimiseur Adam
+    # Calcul de la perte (cross-entropy)
+    loss = tf.losses.softmax_cross_entropy(y, logits)
+
+    # Optimisation avec Adam
     train_op = tf.train.AdamOptimizer().minimize(loss)
 
     # Calcul de la précision
-    acc = tf.reduce_mean(tf.cast(tf.equal(
-        tf.argmax(y, 1),
-        tf.argmax(y_pred, 1)
-    ), tf.float32))
+    correct = tf.equal(tf.argmax(y, 1), tf.argmax(logits, 1))
+    acc = tf.reduce_mean(tf.cast(correct, tf.float32))
 
     return y_pred, train_op, loss, acc
