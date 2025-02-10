@@ -9,7 +9,7 @@ from tensorflow import keras as K
 
 SEED = 0
 os.environ['PYTHONHASHSEED'] = str(SEED)
-os.environ['TF_ENABLE_ONEDNN_OPTS']= '0'
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 random.seed(SEED)
 np.random.seed(SEED)
 tf.random.set_seed(SEED)
@@ -32,7 +32,7 @@ if __name__ == "__main__":
     batch_size = 32
     epochs = 5
     model.fit(X_train_c, Y_train_oh, batch_size=batch_size, epochs=epochs,
-                       validation_data=(X_valid_c, Y_valid_oh))
+              validation_data=(X_valid_c, Y_valid_oh))
     Y_pred = model.predict(X_valid_c)
     print(Y_pred[0])
     Y_pred = np.argmax(Y_pred, 1)
