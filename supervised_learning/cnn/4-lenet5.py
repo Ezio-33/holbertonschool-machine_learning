@@ -1,11 +1,5 @@
 #!/usr/bin/env python3
-"""Architecture LeNet-5 avec TensorFlow 1.x
-
-Ce module construit une version modifiée de l’architecture LeNet-5 en
-utilisant TensorFlow 1.x.
-Il retourne le tenseur de prédiction softmax, l’opération
-d’entraînement (Adam), le tenseur de perte et le tenseur de précision.
-"""
+"""Module implémentant l'architecture LeNet-5 modifiée"""
 
 import tensorflow.compat.v1 as tf
 tf.disable_eager_execution()
@@ -13,106 +7,79 @@ tf.disable_eager_execution()
 
 def lenet5(x, y):
     """
-    Construit l’architecture LeNet-5 modifiée.
+    Construit le réseau LeNet-5 pour reconnaître les chiffres
 
     Args:
-        x: Placeholder de forme (m, 28, 28, 1) contenant les images d'entrée.
-        y: Placeholder de forme (m, 10) contenant les labels one-hot.
-
-    Returns:
-        y_out: Tenseur de sortie activé par softmax (prédictions).
-        train: Opération d’entraînement utilisant l’optimisateur Adam.
-        loss: Tenseur de la perte.
-        acc: Tenseur de la précision.
+        x: Images d'entrée (m, 28, 28, 1)
+        y: Labels attendus (m, 10)
     """
-    # Initialiseur He avec réplicabilité (version TF1 via tf.contrib)
-    k_init = tf.contrib.layers.variance_scaling_initializer()
-    activation = tf.nn.relu
+    # Initialisation spéciale pour les poids
+    init = tf.contrib.layers.variance_scaling_initializer()
 
-    # Couche 1 : convolution avec 6 filtres 5x5 avec padding "same"
-    layer_1 = tf.layers.conv2d(
-        inputs=x,
-        filters=6,
-        kernel_size=(5, 5),
-        padding='same',
-        activation=activation,
-        kernel_initializer=k_init
-    )
-    # Exemple : Si x est de forme (m, 28, 28, 1), alors layer_1 aura forme (m,
-    # 28, 28, 6).
+    # Première couche: 6 filtres de 5x5
+    conv1 = tf.layers.Conv2D(
+        filters=6,          # Nombre de loupes différentes
+        kernel_size=5,      # Taille de chaque loupe
+        padding='same',     # On garde les bords
+        activation=tf.nn.relu,  # On garde que les valeurs positives
+        kernel_initializer=init
+    )(x)
 
-    # Couche 2 : max pooling avec un kernel 2x2 et stride 2
-    pool_1 = tf.layers.max_pooling2d(
-        inputs=layer_1,
-        pool_size=(2, 2),
-        strides=(2, 2)
-    )
-    # Exemple : (m, 28, 28, 6) devient (m, 14, 14, 6).
+    # Réduction de taille par 2
+    pool1 = tf.layers.MaxPooling2D(
+        pool_size=2,
+        strides=2
+    )(conv1)
 
-    # Couche 3 : convolution avec 16 filtres 5x5 avec padding "valid"
-    layer_2 = tf.layers.conv2d(
-        inputs=pool_1,
+    # Deuxième couche: 16 filtres de 5x5
+    conv2 = tf.layers.Conv2D(
         filters=16,
-        kernel_size=(5, 5),
-        padding='valid',
-        activation=activation,
-        kernel_initializer=k_init
-    )
-    # Avec valid padding, si l’entrée est 14x14, la sortie sera de dimension
-    # (14-5+1)=10, soit (m, 10, 10, 16).
+        kernel_size=5,
+        padding='valid',    # On ne garde pas les bords
+        activation=tf.nn.relu,
+        kernel_initializer=init
+    )(pool1)
 
-    # Couche 4 : max pooling avec kernel 2x2 et stride 2
-    pool_2 = tf.layers.max_pooling2d(
-        inputs=layer_2,
-        pool_size=(2, 2),
-        strides=(2, 2)
-    )
-    # La sortie passera de (m, 10, 10, 16) à (m, 5, 5, 16).
+    # Nouvelle réduction de taille
+    pool2 = tf.layers.MaxPooling2D(
+        pool_size=2,
+        strides=2
+    )(conv2)
 
-    # Aplatissement des sorties pour les couches entièrement connectées
-    flat = tf.layers.flatten(pool_2)
-    # Chaque échantillon devient un vecteur de 5*5*16 = 400 éléments.
+    # On met tout à plat
+    flatten = tf.layers.Flatten()(pool2)
 
-    # Couche 5 : couche dense (fully connected) avec 120 neurones
-    dense1 = tf.layers.dense(
-        inputs=flat,
+    # Première couche dense: 120 neurones
+    dense1 = tf.layers.Dense(
         units=120,
-        activation=activation,
-        kernel_initializer=k_init
-    )
+        activation=tf.nn.relu,
+        kernel_initializer=init
+    )(flatten)
 
-    # Couche 6 : couche dense avec 84 neurones
-    dense2 = tf.layers.dense(
-        inputs=dense1,
+    # Deuxième couche dense: 84 neurones
+    dense2 = tf.layers.Dense(
         units=84,
-        activation=activation,
-        kernel_initializer=k_init
-    )
+        activation=tf.nn.relu,
+        kernel_initializer=init
+    )(dense1)
 
-    # Couche 7 : couche de sortie dense avec 10 neurones (sans activation)
-    # On ne lui applique pas d’activation ici car la fonction de perte attend
-    # des logits (sortie non activée)
-    output_layer = tf.layers.dense(
-        inputs=dense2,
+    # Couche de sortie: 10 neurones (un par chiffre)
+    logits = tf.layers.Dense(
         units=10,
-        kernel_initializer=k_init
-    )
+        kernel_initializer=init
+    )(dense2)
 
-    # Prédictions : application de softmax sur les logits pour obtenir des
-    # probabilités
-    y_out = tf.nn.softmax(output_layer)
+    # Probabilités pour chaque chiffre
+    y_pred = tf.nn.softmax(logits)
 
-    # Calcul de la perte avec softmax_cross_entropy, qui applique softmax de
-    # façon interne sur les logits
-    loss = tf.losses.softmax_cross_entropy(y, output_layer)
+    # Calcul de l'erreur
+    loss = tf.losses.softmax_cross_entropy(y, logits)
 
-    # Opération d’entraînement avec l’optimiseur Adam (hyperparamètres par
-    # défaut)
-    train = tf.train.AdamOptimizer().minimize(loss)
+    # Optimisation pour réduire l'erreur
+    train_op = tf.train.AdamOptimizer().minimize(loss)
 
-    # Calcul de la précision : compare l’indice de la classe prédite (argmax
-    # des logits) aux labels réels
-    equality = tf.equal(tf.argmax(y, 1), tf.argmax(output_layer, 1))
-    acc = tf.reduce_mean(tf.cast(equality, tf.float32))
+    # Calcul de la précision
+    correct = tf.equal(tf.argmax(y, 1), tf.argmax(logits, 1))
+    accuracy = tf.reduce_mean(tf.cast(correct, tf.float32))
 
-    return y_out, train, loss, acc
+    return y_pred, train_op, loss, accuracy
