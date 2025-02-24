@@ -28,9 +28,8 @@ class Yolo:
         box_confidences = []
         box_class_probs = []
 
-        input_width = self.model.input.shape[1]  # Correction ici
-        input_height = self.model.input.shape[2]  # Suppression de .value
-
+        input_width = self.model.input.shape[1]
+        input_height = self.model.input.shape[2]
         for output_idx, output in enumerate(outputs):
             grid_h, grid_w, nb_ancres, _ = output.shape
 

@@ -28,8 +28,8 @@ class Yolo:
         box_confidences = []
         box_class_probs = []
 
-        input_width = self.model.input.shape[1]  # Correction ici
-        input_height = self.model.input.shape[2]  # Suppression de .value
+        input_width = self.model.input.shape[1]
+        input_height = self.model.input.shape[2]
 
         for output_idx, output in enumerate(outputs):
             grid_h, grid_w, nb_ancres, _ = output.shape
@@ -158,12 +158,13 @@ class Yolo:
 
                 intersection = np.maximum(0, x2 - x1) * np.maximum(0, y2 - y1)
                 area_current = (
-                    current_box[2] - current_box[0]) * (current_box[3] - current_box[1])
-                area_others = (other_boxes[:,
-                                           2] - other_boxes[:,
-                                                            0]) * (other_boxes[:,
-                                                                               3] - other_boxes[:,
-                                                                                                1])
+                    (current_box[2] - current_box[0]) *
+                    (current_box[3] - current_box[1])
+                )
+                area_others = (
+                    (other_boxes[:, 2] - other_boxes[:, 0]) *
+                    (other_boxes[:, 3] - other_boxes[:, 1])
+                )
                 union = area_current + area_others - intersection
 
                 # Évite la division par zéro
