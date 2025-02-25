@@ -197,7 +197,8 @@ class Yolo:
 
         Returns:
             tuple: (images, image_paths)
-                - images: Liste de numpy.ndarray représentant les images chargées.
+                - images: Liste de numpy.ndarray représentant
+                les images chargées.
                 - image_paths: Liste des chemins complets vers chaque image.
         """
         # Initialisation des listes
@@ -214,6 +215,8 @@ class Yolo:
 
         # Vérifier si aucune image n'a été trouvée
         if len(images) == 0:
-            raise ValueError(f"Aucune image valide trouvée dans le dossier : {folder_path}")
+            raise ValueError(
+                f"Aucune image valide trouvée dans le dossier : {folder_path}"
+            )
 
         return images, image_paths
