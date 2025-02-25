@@ -255,7 +255,7 @@ class Yolo:
             )
 
             # Normaliser les pixels entre 0 et 1
-            normalized_img = resized_img / 255.0
+            normalized_img = resized_img.astype(np.float32) / 255.0
 
             # Ajouter l'image prétraitée à la liste
             pimages.append(normalized_img)
