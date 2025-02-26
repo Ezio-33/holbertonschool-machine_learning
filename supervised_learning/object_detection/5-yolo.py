@@ -251,7 +251,7 @@ class Yolo:
 
             # Redimensionner l'image à la taille du modèle
             resized_img = cv2.resize(
-                img, (input_w, input_h), interpolation=cv2.INTER_CUBIC
+                img, (input_h, input_w), interpolation=cv2.INTER_CUBIC
             )
 
             # Normaliser les pixels entre 0 et 1
