@@ -235,8 +235,8 @@ class Yolo:
                   de chaque image sous forme (hauteur, largeur).
         """
         # Récupérer la taille d'entrée du modèle
-        input_h = self.model.input.shape[1]
-        input_w = self.model.input.shape[2]
+        input_w = self.model.input.shape[1]
+        input_h = self.model.input.shape[2]
 
         # Initialisation des listes pour stocker les résultats
         lpimages = []
