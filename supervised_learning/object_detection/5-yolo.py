@@ -230,38 +230,35 @@ class Yolo:
 
         Returns:
             tuple: (pimages, image_shapes)
-                - pimages: numpy.ndarray contenant toutes
-                les images prétraitées.
-                - image_shapes: numpy.ndarray contenant
-                les dimensions originales de chaque image
-                sous forme (hauteur, largeur).
+                - pimages: numpy.ndarray contenant toutes les images prétraitées.
+                - image_shapes: numpy.ndarray contenant les dimensions originales
+                  de chaque image sous forme (hauteur, largeur).
         """
         # Récupérer la taille d'entrée du modèle
         input_h = self.model.input.shape[1]
         input_w = self.model.input.shape[2]
 
         # Initialisation des listes pour stocker les résultats
-        pimages = []
-        image_shapes = []
+        lpimages = []
+        limage_shapes = []
 
         for img in images:
-            # Stocker la taille originale de l'image
-            h, w = img.shape[:2]
-            image_shapes.append((h, w))
+            # Sauvegarder la taille originale de l'image
+            img_shape = img.shape[0], img.shape[1]
+            limage_shapes.append(img_shape)
 
             # Redimensionner l'image à la taille du modèle
-            resized_img = cv2.resize(
-                img, (input_h, input_w), interpolation=cv2.INTER_CUBIC
-            )
+            dimension = (input_w, input_h)
+            resized = cv2.resize(img, dimension, interpolation=cv2.INTER_CUBIC)
 
             # Normaliser les pixels entre 0 et 1
-            normalized_img = resized_img.astype(np.float32) / 255.0
+            pimage = resized / 255.0
 
             # Ajouter l'image prétraitée à la liste
-            pimages.append(normalized_img)
+            lpimages.append(pimage)
 
         # Convertir en tableaux NumPy
-        pimages = np.stack(pimages)
-        image_shapes = np.array(image_shapes)
+        pimages = np.array(lpimages)
+        image_shapes = np.array(limage_shapes)
 
         return pimages, image_shapes
