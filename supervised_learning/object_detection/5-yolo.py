@@ -230,9 +230,11 @@ class Yolo:
 
         Returns:
             tuple: (pimages, image_shapes)
-                - pimages: numpy.ndarray contenant toutes les images prétraitées.
-                - image_shapes: numpy.ndarray contenant les dimensions originales
-                  de chaque image sous forme (hauteur, largeur).
+                - pimages: numpy.ndarray contenant toutes
+                les images prétraitées.
+                - image_shapes: numpy.ndarray contenant les
+                dimensions originales de chaque image sous
+                forme (hauteur, largeur).
         """
         # Récupérer la taille d'entrée du modèle
         input_w = self.model.input.shape[1]
