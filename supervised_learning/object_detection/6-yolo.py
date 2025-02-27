@@ -268,8 +268,7 @@ class Yolo:
     def show_boxes(self, image, boxes, box_classes, box_scores, file_name):
         """
         Affiche une image avec toutes ses boîtes englobantes, noms de classes
-        et scores associés. 
-
+        et scores associés.
         Args:
             image (numpy.ndarray): Image non traitée.
             boxes (numpy.ndarray): Coordonnées des boîtes englobantes.
