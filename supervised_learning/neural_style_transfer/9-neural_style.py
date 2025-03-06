@@ -380,44 +380,23 @@ class NST:
 
         # Initialisation de l'image générée avec l'image de contenu
         generated_image = tf.Variable(self.content_image, dtype=tf.float32)
-
-        # Configurer l'optimiseur Adam
-        optimizer = tf.optimizers.Adam(
-            learning_rate=lr,
-            beta_1=beta1,
-            beta_2=beta2
-        )
-
-        # Variables pour garder trace du meilleur résultat
+        optimizer = tf.optimizers.Adam(learning_rate=lr, beta_1=beta1, beta_2=beta2)
         best_cost = float('inf')
         best_image = None
 
-        # Boucle d'optimisation
         for i in range(iterations + 1):
-            # Calcul des gradients et des coûts
-            gradients, J_total, J_content, J_style = self.compute_grads(
-                generated_image)
+            gradients, J_total, J_content, J_style = self.compute_grads(generated_image)
 
-            # Mise à jour de l'image générée en utilisant l'optimiseur
             optimizer.apply_gradients([(gradients, generated_image)])
 
-            # Assurez-vous que les valeurs des pixels restent entre 0 et 1
-            clipped_image = tf.clip_by_value(generated_image, 0, 1)
-            generated_image.assign(clipped_image)
+            # Clipping pour garantir que les valeurs restent entre 0 et 1
+            generated_image.assign(tf.clip_by_value(generated_image, 0, 1))
 
-            # Affichage des informations si nécessaire
-            if step is not None and i % step == 0:
-                print(f"Cost at iteration {i}: {J_total}, "
-                      f"content {J_content}, style {J_style}")
+        if step is not None and i % step == 0:
+            print(f"Cost at iteration {i}: {J_total}, content {J_content}, style {J_style}")
 
-            # Mise à jour de la meilleure image si le coût actuel est meilleur
-            if J_total < best_cost:
-                best_cost = J_total
-                best_image = generated_image.numpy()
+        if J_total < best_cost:
+            best_cost = J_total
+            best_image = generated_image.numpy()
 
-        # Retourne la meilleure image trouvée
-        if best_image is not None:
-            return best_image[0], best_cost
-        else:
-            # Cas improbable où aucune meilleure image n'est trouvée
-            return generated_image.numpy()[0], J_total
+        return best_image[0], best_cost
