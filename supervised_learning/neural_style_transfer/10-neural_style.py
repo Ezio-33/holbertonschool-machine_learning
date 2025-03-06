@@ -287,6 +287,12 @@ class NST:
         Returns:
             tuple: (Coût_total, Coût_contenu, Coût_style)
         """
+        # Vérification de la forme de l'image générée
+        s = self.content_image.shape
+        if (not isinstance(generated_image, (tf.Tensor, tf.Variable))
+                or s != generated_image.shape):
+            raise TypeError(f"generated_image must be a tensor of shape {s}")
+
         # Prétraitement pour VGG19
         generated_preprocessed = tf.keras.applications.vgg19.preprocess_input(
             generated_image * 255.0)
