@@ -212,13 +212,23 @@ class NST:
     def layer_style_cost(self, style_output, gram_target):
         """
         Calcule le coût de style pour une couche spécifique
+
+        Args:
+            style_output: tf.Tensor de forme (1, h, w, c) contenant la sortie
+                          de style de la couche pour l'image générée
+            gram_target: tf.Tensor de forme (1, c, c) la matrice de Gram de
+                        la sortie de style cible pour cette couche
+
+        Returns:
+            Le coût de style de la couche
         """
         # Validation des entrées
         if (not isinstance(style_output, (tf.Tensor, tf.Variable))
                 or len(style_output.shape) != 4):
             raise TypeError("style_output must be a tensor of rank 4")
 
-        c = int(gram_target.shape[-1])
+        # Extraire c à partir de style_output, pas de gram_target
+        c = style_output.shape[-1]
 
         if (not isinstance(gram_target, (tf.Tensor, tf.Variable))
                 or gram_target.shape != (1, c, c)):
@@ -228,5 +238,8 @@ class NST:
         # Calcul de la matrice de Gram générée
         gram_generated = self.gram_matrix(style_output)
 
-        # Retourne la différence quadratique moyenne SANS division par 4
+        # S'assurer que les types correspondent
+        gram_generated = tf.cast(gram_generated, dtype=gram_target.dtype)
+
+        # Retourne la différence quadratique moyenne
         return tf.reduce_mean(tf.square(gram_generated - gram_target))
