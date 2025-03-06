@@ -334,22 +334,7 @@ class NST:
 
         return gradients, J_total, J_content, J_style
 
-    def generate_image(self, iterations=1000, step=None, lr=0.01, beta1=0.9,
-                       beta2=0.99):
-        """
-        Génère l'image avec transfert de style neural en utilisant Adam.
-
-        Args:
-            iterations: nombre d'itérations pour la descente de gradient
-            step: si pas None, étape pour afficher les informations
-            d'entraînement
-            lr: taux d'apprentissage pour la descente de gradient
-            beta1: paramètre beta1 pour l'optimisation Adam
-            beta2: paramètre beta2 pour l'optimisation Adam
-
-        Returns:
-            tuple: (image_générée, coût)
-        """
+    def generate_image(self, iterations=1000, step=None, lr=0.01, beta1=0.9, beta2=0.99):
         # Validation des paramètres
         if not isinstance(iterations, int):
             raise TypeError("iterations must be an integer")
@@ -360,8 +345,7 @@ class NST:
             if not isinstance(step, int):
                 raise TypeError("step must be an integer")
             if step <= 0 or step >= iterations:
-                raise ValueError(
-                    "step must be positive and less than iterations")
+                raise ValueError("step must be positive and less than iterations")
 
         if not isinstance(lr, (float, int)):
             raise TypeError("lr must be a number")
@@ -392,11 +376,11 @@ class NST:
             # Clipping pour garantir que les valeurs restent entre 0 et 1
             generated_image.assign(tf.clip_by_value(generated_image, 0, 1))
 
-        if step is not None and i % step == 0:
-            print(f"Cost at iteration {i}: {J_total}, content {J_content}, style {J_style}")
+            if step is not None and i % step == 0:
+                print(f"Cost at iteration {i}: {J_total}, content {J_content}, style {J_style}")
 
-        if J_total < best_cost:
-            best_cost = J_total
-            best_image = generated_image.numpy()
+            if J_total < best_cost:
+                best_cost = J_total
+                best_image = generated_image.numpy()
 
         return best_image[0], best_cost
