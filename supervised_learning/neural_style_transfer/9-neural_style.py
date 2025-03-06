@@ -376,6 +376,8 @@ class NST:
 
         # Initialisation avec l'image de contenu
         generated_image = tf.Variable(self.content_image, dtype=tf.float32)
+
+        # Correction: Utiliser tf.keras.optimizers.Adam avec beta_1 et beta_2
         optimizer = tf.keras.optimizers.Adam(
             learning_rate=lr,
             beta_1=beta1,
@@ -391,20 +393,21 @@ class NST:
                 J_total, J_content, J_style = self.total_cost(generated_image)
 
             # Mise à jour de l'image
-            gradients = tape.gradient(J_total, generated_image)
-            optimizer.apply_gradients([(gradients, generated_image)])
+            grads = tape.gradient(J_total, generated_image)
+            optimizer.apply_gradients([(grads, generated_image)])
 
-            # Clipping des valeurs entre 0 et 1
-            generated_image.assign(tf.clip_by_value(generated_image, 0.0, 1.0))
+            # Stockage intermédiaire du résultat du clipping
+            clipped = tf.clip_by_value(generated_image, 0.0, 1.0)
+            generated_image.assign(clipped)
 
             # Sauvegarde du meilleur résultat
             if J_total < best_cost:
                 best_cost = J_total
                 best_image = generated_image.numpy()
 
-            # Affichage périodique
-            if step and (i + 1) % step == 0:
-                print(f"Iteration {i+1}: Coût={J_total:.2e}, "
-                      f"Contenu={J_content:.2e}, Style={J_style:.2e}")
+            # Affichage périodique avec le format spécifié dans la solution
+            if step is not None and (i + 1) % step == 0:
+                print("Cost at iteration {}: {}, content {}, style {}".format(
+                    i + 1, J_total, J_content, J_style))
 
-        return best_image[0], best_cost
+        return best_image, best_cost
