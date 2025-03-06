@@ -334,31 +334,6 @@ class NST:
 
         return gradients, J_total, J_content, J_style
 
-    def compute_grads(self, generated_image):
-        """
-        Calcule les gradients du coût total par rapport à l'image générée
-
-        Args:
-            generated_image: tf.Tensor de forme (1, H, W, 3)
-
-        Returns:
-            tuple: (gradients, J_total, J_content, J_style)
-        """
-        # Vérification de la forme
-        s = self.content_image.shape
-        if (not isinstance(generated_image, (tf.Tensor, tf.Variable))
-                or generated_image.shape != s):
-            raise TypeError(f"generated_image must be a tensor of shape {s}")
-
-        # Calcul des gradients avec GradientTape
-        with tf.GradientTape() as tape:
-            tape.watch(generated_image)
-            J_total, J_content, J_style = self.total_cost(generated_image)
-
-        gradients = tape.gradient(J_total, generated_image)
-
-        return gradients, J_total, J_content, J_style
-
     def generate_image(self, iterations=1000, step=None, lr=0.01, beta1=0.9,
                        beta2=0.99):
         """

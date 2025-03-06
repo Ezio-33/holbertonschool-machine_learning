@@ -334,48 +334,24 @@ class NST:
 
         return gradients, J_total, J_content, J_style
 
-    def compute_grads(self, generated_image):
-        """
-        Calcule les gradients du coût total par rapport à l'image générée
-
-        Args:
-            generated_image: tf.Tensor de forme (1, H, W, 3)
-
-        Returns:
-            tuple: (gradients, J_total, J_content, J_style)
-        """
-        # Vérification de la forme
-        s = self.content_image.shape
-        if (not isinstance(generated_image, (tf.Tensor, tf.Variable))
-                or generated_image.shape != s):
-            raise TypeError(f"generated_image must be a tensor of shape {s}")
-
-        # Calcul des gradients avec GradientTape
-        with tf.GradientTape() as tape:
-            tape.watch(generated_image)
-            J_total, J_content, J_style = self.total_cost(generated_image)
-
-        gradients = tape.gradient(J_total, generated_image)
-
-        return gradients, J_total, J_content, J_style
-
     def generate_image(self, iterations=1000, step=None, lr=0.01, beta1=0.9,
                        beta2=0.99):
         """
-        Génère l'image de transfert de style
+        Génère l'image transférée de style neuronal.
 
-        Args:
-            iterations: Nombre d'itérations d'optimisation
-            step: Intervalle d'affichage des coûts
-            lr: Taux d'apprentissage
-            beta1: Paramètre beta1 d'Adam
-            beta2: Paramètre beta2 d'Adam
+        Paramètres :
+        - itérations : Nombre d'itérations pour
+        effectuer la descente de gradient.
+        - step : Étape à laquelle imprimer les informations
+        relatives à l'apprentissage.
+        - lr : Taux d'apprentissage pour la descente de gradient.
+        - beta1 : Paramètre Beta1 pour l'optimisation Adam.
+        - beta2 : Paramètre beta2 pour l'optimisation d'Adam.
 
-        Returns:
-            best_image: Image optimisée
-            best_cost: Meilleur coût total
+        Retourne :
+        - image_générée : La meilleure image générée.
+        - coût : Le meilleur coût.
         """
-        # Validation des entrées
         if not isinstance(iterations, int):
             raise TypeError("iterations must be an integer")
         if iterations <= 0:
@@ -399,10 +375,9 @@ class NST:
         if not (0 <= beta2 <= 1):
             raise ValueError("beta2 must be in the range [0, 1]")
 
-        # Initialisation avec l'image de contenu
-        generated_image = tf.Variable(self.content_image, dtype=tf.float32)
+        generated_image = tf.Variable(self.content_image,
+                                      dtype=tf.float32)
 
-        # Correction: Utiliser tf.keras.optimizers.Adam avec beta_1 et beta_2
         optimizer = tf.keras.optimizers.Adam(
             learning_rate=lr,
             beta_1=beta1,
@@ -412,25 +387,19 @@ class NST:
         best_cost = float('inf')
         best_image = None
 
-        # Boucle d'optimisation
         for i in range(iterations):
             with tf.GradientTape() as tape:
                 J_total, J_content, J_style = self.total_cost(generated_image)
 
-            # Mise à jour de l'image
             grads = tape.gradient(J_total, generated_image)
             optimizer.apply_gradients([(grads, generated_image)])
-
-            # Stockage intermédiaire du résultat du clipping
             clipped = tf.clip_by_value(generated_image, 0.0, 1.0)
             generated_image.assign(clipped)
 
-            # Sauvegarde du meilleur résultat
             if J_total < best_cost:
                 best_cost = J_total
                 best_image = generated_image.numpy()
 
-            # Affichage périodique avec le format spécifié dans la solution
             if step is not None and (i + 1) % step == 0:
                 print("Cost at iteration {}: {}, content {}, style {}".format(
                     i + 1, J_total, J_content, J_style))
