@@ -334,13 +334,15 @@ class NST:
 
         return gradients, J_total, J_content, J_style
 
-    def generate_image(self, iterations=1000, step=None, lr=0.01, beta1=0.9, beta2=0.99):
+    def generate_image(self, iterations=1000, step=None, lr=0.01, beta1=0.9,
+                       beta2=0.99):
         """
-        Génère l'image avec transfert de style neural en utilisant l'optimisation Adam.
+        Génère l'image avec transfert de style neural en utilisant Adam.
 
         Args:
-            iterations: nombre d'itérations pour effectuer la descente de gradient
-            step: si pas None, étape à laquelle afficher les informations d'entraînement
+            iterations: nombre d'itérations pour la descente de gradient
+            step: si pas None, étape pour afficher les informations
+            d'entraînement
             lr: taux d'apprentissage pour la descente de gradient
             beta1: paramètre beta1 pour l'optimisation Adam
             beta2: paramètre beta2 pour l'optimisation Adam
@@ -358,7 +360,8 @@ class NST:
             if not isinstance(step, int):
                 raise TypeError("step must be an integer")
             if step <= 0 or step >= iterations:
-                raise ValueError("step must be positive and less than iterations")
+                raise ValueError(
+                    "step must be positive and less than iterations")
 
         if not isinstance(lr, (float, int)):
             raise TypeError("lr must be a number")
@@ -392,7 +395,8 @@ class NST:
         # Boucle d'optimisation
         for i in range(iterations + 1):
             # Calcul des gradients et des coûts
-            gradients, J_total, J_content, J_style = self.compute_grads(generated_image)
+            gradients, J_total, J_content, J_style = self.compute_grads(
+                generated_image)
 
             # Mise à jour de l'image générée en utilisant l'optimiseur
             optimizer.apply_gradients([(gradients, generated_image)])
@@ -403,18 +407,17 @@ class NST:
 
             # Affichage des informations si nécessaire
             if step is not None and i % step == 0:
-                print(f"Cost at iteration {i}: {J_total}, content {J_content}, style {J_style}")
+                print(f"Cost at iteration {i}: {J_total}, "
+                      f"content {J_content}, style {J_style}")
 
             # Mise à jour de la meilleure image si le coût actuel est meilleur
             if J_total < best_cost:
                 best_cost = J_total
                 best_image = generated_image.numpy()
 
+        # Retourne la meilleure image trouvée
         if best_image is not None:
-            # Convertir l'image en tableau NumPy et supprimer la dimension de lot
-            final_image = np.squeeze(best_image)
-            return final_image, best_cost
+            return best_image[0], best_cost
         else:
-            # Si aucune meilleure image n'est trouvée
-            final_image = np.squeeze(generated_image.numpy())
-            return final_image, J_total
+            # Cas improbable où aucune meilleure image n'est trouvée
+            return generated_image.numpy()[0], J_total
