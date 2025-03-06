@@ -410,4 +410,11 @@ class NST:
                 best_cost = J_total
                 best_image = generated_image.numpy()
 
-        return best_image[0], best_cost
+        if best_image is not None:
+            # Convertir l'image en tableau NumPy et supprimer la dimension de lot
+            final_image = np.squeeze(best_image)
+            return final_image, best_cost
+        else:
+            # Si aucune meilleure image n'est trouvée
+            final_image = np.squeeze(generated_image.numpy())
+            return final_image, J_total
