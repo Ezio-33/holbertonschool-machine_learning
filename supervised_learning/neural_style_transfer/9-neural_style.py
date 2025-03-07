@@ -404,7 +404,7 @@ class NST:
 
             # Affichage périodique
             if step and (i + 1) % step == 0:
-                print(f"Iteration {i+1}: Coût={J_total:.2e}, "
-                      f"Contenu={J_content:.2e}, Style={J_style:.2e}")
+                print(f"Iteration {i+1}: Coût={J_total}, "
+                      f"Contenu={J_content}, Style={J_style}")
 
         return best_image[0], best_cost
