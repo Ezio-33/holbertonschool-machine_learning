@@ -62,28 +62,28 @@ def minor(matrix):
     # Vérification que matrix est une liste
     if not isinstance(matrix, list):
         raise TypeError("matrix must be a list of lists")
-    
+
     # Vérification pour liste vide
     if len(matrix) == 0:
         raise TypeError("matrix must be a list of lists")
-    
+
     # Vérification que tous les éléments sont des listes
     if not all(isinstance(row, list) for row in matrix):
         raise TypeError("matrix must be a list of lists")
-    
+
     # Vérification de matrice vide ou non carrée
     size = len(matrix)
     if size == 1 and len(matrix[0]) == 0:
         raise ValueError("matrix must be a non-empty square matrix")
-    
+
     for row in matrix:
         if len(row) != size:
             raise ValueError("matrix must be a non-empty square matrix")
-    
+
     # Cas particulier matrice 1x1
     if size == 1:
         return [[1]]
-    
+
     # Calcul de la matrice des mineurs
     minor_matrix = []
     for i in range(size):
@@ -98,9 +98,9 @@ def minor(matrix):
                         if c != j:  # Ignorer la colonne j
                             sub_row.append(matrix[r][c])
                     sub_matrix.append(sub_row)
-            
+
             # Calcul du déterminant de la sous-matrice
             minor_row.append(determinant(sub_matrix))
         minor_matrix.append(minor_row)
-    
+
     return minor_matrix

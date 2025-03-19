@@ -58,28 +58,28 @@ def minor(matrix):
     # Vérification du type
     if not isinstance(matrix, list):
         raise TypeError("matrix must be a list of lists")
-    
+
     # Vérification de liste vide
     if len(matrix) == 0:
         raise TypeError("matrix must be a list of lists")
-    
+
     # Vérification que tous les éléments sont des listes
     if not all(isinstance(row, list) for row in matrix):
         raise TypeError("matrix must be a list of lists")
-    
+
     # Vérification de matrice vide ou non carrée
     size = len(matrix)
     if size == 1 and len(matrix[0]) == 0:
         raise ValueError("matrix must be a non-empty square matrix")
-    
+
     for row in matrix:
         if len(row) != size:
             raise ValueError("matrix must be a non-empty square matrix")
-    
+
     # Cas particulier matrice 1x1
     if size == 1:
         return [[1]]
-    
+
     # Calcul de la matrice des mineurs
     minor_matrix = []
     for i in range(size):
@@ -94,11 +94,11 @@ def minor(matrix):
                         if c != j:  # Ignorer la colonne j
                             sub_row.append(matrix[r][c])
                     sub_matrix.append(sub_row)
-            
+
             # Calcul du déterminant de la sous-matrice
             minor_row.append(determinant(sub_matrix))
         minor_matrix.append(minor_row)
-    
+
     return minor_matrix
 
 
@@ -119,31 +119,31 @@ def cofactor(matrix):
     # Vérification du type
     if not isinstance(matrix, list):
         raise TypeError("matrix must be a list of lists")
-    
+
     # Vérification de liste vide
     if len(matrix) == 0:
         raise TypeError("matrix must be a list of lists")
-    
+
     # Vérification que tous les éléments sont des listes
     if not all(isinstance(row, list) for row in matrix):
         raise TypeError("matrix must be a list of lists")
-    
+
     # Vérification de matrice vide ou non carrée
     size = len(matrix)
     if size == 1 and len(matrix[0]) == 0:
         raise ValueError("matrix must be a non-empty square matrix")
-    
+
     for row in matrix:
         if len(row) != size:
             raise ValueError("matrix must be a non-empty square matrix")
-    
+
     # Cas particulier matrice 1x1
     if size == 1:
         return [[1]]
-    
+
     # Calcul de la matrice des mineurs
     minor_matrix = minor(matrix)
-    
+
     # Calcul de la matrice des cofacteurs
     cofactor_matrix = []
     for i in range(size):
@@ -153,8 +153,9 @@ def cofactor(matrix):
             sign = (-1) ** (i + j)
             cofactor_row.append(sign * minor_matrix[i][j])
         cofactor_matrix.append(cofactor_row)
-    
+
     return cofactor_matrix
+
 
 def adjugate(matrix):
     """
@@ -173,40 +174,42 @@ def adjugate(matrix):
     # Vérification du type
     if not isinstance(matrix, list):
         raise TypeError("matrix must be a list of lists")
-    
+
     # Vérification de liste vide
     if len(matrix) == 0:
         raise TypeError("matrix must be a list of lists")
-    
+
     # Vérification que tous les éléments sont des listes
     if not all(isinstance(row, list) for row in matrix):
         raise TypeError("matrix must be a list of lists")
-    
+
     # Vérification de matrice vide ou non carrée
     size = len(matrix)
     if size == 1 and len(matrix[0]) == 0:
         raise ValueError("matrix must be a non-empty square matrix")
-    
+
     for row in matrix:
         if len(row) != size:
             raise ValueError("matrix must be a non-empty square matrix")
-    
+
     # Cas particulier matrice 1x1
     if size == 1:
         return [[1]]
-    
+
     # Calcul de la matrice des cofacteurs
     cofactor_matrix = cofactor(matrix)
-    
+
     # Transposition de la matrice des cofacteurs pour obtenir l'adjointe
     adjugate_matrix = []
     for j in range(size):  # Parcourir les colonnes
         adjugate_row = []
         for i in range(size):  # Parcourir les lignes
-            adjugate_row.append(cofactor_matrix[i][j])  # Note: i et j sont inversés ici
+            adjugate_row.append(cofactor_matrix[i][j])
+            # Note: i et j sont inversés ici
         adjugate_matrix.append(adjugate_row)
-    
+
     return adjugate_matrix
+
 
 def inverse(matrix):
     """
@@ -225,24 +228,24 @@ def inverse(matrix):
     # Vérification du type
     if not isinstance(matrix, list):
         raise TypeError("matrix must be a list of lists")
-    
+
     # Vérification de liste vide
     if len(matrix) == 0:
         raise TypeError("matrix must be a list of lists")
-    
+
     # Vérification que tous les éléments sont des listes
     if not all(isinstance(row, list) for row in matrix):
         raise TypeError("matrix must be a list of lists")
-    
+
     # Vérification de matrice vide ou non carrée
     size = len(matrix)
     if size == 1 and len(matrix[0]) == 0:
         raise ValueError("matrix must be a non-empty square matrix")
-    
+
     for row in matrix:
         if len(row) != size:
             raise ValueError("matrix must be a non-empty square matrix")
-    
+
     # Cas particulier matrice 1x1
     if size == 1:
         if matrix[0][0] == 0:
