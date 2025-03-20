@@ -18,8 +18,9 @@ class Poisson:
         Initialise une instance de distribution de Poisson.
 
         Args:
-            data (list, optional): Liste de données pour estimer la distribution
-            lambtha (float, optional): Nombre moyen d'occurrences dans un intervalle
+            data (list, optional): Liste de données pour estimer
+            la distribution lambtha (float, optional): Nombre moyen
+            d'occurrences dans un intervalle
 
         Raises:
             ValueError: Si lambtha n'est pas une valeur positive
@@ -32,7 +33,8 @@ class Poisson:
                 raise ValueError("lambtha must be a positive value")
             self.lambtha = float(lambtha)
         else:
-            # Si des données sont fournies, calculer lambtha à partir des données
+            # Si des données sont fournies, calculer
+            # lambtha à partir des données
             if not isinstance(data, list):
                 raise TypeError("data must be a list")
             if len(data) < 2:
@@ -77,24 +79,24 @@ class Poisson:
         """
         Calcule la valeur de la fonction de distribution cumulative (CDF)
         pour un nombre donné de "succès".
-        
+
         Args:
             k: Le nombre de "succès" (événements)
-            
+
         Returns:
             La valeur CDF pour k
         """
         # Convertir k en entier s'il ne l'est pas déjà
         if not isinstance(k, int):
             k = int(k)
-        
+
         # Si k est négatif, retourner 0
         if k < 0:
             return 0
-        
+
         # Calculer la CDF comme la somme des PMF de 0 à k
         cdf_value = 0
         for i in range(k + 1):
             cdf_value += self.pmf(i)
-        
+
         return cdf_value
