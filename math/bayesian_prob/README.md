@@ -3,9 +3,9 @@
 <!-- STYLE D'EN-TÊTE : CLASSIQUE -->
 <div align="center">
 
-<img src="readmeai/assets/logos/purple.svg" width="30%" style="position: relative; top: 0; right: 0;" alt="Logo du Projet"/>
+<img src="https://s3.eu-west-3.amazonaws.com/hbtn.intranet/uploads/medias/2019/8/8358e1144bbb1fcc51b4.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA4MYA5JM5DUTZGMZG%2F20250325%2Feu-west-3%2Fs3%2Faws4_request&X-Amz-Date=20250325T093612Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature=3e3f77e799b49a8bac5f9fb71efe2e609f81589f42211345f58d34976cda7dc6" width="30%" style="position: relative; top: 0; right: 0;" alt="Logo du Projet"/>
 
-# <code>❯ REMPLACE-MOI</code>
+# <code> Bayesian Probability </code>
 
 <em>Débloquer des perspectives, amplifier l'incertitude</em>
 
@@ -33,7 +33,6 @@
 	- [Installation](#installation)
 	- [Utilisation](#utilisation)
 	- [Tests](#tests)
-- [Feuille de route](#feuille-de-route)
 - [Contribuer](#contribuer)
 
 ---
@@ -173,14 +172,6 @@ echo 'INSERT-TEST-COMMAND-HERE'
 
 ---
 
-## Feuille de route
-
-- [X] **`Task 1`**: <strike>Implémenter la première fonctionnalité.</strike>
-- [ ] **`Task 2`**: Implémenter la deuxième fonctionnalité.
-- [ ] **`Task 3`**: Implémenter la troisième fonctionnalité.
-
----
-
 ## Contribuer
 
 - **💬 [Rejoindre les discussions](https://LOCAL///discussions)** : Partagez vos idées, donnez votre avis ou posez vos questions.
@@ -221,4 +212,3 @@ echo 'INSERT-TEST-COMMAND-HERE'
 
 
 [back-to-top]: https://img.shields.io/badge/-BACK_TO_TOP-151515?style=flat-square
-
