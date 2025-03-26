@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
-"""Module pour calculer une matrice de corrélation à partir d'une matrice de covariance."""
+"""Module pour calculer une matrice de corrélation à
+partir d'une matrice de covariance."""
 
 import numpy as np
+
 
 def correlation(C):
     """

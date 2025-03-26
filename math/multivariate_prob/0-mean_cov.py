@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
-"""Module pour calculer la moyenne et la covariance d'un ensemble de données."""
+"""Module pour calculer la moyenne et la
+covariance d'un ensemble de données."""
 
 import numpy as np
+
 
 def mean_cov(X):
     """
