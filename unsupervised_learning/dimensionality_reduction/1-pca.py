@@ -5,6 +5,7 @@ Module de réduction de dimensionnalité par PCA avec SVD
 
 import numpy as np
 
+
 def pca(X, ndim):
     """
     Effectue une réduction PCA en spécifiant le nombre de dimensions
