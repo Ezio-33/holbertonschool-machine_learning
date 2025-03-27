@@ -1,31 +1,29 @@
 #!/usr/bin/env python3
 """
-PCA avec SVD pour réduction dimensionnelle
-Version validée avec les tests
+Module de réduction de dimensionnalité par PCA avec SVD
 """
 
 import numpy as np
 
-
 def pca(X, ndim):
     """
-    Réduction PCA via décomposition SVD
+    Effectue une réduction PCA en spécifiant le nombre de dimensions
 
     Args:
         X: Matrice de données (n_samples, n_features)
-        ndim: Nombre de dimensions cibles
+        ndim: Nombre de dimensions désiré en sortie
 
     Returns:
-        T: Matrice projetée (n_samples, ndim)
+        T: Matrice transformée (n_samples, ndim)
     """
     # Centrage des données
-    X_centered = X - np.mean(X, axis=0)
+    X_mean = np.mean(X, axis=0)
+    X_centered = X - X_mean
 
     # Décomposition SVD
     U, S, Vt = np.linalg.svd(X_centered, full_matrices=False)
 
-    # Ajustement de signe pour cohérence avec les tests
-    T = U[:, :ndim] * S[:ndim]
-    T *= -1  # Correction cruciale pour l'alignement des signes
+    # Sélection des composantes principales
+    T = np.dot(X_centered, Vt.T[:, :ndim])
 
     return T
