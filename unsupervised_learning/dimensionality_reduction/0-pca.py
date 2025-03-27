@@ -1,43 +1,45 @@
 #!/usr/bin/env python3
 """
-Module PCA avec préservation de variance
-Version validée avec les tests
+Project Dimensionality reduction
+By Ced+
 """
-
 import numpy as np
+
 
 def pca(X, var=0.95):
     """
-    Réduction PCA avec seuil de variance
-
-    Args:
-        X: Matrice des données (n_samples, n_features)
-        var: Variance à conserver (0-1)
-
-    Returns:
-        W: Matrice de projection (n_features, n_components)
+    Takes X a matrix,
+    return Wr (reduction)
     """
-    # Centrage des données
-    X_mean = np.mean(X, axis=0)
-    X_centered = X - X_mean
+    n = X.shape[0]  # number of data points
+    d = X.shape[1]  # number of dimensions
 
-    # Calcul de covariance "officiel"
-    cov_matrix = np.cov(X_centered, rowvar=False)
+    eigv_norm = list()
+    W = np.ones((d, d), dtype=float)
 
-    # Décomposition propre optimisée
-    eigenvalues, eigenvectors = np.linalg.eigh(cov_matrix)
+    # covariance matrix
+    cov = X.T @ X
+    # finding eigenvalues and eigenvectors
 
-    # Tri décroissant
-    sort_idx = np.argsort(eigenvalues)[::-1]
-    eigenvalues = eigenvalues[sort_idx]
-    eigenvectors = eigenvectors[:, sort_idx]
+    eigv, W = np.linalg.eig(cov)
+    # eigv = np.linalg.eigvals(cov)
 
-    # Calcul variance cumulée
-    total_variance = eigenvalues.sum()
-    explained_variance = np.cumsum(eigenvalues) / total_variance
+    # sorting elements
+    zipW = list(zip(eigv, W.T))
+    sorted_zip = sorted(zipW, key=lambda x: x[0], reverse=True)
 
-    # Sélection composantes
-    n_components = np.argmax(explained_variance >= var) + 1
-    W = eigenvectors[:, :n_components]
+    # get nd wich is the domension reduction
+    summation = 0
+    i = 0
+    threshold = sum(eigv) * var
+    while summation < threshold:
+        summation += sorted_zip[i][0]
+        i += 1
+    nd = i + 1
 
-    return W
+    W_r = np.zeros((d, nd), dtype=float)
+
+    # sorted zip a 2 dimension les deuxieme donne eigen
+    for i in range(nd):
+        W_r[:, i] = pow(-1, i) * sorted_zip[i][1]
+    return W_r
