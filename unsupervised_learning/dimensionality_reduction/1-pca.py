@@ -6,6 +6,7 @@ Version validée avec les tests
 
 import numpy as np
 
+
 def pca(X, ndim):
     """
     Réduction PCA via décomposition SVD
@@ -19,12 +20,12 @@ def pca(X, ndim):
     """
     # Centrage des données
     X_centered = X - np.mean(X, axis=0)
-    
+
     # Décomposition SVD
     U, S, Vt = np.linalg.svd(X_centered, full_matrices=False)
-    
+
     # Ajustement de signe pour cohérence avec les tests
     T = U[:, :ndim] * S[:ndim]
     T *= -1  # Correction cruciale pour l'alignement des signes
-    
+
     return T
