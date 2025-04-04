@@ -1,20 +1,21 @@
 #!/usr/bin/env python3
-"""Implémentation optimisée de K-means avec gestion des clusters vides"""
+"""Implémentation de l'algorithme K-means avec gestion des clusters vides"""
 
 import numpy as np
 initialize = __import__('0-initialize').initialize
 
 
 def kmeans(X, k, iterations=1000):
-    """Effectue le clustering K-means
+    """
+    Effectue le clustering K-measur les données fournies
 
     Args:
-        X (numpy.ndarray): Données de forme (n, d)
-        k (int): Nombre de clusters
-        iterations (int): Itérations maximales
+        X (numpy.ndarray): Jeu de données de forme (n, d)
+        k (int): Nombre de clusters souhaité
+        iterations (int): Nombre maximum d'itérations
 
     Returns:
-        tuple: (centroïdes, affectations)
+        tuple: (centroïdes finaux, affectations des points)
     """
 
     # Validation des entrées
@@ -22,34 +23,51 @@ def kmeans(X, k, iterations=1000):
         return None, None
     if not isinstance(k, int) or k <= 0 or k >= X.shape[0]:
         return None, None
-
-    n, d = X.shape
-
-    # Initialisation des centroïdes
-    centroids = initialize(X, k)
-    if centroids is None:
+    if not isinstance(iterations, int) or iterations < 1:
         return None, None
 
-    # Copie pour convergence
-    centroids_prev = np.zeros_like(centroids)
+    n, d = X.shape  # Récupère le nombre de points (n) et dimensions (d)
 
+    # Initialisation des centroïdes avec la fonction de la tâche 0
+    centroids = initialize(X, k)
+    if centroids is None:  # Vérification de l'initialisation
+        return None, None
+
+    # Copie des centroïdes pour détection de convergence
+    previous_centroids = np.zeros_like(centroids)
+
+    # Boucle principale d'optimisation
     for _ in range(iterations):
-        # Calcul des distances (vectorisé)
+        # Étape 1 : Calcul des distances entre points et centroïdes (vectorisé)
         distances = np.linalg.norm(X[:, np.newaxis] - centroids, axis=2)
-        clss = np.argmin(distances, axis=1)
 
-        # Mise à jour des centroïdes
-        centroids_prev = np.copy(centroids)
-        for i in range(k):
-            cluster_points = X[clss == i]
+        # Attribution des points au cluster le plus proche
+        clusters = np.argmin(distances, axis=1)
 
-            if cluster_points.size == 0:  # Cluster vide
-                centroids[i] = initialize(X, 1)[0]
+        # Sauvegarde des anciens centroïdes pour comparaison
+        previous_centroids[:] = centroids  # Utilisation de slice pour copie
+
+        # Étape 2 : Mise à jour des centroïdes
+        for cluster_idx in range(k):
+            # Points appartenant au cluster courant
+            cluster_points = X[clusters == cluster_idx]
+
+            if cluster_points.size == 0:  # Cas du cluster vide
+                # Réinitialisation avec la méthode de la tâche 0
+                new_centroid = initialize(X, 1)
+                if new_centroid is not None:
+                    centroids[cluster_idx] = new_centroid[0]
             else:
-                centroids[i] = cluster_points.mean(axis=0)
+                # Calcul du nouveau centroïde comme moyenne des points
+                centroids[cluster_idx] = cluster_points.mean(axis=0)
 
-        # Vérification de convergence
-        if np.allclose(centroids, centroids_prev, atol=1e-5):
+        # Vérification de la convergence (amélioration avec tolérance
+        # numérique)
+        if np.allclose(centroids, previous_centroids, atol=1e-5, rtol=0):
             break
 
-    return centroids, clss
+    # Dernière attribution des clusters après convergence
+    final_distances = np.linalg.norm(X[:, np.newaxis] - centroids, axis=2)
+    final_clusters = np.argmin(final_distances, axis=1)
+
+    return centroids, final_clusters
