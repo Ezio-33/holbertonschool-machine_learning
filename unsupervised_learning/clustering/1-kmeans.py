@@ -4,58 +4,41 @@
 import numpy as np
 initialize = __import__('0-initialize').initialize
 
-
 def kmeans(X, k, iterations=1000):
-    """Effectue le clustering K-means en respectant les contraintes
-
-    Args:
-        X (numpy.ndarray): Données de forme (n, d)
-        k (int): Nombre de clusters
-        iterations (int): Itérations maximum
-
-    Returns:
-        tuple: (Centroïdes, Affectations)
-    """
-
+    """Algorithme K-means avec initialisation robuste et
+    gestion de convergence"""
+    
     # Validation des entrées
     if not isinstance(X, np.ndarray) or len(X.shape) != 2:
         return None, None
     n, d = X.shape
-
     if not isinstance(k, int) or k <= 0 or k >= n:
         return None, None
-
+    
     # Initialisation des centroïdes
     centroids = initialize(X, k)
     if centroids is None:
         return None, None
-
-    prev_centroids = np.copy(centroids)
-
+    
+    prev_centroids = np.zeros_like(centroids)
+    
     for _ in range(iterations):
-        # Calcul des distances (vectorisé)
+        # Calcul des distances vectorisées
         distances = np.linalg.norm(X[:, np.newaxis] - centroids, axis=2)
-        labels = np.argmin(distances, axis=1)
-
+        clss = np.argmin(distances, axis=1)
+        
         # Mise à jour des centroïdes
-        new_centroids = np.zeros_like(centroids)
         for i in range(k):
-            cluster_points = X[labels == i]
-
-            if cluster_points.size == 0:  # Cluster vide
-                # Réutilisation de la fonction d'initialisation
-                new_centroids[i] = initialize(X, 1)[0]
+            mask = clss == i
+            if not np.any(mask):
+                # Réinitialisation selon la même méthode que initialize()
+                centroids[i] = initialize(X, 1)
             else:
-                new_centroids[i] = cluster_points.mean(axis=0)
-
+                centroids[i] = X[mask].mean(axis=0)
+                
         # Vérification de convergence
-        if np.allclose(centroids, new_centroids):
+        if np.allclose(centroids, prev_centroids, atol=1e-6):
             break
-
-        centroids = np.copy(new_centroids)
-
-    # Dernière assignation
-    distances = np.linalg.norm(X[:, np.newaxis] - centroids, axis=2)
-    labels = np.argmin(distances, axis=1)
-
-    return centroids, labels
+        prev_centroids = np.copy(centroids)
+    
+    return centroids, clss
