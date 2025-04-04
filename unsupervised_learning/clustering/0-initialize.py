@@ -3,13 +3,14 @@
 
 import numpy as np
 
+
 def initialize(X, k):
     """Initialise les centroïdes selon une distribution uniforme multivariée
-    
+
     Args:
         X : ndarray de forme (n, d)
         k : nombre de clusters
-        
+
     Returns:
         ndarray de forme (k, d)
     """
@@ -21,5 +22,5 @@ def initialize(X, k):
     n, d = X.shape
     mins = np.min(X, axis=0)
     maxs = np.max(X, axis=0)
-    
+
     return np.random.uniform(low=mins, high=maxs, size=(k, d))
