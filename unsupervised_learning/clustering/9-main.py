@@ -42,11 +42,6 @@ def BIC(X, kmin=1, kmax=None, iterations=1000, tol=1e-5, verbose=False):
     # Initialisation des listes pour stocker les BIC et les log-vraisemblances
     b = []
     likelihoods = []
-    
-    # Initialisation des variables pour suivre le meilleur modèle
-    best_bic = float('inf')  # Initialiser avec l'infini
-    best_k = None
-    best_results = None
 
     # Boucle sur les différentes valeurs de k
     for k in range(kmin, kmax + 1):

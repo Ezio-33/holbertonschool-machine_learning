@@ -1,27 +1,29 @@
 #!/usr/bin/env python3
-"""Implémentation de Gaussian Mixture Model avec Scikit-Learn"""
+"""11-gmm.py: Calcule un modèle GMM sur un dataset X avec k composantes."""
 
-import sklearn.cluster  # Importation du module clustering de scikit-learn
+import sklearn.mixture as mix
 
 
-def kmeans(X, k):
+def gmm(X, k):
     """
-    Applique KMeans sur les données X pour k clusters.
+    Calcule le modèle Gaussien à mélanges (GMM) sur X.
 
     Paramètres:
-        X -- données d'entrée (matrice ou array)
-        k -- nombre de clusters à trouver
+      X (array-like): Données pour entraînement.
+      k (int): Nombre de composantes du modèle.
 
     Retourne:
-        C     -- centres des clusters
-        clss  -- étiquettes attribuées à chaque point
+      tuple: Poids, moyennes, covariances, prédictions, bic.
     """
-    # Applique l'algorithme KMeans avec k clusters sur X
-    kmean = sklearn.cluster.KMeans(n_clusters=k).fit(X)
-    # Centre de chaque cluster calculé par l'algorithme
-    C = kmean.cluster_centers_
-    # Label attribué à chaque échantillon en fonction du cluster
-    clss = kmean.labels_
+    # Crée et entraîne le modèle GMM avec k composants
+    model = mix.GaussianMixture(n_components=k).fit(X)
 
-    # Retourne les centres de clusters et les labels correspondants
-    return C, clss
+    # Retourne les paramètres du modèle entraîné:
+    # - Poids de chaque composante
+    # - Moyennes de chaque composante
+    # - Covariances de chaque composante
+    # - Prédictions pour X
+    # - Critère Bayesian Information (BIC)
+    return (model.weights_, model.means_,
+            model.covariances_, model.predict(X),
+            model.bic(X))
