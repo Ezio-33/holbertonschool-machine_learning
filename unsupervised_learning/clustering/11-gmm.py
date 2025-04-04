@@ -1,34 +1,27 @@
 #!/usr/bin/env python3
 """Implémentation de Gaussian Mixture Model avec Scikit-Learn"""
 
-import numpy as np
-import sklearn.mixture
+import sklearn.cluster  # Importation du module clustering de scikit-learn
 
 
-def gmm(X, k):
-    """Entraîne un modèle GMM et retourne ses paramètres
-
-    Args:
-        X (numpy.ndarray): Données de forme (n, d)
-        k (int): Nombre de clusters
-
-    Returns:
-        tuple: (pi, m, S, clss, bic)
-            - pi: Poids des clusters (k,)
-            - m: Moyennes des clusters (k, d)
-            - S: Covariances des clusters (k, d, d)
-            - clss: Affectations des points (n,)
-            - bic: Valeur BIC du modèle
+def kmeans(X, k):
     """
-    # Création et entraînement du modèle
-    model = sklearn.mixture.GaussianMixture(n_components=k)
-    model.fit(X)
+    Applique KMeans sur les données X pour k clusters.
 
-    # Extraction des paramètres
-    pi = model.weights_
-    m = model.means_
-    S = model.covariances_
-    clss = model.predict(X)
-    bic = model.bic(X)
+    Paramètres:
+        X -- données d'entrée (matrice ou array)
+        k -- nombre de clusters à trouver
 
-    return pi, m, S, clss, bic
+    Retourne:
+        C     -- centres des clusters
+        clss  -- étiquettes attribuées à chaque point
+    """
+    # Applique l'algorithme KMeans avec k clusters sur X
+    kmean = sklearn.cluster.KMeans(n_clusters=k).fit(X)
+    # Centre de chaque cluster calculé par l'algorithme
+    C = kmean.cluster_centers_
+    # Label attribué à chaque échantillon en fonction du cluster
+    clss = kmean.labels_
+
+    # Retourne les centres de clusters et les labels correspondants
+    return C, clss

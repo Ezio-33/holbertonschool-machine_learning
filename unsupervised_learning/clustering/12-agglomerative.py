@@ -7,32 +7,24 @@ import matplotlib.pyplot as plt
 
 def agglomerative(X, dist):
     """
-    Effectue un clustering hiérarchique avec seuillage de distance
+    Applique l'algorithme d'agglomération sur les données X.
 
-    Args:
-        X: ndarray (n, d) - Données à clusteriser
-        dist: float - Distance cophénétique maximale
+    Paramètres:
+    X: array-like, données à regrouper.
+    dist: float, seuil de distance pour le dendrogramme.
 
-    Returns:
-        ndarray: (n,) - Indices des clusters
+    Retourne:
+    clss: array, étiquettes des clusters trouvés.
     """
-    # Calcul de la matrice de linkage
+    # Calcul de la matrice de linkage avec la méthode de Ward
     Z = scipy.cluster.hierarchy.linkage(X, method='ward')
 
-    # Création du dendrogramme avec coloration
-    dn = scipy.cluster.hierarchy.dendrogram(
-        Z,
-        color_threshold=dist,
-        above_threshold_color='grey',
-        no_labels=True
-    )
+    # Création du dendrogramme utilisant le seuil pour les couleurs
+    scipy.cluster.hierarchy.dendrogram(Z, color_threshold=dist)
 
-    # Découpage des clusters selon la distance
-    clss = scipy.cluster.hierarchy.fcluster(Z, t=dist, criterion='distance')
-
-    plt.title('Dendrogramme Ward')
-    plt.xlabel('Points de données')
-    plt.ylabel('Distance')
+    # Affichage du dendrogramme
     plt.show()
 
+    # Attribution des clusters selon la hauteur 'dist'
+    clss = scipy.cluster.hierarchy.fcluster(Z, dist, criterion='distance')
     return clss

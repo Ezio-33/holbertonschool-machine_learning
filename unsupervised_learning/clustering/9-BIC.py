@@ -2,65 +2,51 @@
 """Détermine le meilleur nombre de clusters avec le BIC"""
 
 import numpy as np
+# Importation de la fonction EM depuis le module '8-EM'
 expectation_maximization = __import__('8-EM').expectation_maximization
 
 
 def BIC(X, kmin=1, kmax=None, iterations=1000, tol=1e-5, verbose=False):
-    """Calcule le BIC pour différentes valeurs de k et
-    sélectionne la meilleure"""
+    """
+    Calcule le BIC pour différents nombres de clusters et retourne le meilleur.
 
-    # Validation des entrées
-    if not isinstance(X, np.ndarray) or len(X.shape) != 2:
-        return None, None, None, None
+    Paramètres:
+    - X: np.ndarray, les données.
+    - kmin: int, nombre minimal de clusters.
+    - kmax: int, nombre maximal de clusters.
+    - iterations: int, nombre maximum d'itérations pour EM.
+    - tol: float, tolérance pour la convergence.
+    - verbose: bool, affichage d'informations supplémentaires.
+
+    Retourne:
+    - best_k: int, meilleur nombre de clusters choisi.
+    - best_result: tuple, contient pi, m, S du meilleur EM.
+    - l: float, log-vraisemblance finale.
+    - b: np.ndarray, valeurs de BIC pour chaque k.
+    """
+    # Récupération des dimensions des données
     n, d = X.shape
-
-    if kmax is None:
-        kmax = X.shape[0] - 1
-    if kmin < 1 or kmax < kmin or kmax >= X.shape[0]:
-        return None, None, None, None
-
-    log_likelihoods = []
-    bic_values = []
-    results = []
-
-    np.random.seed(11)  # Seed globale
-
+    # Initialisation d'un tableau pour log-vraisemblance
+    l_arr = np.zeros(kmax - kmin + 1)
+    # Initialisation d'un tableau pour le BIC
+    b = np.zeros(kmax - kmin + 1)
+    # Boucle sur les différentes valeurs de k
     for k in range(kmin, kmax + 1):
-        # Reset seed pour chaque k pour reproductibilité
-        np.random.seed(11)
-
-        # Calcul EM
-        pi, m, S, _, l = expectation_maximization(
-            X, k, iterations=iterations, tol=tol, verbose=False
-        )
-
-        if pi is None:
-            continue
-
-        # Calcul des paramètres
-        params_pi = k - 1
-        params_m = k * d
-        params_S = k * d * (d + 1) // 2
-        p = params_pi + params_m + params_S
-
-        # Calcul BIC
-        bic = p * np.log(n) - 2 * l
-
-        # Stockage sans arrondi
-        log_likelihoods.append(l)
-        bic_values.append(bic)
-        results.append((pi, m, S))
-
-    if not bic_values:
-        return None, None, None, None
-
-    # Sélection du meilleur BIC
-    best_idx = np.argmin(bic_values)
-    best_k = kmin + best_idx
-    best_result = results[best_idx]
-
-    # Conversion en arrays numpy
-    log_likelihoods = np.array(log_likelihoods)
-    bic_values = np.array(bic_values)
-
-    return (best_k, best_result, log_likelihoods, bic_values)
+        print("K", k)
+        # Calcul de EM pour k clusters
+        pi, m, S, g, l = expectation_maximization(
+            X, k, iterations, tol, verbose=False)
+        # Calcul du BIC pour k clusters
+        b[k - kmin] = k * np.log(n) - (2 * l)
+        # Sauvegarde de la log-vraisemblance dans le tableau
+        l_arr[k - kmin] = l
+    # Sélection du meilleur k selon le maximum du BIC
+    best_k = np.argmax(b) + kmin
+    # Stockage de l'indice de la meilleure log-vraisemblance
+    best_l = np.argmax(l_arr)
+    print("best k", best_k)
+    # Sélection des résultats correspondant au meilleur EM
+    best_result = pi, m, S
+    print("best result", best_result)
+    # Renvoi du meilleur k et des résultats associés
+    return best_k, best_result, l, b
