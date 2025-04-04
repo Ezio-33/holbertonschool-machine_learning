@@ -8,6 +8,7 @@ initialize = __import__('4-initialize').initialize
 expectation = __import__('6-expectation').expectation
 maximization = __import__('7-maximization').maximization
 
+
 def expectation_maximization(X, k, iterations=1000, tol=1e-5, verbose=False):
     """
     Réalise l'algorithme d'Expectation-Maximization.
@@ -60,7 +61,8 @@ def expectation_maximization(X, k, iterations=1000, tol=1e-5, verbose=False):
 
     # Boucle principale pour l'algorithme EM
     for i in range(iterations):
-        # Etape d'espérance (E-step) pour calculer les responsabilités et la log vraisemblance
+        # Etape d'espérance (E-step) pour calculer les responsabilités et la
+        # log vraisemblance
         g, prev_L = expectation(X, pi, m, S)
 
         # Affichage optionnel de la log vraisemblance tous les 10 itérations
@@ -73,7 +75,8 @@ def expectation_maximization(X, k, iterations=1000, tol=1e-5, verbose=False):
         # Calcul de la log vraisemblance après la maximisation
         g, L = expectation(X, pi, m, S)
 
-        # Vérification de convergence : si la différence entre deux itérations est inférieure à tol, on arrête
+        # Vérification de convergence : si la différence entre deux itérations
+        # est inférieure à tol, on arrête
         if abs(L - prev_L) <= tol:
             break
 
@@ -81,5 +84,6 @@ def expectation_maximization(X, k, iterations=1000, tol=1e-5, verbose=False):
     if verbose:
         print(f"Log Likelihood after {i + 1} iterations: {round(L, 5)}")
 
-    # Retourne les paramètres finaux, les responsabilités et la log vraisemblance finale
+    # Retourne les paramètres finaux, les responsabilités et la log
+    # vraisemblance finale
     return pi, m, S, g, L
