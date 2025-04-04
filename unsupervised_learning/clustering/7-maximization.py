@@ -11,7 +11,7 @@ def maximization(X, g):
     n points et d caractéristiques.
     g : matrice des responsabilités, de forme (k, n) où k est
     le nombre de clusters.
-    Retourn:
+    Retourne:
       pi : les poids de chaque cluster, de forme (k,)
       m  : les moyennes de chaque cluster, de forme (k, d)
       S  : les matrices de covariance de chaque cluster, de forme (k, d, d)
@@ -30,6 +30,10 @@ def maximization(X, g):
     if g.shape[1] != X.shape[0]:
         return None, None, None
 
+    # Vérifie que la somme des responsabilités de chaque point est (environ) 1
+    if not np.allclose(np.sum(g, axis=0), 1):
+        return None, None, None
+
     n, d = X.shape      # n : nombre d'échantillons, d : dimensions des données
     k = g.shape[0]      # k : nombre de clusters
 
@@ -40,17 +44,9 @@ def maximization(X, g):
 
     # Mise à jour des paramètres pour chaque cluster
     for i in range(k):
-        # Mise à jour de la proportion du cluster i
         pi[i] = 1 / n * np.sum(g[i], axis=0)
-
-        # Calcul des moyennes pour tous les clusters
-        # Cette ligne est exécutée à chaque itération mais calcule les moyennes
-        # pour tous les clusters.
         m = np.sum(g[:, :, np.newaxis] * X, axis=1) / \
             np.sum(g, axis=1)[:, np.newaxis]
-
-        # Mise à jour de la matrice de covariance pour le cluster i
         S[i] = (g[i] * (X - m[i]).T @ (X - m[i])) / np.sum(g[i], axis=0)
 
-    # Retourne les nouveaux paramètres estimés du modèle
     return pi, m, S
