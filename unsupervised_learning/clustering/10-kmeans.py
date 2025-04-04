@@ -1,27 +1,39 @@
 #!/usr/bin/env python3
-"""Implémentation de K-means avec Scikit-Learn"""
+"""Implémentation de K-means avec Scikit-Learn
 
-import numpy as np
-from sklearn.cluster import KMeans
+Cette fonction calcule les clusters d'un ensemble de données X 
+en utilisant l'algorithme K-means. 
+Elle renvoie les centres des clusters et les labels des données.
+"""
+
+import sklearn.cluster  # Importation du module de clustering de Scikit-Learn
 
 
 def kmeans(X, k):
-    """Effectue un clustering K-means avec Scikit-Learn
-
-    Args:
-        X (numpy.ndarray): Données de forme (n, d)
-        k (int): Nombre de clusters
-
-    Returns:
-        tuple: (C, clss)
-            - C : centroïdes des clusters (k, d)
-            - clss : indices des clusters pour chaque point (n,)
     """
-    # Création du modèle K-means avec configuration de base
-    kmeans_model = KMeans(n_clusters=k, n_init=10)
-
-    # Entraînement du modèle sur les données
-    kmeans_model.fit(X)
-
-    # Récupération des résultats
-    return kmeans_model.cluster_centers_, kmeans_model.labels_
+    Réalise le clustering de type K-means sur l'ensemble de données X.
+    
+    Paramètres:
+        X (array-like): Les données d'entrée à clusteriser.
+        k (int): Le nombre de clusters à former.
+    
+    Retourne:
+        tuple: Un tuple contenant:
+            - C (array-like): Les centres des clusters.
+            - clss (array-like): Les labels indiquant à
+            quel cluster chaque donnée appartient.
+    """
+    # Création d'un modèle KMeans avec k clusters
+    model = sklearn.cluster.KMeans(n_clusters=k)
+    
+    # Entraînement du modèle sur les données X
+    model.fit(X)
+    
+    # Récupération des centres des clusters
+    C = model.cluster_centers_
+    
+    # Attribution des labels à chaque point dans X
+    clss = model.labels_
+    
+    # Retourner les centres des clusters et les labels correspondants
+    return C, clss

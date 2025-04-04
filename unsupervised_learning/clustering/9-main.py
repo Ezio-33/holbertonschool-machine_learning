@@ -1,31 +1,83 @@
 #!/usr/bin/env python3
+"""Détermine le meilleur nombre de clusters avec le BIC"""
 
-import matplotlib.pyplot as plt
 import numpy as np
-BIC = __import__('9-BIC').BIC
+expectation_maximization = __import__('8-EM').expectation_maximization
 
-if __name__ == '__main__':
-    np.random.seed(11)
-    a = np.random.multivariate_normal([30, 40], [[75, 5], [5, 75]], size=10000)
-    b = np.random.multivariate_normal([5, 25], [[16, 10], [10, 16]], size=750)
-    c = np.random.multivariate_normal([60, 30], [[16, 0], [0, 16]], size=750)
-    d = np.random.multivariate_normal(
-        [20, 70], [[35, 10], [10, 35]], size=1000)
-    X = np.concatenate((a, b, c, d), axis=0)
-    np.random.shuffle(X)
-    best_k, best_result, l, b = BIC(X, kmin=1, kmax=10)
-    print(best_k)
-    print(best_result)
-    print(l)
-    print(b)
-    x = np.arange(1, 11)
-    plt.plot(x, l, 'r')
-    plt.xlabel('Clusters')
-    plt.ylabel('Log Likelihood')
-    plt.tight_layout()
-    plt.show()
-    plt.plot(x, b, 'b')
-    plt.xlabel('Clusters')
-    plt.ylabel('BIC')
-    plt.tight_layout()
-    plt.show()
+
+def BIC(X, kmin=1, kmax=None, iterations=1000, tol=1e-5, verbose=False):
+    """Calcule le BIC pour différents nombres de
+    clusters et retourne le meilleur."""
+
+    # Vérification des types et dimensions de X
+    if not isinstance(X, np.ndarray) or X.ndim != 2:
+        return None, None, None, None
+
+    n, d = X.shape
+
+    # Vérification de kmin
+    if not isinstance(kmin, int) or kmin <= 0 or kmin >= n:
+        return None, None, None, None
+
+    # Initialisation de kmax si non fourni
+    if kmax is None:
+        kmax = n
+
+    # Vérification de kmax
+    if not isinstance(kmax, int) or kmax <= 0 or kmax < kmin or kmax > n:
+        return None, None, None, None
+
+    # Vérification que le nombre de valeurs de k est suffisant
+    if kmax - kmin + 1 < 2:
+        return None, None, None, None
+
+    # Vérification des autres paramètres
+    if not isinstance(iterations, int) or iterations <= 0:
+        return None, None, None, None
+    if not isinstance(tol, float) or tol < 0:
+        return None, None, None, None
+    if not isinstance(verbose, bool):
+        return None, None, None, None
+
+    # Initialisation des listes pour stocker les BIC et les log-vraisemblances
+    b = []
+    likelihoods = []
+    
+    # Initialisation des variables pour suivre le meilleur modèle
+    best_bic = float('inf')  # Initialiser avec l'infini
+    best_k = None
+    best_results = None
+
+    # Boucle sur les différentes valeurs de k
+    for k in range(kmin, kmax + 1):
+        # Calcul de EM pour k clusters
+        pi, m, S, g, li = expectation_maximization(
+            X, k, iterations, tol, verbose
+        )
+
+        # Vérification que l'EM a réussi
+        if pi is None or m is None or S is None or g is None:
+            return None, None, None, None
+
+        # Calcul du nombre de paramètres pour le modèle
+        p = (k * d) + (k * d * (d + 1) // 2) + (k - 1)
+
+        # Calcul du BIC pour k clusters
+        bic = p * np.log(n) - 2 * li
+
+        # Stockage des log-vraisemblances et des BIC
+        likelihoods.append(li)
+        b.append(bic)
+
+        # Sélection du meilleur modèle en fonction du BIC
+        if k == kmin or bic < best_bic:
+            best_bic = bic
+            best_results = (pi, m, S)
+            best_k = k
+
+    # Conversion des listes en tableaux numpy
+    likelihoods = np.array(likelihoods)
+    b = np.array(b)
+
+    # Retourne le meilleur k et les résultats associés
+    return best_k, best_results, likelihoods, b
