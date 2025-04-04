@@ -14,8 +14,8 @@ def expectation_maximization(X, k, iterations=1000, tol=1e-5, verbose=False):
 
     Paramètres:
         X : np.ndarray
-            Tableau de données de forme (n, d) où n est le nombre
-            d'exemples et d est la dimension.
+            Tableau de données de forme (n, d) où n est le nombre d'exemples et
+            d est la dimension.
         k : int
             Nombre de mélanges (clusters).
         iterations : int, facultatif
@@ -24,8 +24,8 @@ def expectation_maximization(X, k, iterations=1000, tol=1e-5, verbose=False):
             Tolérance pour la convergence de la log vraisemblance.
             Par défaut à 1e-5.
         verbose : bool, facultatif
-            Si True, affiche la log vraisemblance tous les 10
-            itérations. Par défaut à False.
+            Si True, affiche la log vraisemblance tous les 10 itérations.
+            Par défaut à False.
 
     Retourne:
         pi : np.ndarray
@@ -58,31 +58,28 @@ def expectation_maximization(X, k, iterations=1000, tol=1e-5, verbose=False):
     # Initialisation des paramètres (pi, moyennes et covariances)
     pi, m, S = initialize(X, k)
 
-    # Calcul initial de la log vraisemblance
-    g, prev_L = expectation(X, pi, m, S)
-    if verbose:
-        print(f"Log Likelihood after 0 iterations: {prev_L:.5f}")
-
     # Boucle principale pour l'algorithme EM
-    for i in range(1, iterations + 1):
+    for i in range(iterations):
         # Etape d'espérance (E-step) pour calculer les responsabilités et la log vraisemblance
-        g, L = expectation(X, pi, m, S)
+        g, prev_L = expectation(X, pi, m, S)
 
-        # Affichage optionnel de la log vraisemblance tous les 10 itérations ou à la dernière itération
-        if verbose and (i % 10 == 0 or i == iterations):
-            print(f"Log Likelihood after {i} iterations: {L:.5f}")
-
-        # Vérification de convergence : si la différence entre deux itérations est inférieure à tol, on arrête
-        if abs(L - prev_L) <= tol:
-            if verbose:
-                print(f"Log Likelihood after {i} iterations: {L:.5f}")
-            break
-
-        # Mise à jour de la log vraisemblance précédente
-        prev_L = L
+        # Affichage optionnel de la log vraisemblance tous les 10 itérations
+        if verbose and i % 10 == 0:
+            print(f"Log Likelihood after {i} iterations: {round(prev_L, 5)}")
 
         # Etape de maximisation (M-step) pour mettre à jour les paramètres
         pi, m, S = maximization(X, g)
+
+        # Calcul de la log vraisemblance après la maximisation
+        g, L = expectation(X, pi, m, S)
+
+        # Vérification de convergence : si la différence entre deux itérations est inférieure à tol, on arrête
+        if abs(L - prev_L) <= tol:
+            break
+
+    # Affichage final de la log vraisemblance si verbose est True
+    if verbose:
+        print(f"Log Likelihood after {i + 1} iterations: {round(L, 5)}")
 
     # Retourne les paramètres finaux, les responsabilités et la log vraisemblance finale
     return pi, m, S, g, L
