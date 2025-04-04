@@ -1,30 +1,15 @@
 #!/usr/bin/env python3
-"""Clustering hiérarchique avec méthode de Ward et dendrogramme"""
+"""12-agglomerative"""
 
-import scipy.cluster.hierarchy
-import matplotlib.pyplot as plt
-
+import scipy.cluster.hierarchy as sch  # Import hierarchie de clusters
+import matplotlib.pyplot as plt  # Import matplotlib pour affichage graphique
 
 def agglomerative(X, dist):
-    """
-    Applique l'algorithme d'agglomération sur les données X.
-
-    Paramètres:
-    X: array-like, données à regrouper.
-    dist: float, seuil de distance pour le dendrogramme.
-
-    Retourne:
-    clss: array, étiquettes des clusters trouvés.
-    """
-    # Calcul de la matrice de linkage avec la méthode de Ward
-    Z = scipy.cluster.hierarchy.linkage(X, method='ward')
-
-    # Création du dendrogramme utilisant le seuil pour les couleurs
-    scipy.cluster.hierarchy.dendrogram(Z, color_threshold=dist)
-
-    # Affichage du dendrogramme
+    # Calcule la matrice de liaison avec la méthode Ward
+    linkage_matrix = sch.linkage(X, method="ward")
+    # Trace le dendrogramme avec le seuil de couleur donné
+    sch.dendrogram(linkage_matrix, color_threshold=dist)
+    # Affiche le dendrogramme
     plt.show()
-
-    # Attribution des clusters selon la hauteur 'dist'
-    clss = scipy.cluster.hierarchy.fcluster(Z, dist, criterion='distance')
-    return clss
+    # Retourne les clusters selon la distance seuil donnée
+    return sch.fcluster(linkage_matrix, t=dist, criterion="distance")
