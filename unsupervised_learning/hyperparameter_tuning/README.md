@@ -5,6 +5,7 @@ Ce projet explore les techniques avancées de réglage d'hyperparamètres en uti
 ## Description
 
 Implémentation depuis zéro de :
+
 - Processus gaussiens 1D sans bruit
 - Optimisation bayésienne avec fonction d'acquisition Expected Improvement
 - Application pratique avec GPyOpt
@@ -20,4 +21,5 @@ Implémentation depuis zéro de :
 - `6-bayes_opt.py` : Application pratique avec GPyOpt
 
 ## Auteur
-[Votre nom]
+
+Samuel VERSCHUEREN
