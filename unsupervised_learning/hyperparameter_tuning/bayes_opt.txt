@@ -1,0 +1,275 @@
+Rapport d'Optimisation Bayésienne
+================================
+Meilleur taux d'apprentissage : 0.0007
+Meilleur nombre de filtres : 32
+Meilleur nombre d'unités denses : 64
+Meilleur taux de dropout : 0.27
+Meilleur poids de régularisation L2 : 0.0000
+Meilleure perte de validation : 0.1572
+
+Historique des Itérations:
+==========================
+Iteration 1:
+  Taux d'apprentissage : 0.0060
+  Nombre de filtres : 16
+  Nombre d'unités denses : 64
+  Taux de dropout : 0.11
+  Poids de régularisation L2 : 0.0007
+  Perte de validation : 0.3509
+--------------------------
+Iteration 2:
+  Taux d'apprentissage : 0.0016
+  Nombre de filtres : 32
+  Nombre d'unités denses : 64
+  Taux de dropout : 0.27
+  Poids de régularisation L2 : 0.0000
+  Perte de validation : 0.1685
+--------------------------
+Iteration 3:
+  Taux d'apprentissage : 0.0016
+  Nombre de filtres : 16
+  Nombre d'unités denses : 128
+  Taux de dropout : 0.22
+  Poids de régularisation L2 : 0.0010
+  Perte de validation : 0.2643
+--------------------------
+Iteration 4:
+  Taux d'apprentissage : 0.0100
+  Nombre de filtres : 32
+  Nombre d'unités denses : 64
+  Taux de dropout : 0.10
+  Poids de régularisation L2 : 0.0010
+  Perte de validation : 0.3956
+--------------------------
+Iteration 5:
+  Taux d'apprentissage : 0.0032
+  Nombre de filtres : 32
+  Nombre d'unités denses : 64
+  Taux de dropout : 0.28
+  Poids de régularisation L2 : 0.0003
+  Perte de validation : 0.2533
+--------------------------
+Iteration 6:
+  Taux d'apprentissage : 0.0007
+  Nombre de filtres : 32
+  Nombre d'unités denses : 64
+  Taux de dropout : 0.27
+  Poids de régularisation L2 : 0.0000
+  Perte de validation : 0.1572
+--------------------------
+Iteration 7:
+  Taux d'apprentissage : 0.0100
+  Nombre de filtres : 32
+  Nombre d'unités denses : 64
+  Taux de dropout : 0.27
+  Poids de régularisation L2 : 0.0000
+  Perte de validation : 0.2087
+--------------------------
+Iteration 8:
+  Taux d'apprentissage : 0.0000
+  Nombre de filtres : 32
+  Nombre d'unités denses : 64
+  Taux de dropout : 0.25
+  Poids de régularisation L2 : 0.0010
+  Perte de validation : 1.0345
+--------------------------
+Iteration 9:
+  Taux d'apprentissage : 0.0061
+  Nombre de filtres : 16
+  Nombre d'unités denses : 128
+  Taux de dropout : 0.20
+  Poids de régularisation L2 : 0.0001
+  Perte de validation : 0.2447
+--------------------------
+Iteration 10:
+  Taux d'apprentissage : 0.0000
+  Nombre de filtres : 16
+  Nombre d'unités denses : 128
+  Taux de dropout : 0.19
+  Poids de régularisation L2 : 0.0010
+  Perte de validation : 1.0547
+--------------------------
+Iteration 11:
+  Taux d'apprentissage : 0.0100
+  Nombre de filtres : 16
+  Nombre d'unités denses : 128
+  Taux de dropout : 0.21
+  Poids de régularisation L2 : 0.0000
+  Perte de validation : 0.2154
+--------------------------
+Iteration 12:
+  Taux d'apprentissage : 0.0100
+  Nombre de filtres : 16
+  Nombre d'unités denses : 128
+  Taux de dropout : 0.24
+  Poids de régularisation L2 : 0.0000
+  Perte de validation : 0.2180
+--------------------------
+Iteration 13:
+  Taux d'apprentissage : 0.0000
+  Nombre de filtres : 16
+  Nombre d'unités denses : 128
+  Taux de dropout : 0.25
+  Poids de régularisation L2 : 0.0010
+  Perte de validation : 1.0647
+--------------------------
+Iteration 14:
+  Taux d'apprentissage : 0.0100
+  Nombre de filtres : 16
+  Nombre d'unités denses : 128
+  Taux de dropout : 0.23
+  Poids de régularisation L2 : 0.0000
+  Perte de validation : 0.1902
+--------------------------
+Iteration 15:
+  Taux d'apprentissage : 0.0100
+  Nombre de filtres : 32
+  Nombre d'unités denses : 64
+  Taux de dropout : 0.27
+  Poids de régularisation L2 : 0.0010
+  Perte de validation : 0.4281
+--------------------------
+Iteration 16:
+  Taux d'apprentissage : 0.0000
+  Nombre de filtres : 32
+  Nombre d'unités denses : 64
+  Taux de dropout : 0.30
+  Poids de régularisation L2 : 0.0000
+  Perte de validation : 0.8540
+--------------------------
+Iteration 17:
+  Taux d'apprentissage : 0.0009
+  Nombre de filtres : 16
+  Nombre d'unités denses : 128
+  Taux de dropout : 0.21
+  Poids de régularisation L2 : 0.0000
+  Perte de validation : 0.1832
+--------------------------
+Iteration 18:
+  Taux d'apprentissage : 0.0063
+  Nombre de filtres : 16
+  Nombre d'unités denses : 64
+  Taux de dropout : 0.13
+  Poids de régularisation L2 : 0.0004
+  Perte de validation : 0.3003
+--------------------------
+Iteration 19:
+  Taux d'apprentissage : 0.0000
+  Nombre de filtres : 16
+  Nombre d'unités denses : 64
+  Taux de dropout : 0.15
+  Poids de régularisation L2 : 0.0010
+  Perte de validation : 1.2208
+--------------------------
+Iteration 20:
+  Taux d'apprentissage : 0.0100
+  Nombre de filtres : 16
+  Nombre d'unités denses : 64
+  Taux de dropout : 0.12
+  Poids de régularisation L2 : 0.0000
+  Perte de validation : 0.2168
+--------------------------
+Iteration 21:
+  Taux d'apprentissage : 0.0005
+  Nombre de filtres : 32
+  Nombre d'unités denses : 64
+  Taux de dropout : 0.12
+  Poids de régularisation L2 : 0.0008
+  Perte de validation : 0.2580
+--------------------------
+Iteration 22:
+  Taux d'apprentissage : 0.0100
+  Nombre de filtres : 32
+  Nombre d'unités denses : 64
+  Taux de dropout : 0.14
+  Poids de régularisation L2 : 0.0000
+  Perte de validation : 0.2199
+--------------------------
+Iteration 23:
+  Taux d'apprentissage : 0.0000
+  Nombre de filtres : 32
+  Nombre d'unités denses : 64
+  Taux de dropout : 0.14
+  Poids de régularisation L2 : 0.0010
+  Perte de validation : 0.9656
+--------------------------
+Iteration 24:
+  Taux d'apprentissage : 0.0100
+  Nombre de filtres : 32
+  Nombre d'unités denses : 64
+  Taux de dropout : 0.13
+  Poids de régularisation L2 : 0.0000
+  Perte de validation : 0.2460
+--------------------------
+Iteration 25:
+  Taux d'apprentissage : 0.0000
+  Nombre de filtres : 32
+  Nombre d'unités denses : 64
+  Taux de dropout : 0.11
+  Poids de régularisation L2 : 0.0000
+  Perte de validation : 0.8808
+--------------------------
+Iteration 26:
+  Taux d'apprentissage : 0.0011
+  Nombre de filtres : 16
+  Nombre d'unités denses : 64
+  Taux de dropout : 0.12
+  Poids de régularisation L2 : 0.0000
+  Perte de validation : 0.1795
+--------------------------
+Iteration 27:
+  Taux d'apprentissage : 0.0034
+  Nombre de filtres : 16
+  Nombre d'unités denses : 128
+  Taux de dropout : 0.23
+  Poids de régularisation L2 : 0.0000
+  Perte de validation : 0.1773
+--------------------------
+Iteration 28:
+  Taux d'apprentissage : 0.0008
+  Nombre de filtres : 32
+  Nombre d'unités denses : 128
+  Taux de dropout : 0.22
+  Poids de régularisation L2 : 0.0007
+  Perte de validation : 0.2488
+--------------------------
+Iteration 29:
+  Taux d'apprentissage : 0.0021
+  Nombre de filtres : 32
+  Nombre d'unités denses : 128
+  Taux de dropout : 0.21
+  Poids de régularisation L2 : 0.0008
+  Perte de validation : 0.2995
+--------------------------
+Iteration 30:
+  Taux d'apprentissage : 0.0100
+  Nombre de filtres : 32
+  Nombre d'unités denses : 128
+  Taux de dropout : 0.23
+  Poids de régularisation L2 : 0.0000
+  Perte de validation : 0.2157
+--------------------------
+Iteration 31:
+  Taux d'apprentissage : 0.0100
+  Nombre de filtres : 32
+  Nombre d'unités denses : 128
+  Taux de dropout : 0.22
+  Poids de régularisation L2 : 0.0000
+  Perte de validation : 0.2440
+--------------------------
+Iteration 32:
+  Taux d'apprentissage : 0.0000
+  Nombre de filtres : 32
+  Nombre d'unités denses : 128
+  Taux de dropout : 0.24
+  Poids de régularisation L2 : 0.0010
+  Perte de validation : 0.9273
+--------------------------
+Iteration 33:
+  Taux d'apprentissage : 0.0100
+  Nombre de filtres : 32
+  Nombre d'unités denses : 128
+  Taux de dropout : 0.20
+  Poids de régularisation L2 : 0.0000
+  Perte de validation : 0.2332
+--------------------------
