@@ -46,7 +46,8 @@ def autoencoder(input_dims, hidden_layers, latent_dims):
     # Couche de reconstruction finale
     sortie_decodeur = keras.layers.Dense(
         input_dims,
-        activation='sigmoid'# Sortie entre 0 et 1 comme les images normalisées
+        # Sortie entre 0 et 1 comme les images normalisées
+        activation='sigmoid'
     )(x)
 
     # Modèle décodeur final
