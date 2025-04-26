@@ -5,27 +5,17 @@ import tensorflow.keras as K
 
 def sampling(args):
     """
-    Reparamétrisation pour l'échantillonnage dans l'espace latent
-    Args:
-        args: tuple contenant (z_mean, z_log_var)
-    Returns:
-        z: vecteur latent échantillonné
+    Reparamétrisation pour l'échantillonnage latent
     """
     z_mean, z_log_var = args
-    batch_size = K.backend.shape(z_mean)[0]
-    latent_dim = K.backend.int_shape(z_mean)[1]
-    epsilon = K.backend.random_normal(shape=(batch_size, latent_dim))
+    batch = K.backend.shape(z_mean)[0]
+    dim = K.backend.int_shape(z_mean)[1]
+    epsilon = K.backend.random_normal(shape=(batch, dim))
     return z_mean + K.backend.exp(0.5 * z_log_var) * epsilon
 
 def autoencoder(input_dims, hidden_layers, latent_dims):
     """
     Construit un autoencodeur variationnel
-    Args:
-        input_dims: Dimension des données d'entrée
-        hidden_layers: Liste des couches cachées de l'encodeur
-        latent_dims: Dimension de l'espace latent
-    Returns:
-        encoder, decoder, vae: Les trois modèles
     """
     # ========== Encodeur ==========
     inputs = K.Input(shape=(input_dims,), name='input')
