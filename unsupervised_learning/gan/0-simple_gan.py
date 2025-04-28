@@ -19,20 +19,27 @@ class Simple_GAN(keras.Model):
         self.disc_iter = disc_iter
 
         # Configuration des optimiseurs
-        self.g_optimizer = keras.optimizers.Adam(
+        self.generator_optimizer = keras.optimizers.Adam(
             learning_rate=learning_rate, 
             beta_1=0.5, 
             beta_2=0.9
         )
-        self.d_optimizer = keras.optimizers.Adam(
+        self.discriminator_optimizer = keras.optimizers.Adam(
             learning_rate=learning_rate,
             beta_1=0.5,
             beta_2=0.9
         )
 
-        # Déclaration des métriques
-        self.disc_loss_tracker = keras.metrics.Mean(name="discr_loss")
-        self.gen_loss_tracker = keras.metrics.Mean(name="gen_loss")
+        # Définition des fonctions de perte originales
+        self.generator.loss = lambda x: tf.keras.losses.MeanSquaredError()(x, tf.ones(x.shape))
+        self.discriminator.loss = lambda x, y: (
+            tf.keras.losses.MeanSquaredError()(x, tf.ones(x.shape)) + 
+            tf.keras.losses.MeanSquaredError()(y, -1 * tf.ones(y.shape))
+        )
+
+        # Compilation des modèles
+        self.generator.compile(optimizer=self.generator_optimizer, loss=self.generator.loss)
+        self.discriminator.compile(optimizer=self.discriminator_optimizer, loss=self.discriminator.loss)
 
     def get_fake_sample(self, size=None, training=False):
         size = size or self.batch_size
@@ -44,45 +51,32 @@ class Simple_GAN(keras.Model):
         return tf.gather(self.real_examples, tf.random.shuffle(indices)[:size])
 
     def train_step(self, data):
-        # Réinitialisation des métriques
-        self.disc_loss_tracker.reset_state()
-        self.gen_loss_tracker.reset_state()
-
         # Entraînement du discriminateur
         for _ in range(self.disc_iter):
-            with tf.GradientTape() as d_tape:
+            with tf.GradientTape() as disc_tape:
                 real_samples = self.get_real_sample()
                 fake_samples = self.get_fake_sample()
                 
                 pred_real = self.discriminator(real_samples, training=True)
                 pred_fake = self.discriminator(fake_samples, training=True)
                 
-                # Calcul de la perte Wasserstein
-                d_loss = tf.reduce_mean(pred_fake) - tf.reduce_mean(pred_real)
+                disc_loss = self.discriminator.loss(pred_real, pred_fake)
             
-            # Application des gradients
-            d_gradients = d_tape.gradient(d_loss, self.discriminator.trainable_variables)
-            self.d_optimizer.apply_gradients(zip(d_gradients, self.discriminator.trainable_variables))
-            self.disc_loss_tracker.update_state(d_loss)
+            disc_grads = disc_tape.gradient(disc_loss, self.discriminator.trainable_variables)
+            self.discriminator_optimizer.apply_gradients(
+                zip(disc_grads, self.discriminator.trainable_variables)
+            )
 
         # Entraînement du générateur
-        with tf.GradientTape() as g_tape:
+        with tf.GradientTape() as gen_tape:
             generated_samples = self.get_fake_sample()
             pred_fake = self.discriminator(generated_samples, training=False)
             
-            # Calcul de la perte du générateur
-            g_loss = -tf.reduce_mean(pred_fake)
+            gen_loss = self.generator.loss(pred_fake)
         
-        # Mise à jour des poids
-        g_gradients = g_tape.gradient(g_loss, self.generator.trainable_variables)
-        self.g_optimizer.apply_gradients(zip(g_gradients, self.generator.trainable_variables))
-        self.gen_loss_tracker.update_state(g_loss)
+        gen_grads = gen_tape.gradient(gen_loss, self.generator.trainable_variables)
+        self.generator_optimizer.apply_gradients(
+            zip(gen_grads, self.generator.trainable_variables)
+        )
 
-        return {
-            "discr_loss": self.disc_loss_tracker.result(),
-            "gen_loss": self.gen_loss_tracker.result()
-        }
-
-    @property
-    def metrics(self):
-        return [self.disc_loss_tracker, self.gen_loss_tracker]
+        return {"discr_loss": disc_loss, "gen_loss": gen_loss}
