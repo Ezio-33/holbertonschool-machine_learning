@@ -145,7 +145,7 @@ def visualize_2D(G, show=True, title=None, filename=None, dpi=200):
 
     if show:
         plt.show()
-                
+
 ## LET'S GO !
 
 set_seeds(0)
