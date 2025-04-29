@@ -1,13 +1,23 @@
 #!/usr/bin/env python3
 """
-Module WGAN_clip - Implémentation de Wasserstein GAN avec weight clipping
+Module WGAN_clip - Implémentation de Wasserstein GAN avec poids clipsés
 """
 import tensorflow as tf
 from tensorflow import keras
 
 
 class WGAN_clip(keras.Model):
-    """Classe WGAN avec contrainte de clipping des poids"""
+    """
+    Classe WGAN avec contrainte de clipping des poids [-1, 1]
+    Args:
+        generator: Modèle générateur
+        discriminator: Modèle discriminateur (critique)
+        latent_generator: Fonction de génération de vecteurs latents
+        real_examples: Jeu de données réel
+        batch_size: Taille des lots
+        disc_iter: Nombre d'itérations du discriminateur par étape
+        learning_rate: Taux d'apprentissage
+    """
 
     def __init__(
             self,
@@ -59,38 +69,40 @@ class WGAN_clip(keras.Model):
     def train_step(self, data):
         """Une étape complète d'entraînement"""
 
-        # Entraînement du discriminateur
+        # Entraînement du discriminateur (critique)
         for _ in range(self.disc_iter):
             with tf.GradientTape() as d_tape:
                 real_samples = self.get_real_sample()
                 fake_samples = self.get_fake_sample()
 
-                real_out = self.discriminator(real_samples, training=True)
-                fake_out = self.discriminator(fake_samples, training=True)
+                pred_real = self.discriminator(real_samples, training=True)
+                pred_fake = self.discriminator(fake_samples, training=True)
 
-                d_loss = self.discriminator.loss(real_out, fake_out)
+                d_loss = self.discriminator.loss(pred_real, pred_fake)
 
             # Calcul et application des gradients avec clipping
             d_gradients = d_tape.gradient(
                 d_loss, self.discriminator.trainable_variables)
             self.d_optimizer.apply_gradients(
-                zip(d_gradients, self.discriminator.trainable_variables))
+                zip(d_gradients, self.discriminator.trainable_variables)
+            )
 
-            # Clipping des poids après chaque mise à jour
-            for var in self.discriminator.trainable_variables:
-                var.assign(tf.clip_by_value(var, -1.0, 1.0))
+            # Clipping des poids entre [-1, 1]
+            for w in self.discriminator.trainable_variables:
+                w.assign(tf.clip_by_value(w, -1.0, 1.0))
 
         # Entraînement du générateur
         with tf.GradientTape() as g_tape:
             generated_samples = self.get_fake_sample()
-            fake_out = self.discriminator(generated_samples, training=False)
+            pred_fake = self.discriminator(generated_samples, training=False)
 
-            g_loss = self.generator.loss(fake_out)
+            g_loss = self.generator.loss(pred_fake)
 
         # Mise à jour des poids du générateur
         g_gradients = g_tape.gradient(
             g_loss, self.generator.trainable_variables)
         self.g_optimizer.apply_gradients(
-            zip(g_gradients, self.generator.trainable_variables))
+            zip(g_gradients, self.generator.trainable_variables)
+        )
 
         return {"d_loss": d_loss, "g_loss": g_loss}
