@@ -51,8 +51,7 @@ class WGAN_clip(keras.Model):
 
         # Définition des fonctions de perte Wasserstein
         self.generator.loss = lambda x: -tf.reduce_mean(x)
-        self.discriminator.loss = lambda real_out, fake_out: tf.reduce_mean(
-            fake_out) - tf.reduce_mean(real_out)
+        self.discriminator.loss = lambda real_out, fake_out: tf.reduce_mean(fake_out) - tf.reduce_mean(real_out)
 
     def get_fake_sample(self, size=None, training=False):
         """Génère un batch de données synthétiques"""
@@ -80,11 +79,8 @@ class WGAN_clip(keras.Model):
                 d_loss = self.discriminator.loss(pred_real, pred_fake)
 
             # Calcul et application des gradients avec clipping
-            d_gradients = d_tape.gradient(
-                d_loss, self.discriminator.trainable_variables)
-            self.d_optimizer.apply_gradients(
-                zip(d_gradients, self.discriminator.trainable_variables)
-            )
+            d_gradients = d_tape.gradient(d_loss, self.discriminator.trainable_variables)
+            self.d_optimizer.apply_gradients(zip(d_gradients, self.discriminator.trainable_variables))
 
             # Clipping des poids entre [-1, 1]
             for w in self.discriminator.trainable_variables:
@@ -98,10 +94,7 @@ class WGAN_clip(keras.Model):
             g_loss = self.generator.loss(pred_fake)
 
         # Mise à jour des poids du générateur
-        g_gradients = g_tape.gradient(
-            g_loss, self.generator.trainable_variables)
-        self.g_optimizer.apply_gradients(
-            zip(g_gradients, self.generator.trainable_variables)
-        )
+        g_gradients = g_tape.gradient(g_loss, self.generator.trainable_variables)
+        self.g_optimizer.apply_gradients(zip(g_gradients, self.generator.trainable_variables))
 
         return {"d_loss": d_loss, "g_loss": g_loss}
