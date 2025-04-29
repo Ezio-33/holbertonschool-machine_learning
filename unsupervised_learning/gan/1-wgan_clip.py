@@ -5,6 +5,7 @@ Module WGAN_clip - Implémentation de Wasserstein GAN avec poids clipsés
 import tensorflow as tf
 from tensorflow import keras
 
+
 class WGAN_clip(keras.Model):
     """
     Classe WGAN avec contrainte de clipping des poids [-1, 1]
@@ -50,8 +51,10 @@ class WGAN_clip(keras.Model):
         )
 
         # Définition des fonctions de perte Wasserstein
-        self.generator.loss = lambda x: -tf.reduce_mean(x)
-        self.discriminator.loss = lambda real_out, fake_out: tf.reduce_mean(fake_out) - tf.reduce_mean(real_out)
+        self.generator_loss = lambda x: -tf.reduce_mean(x)
+        self.discriminator_loss = lambda real_out, fake_out: (
+            tf.reduce_mean(fake_out) - tf.reduce_mean(real_out)
+        )
 
     def get_fake_sample(self, size=None, training=False):
         """Génère un batch de données synthétiques"""
@@ -62,9 +65,10 @@ class WGAN_clip(keras.Model):
         """Sélectionne un batch de données réelles"""
         size = size or self.batch_size
         indices = tf.range(tf.shape(self.real_examples)[0])
-        return tf.gather(self.real_examples, tf.random.shuffle(indices)[:size])
+        shuffled_indices = tf.random.shuffle(indices)[:size]
+        return tf.gather(self.real_examples, shuffled_indices)
 
-    def train_step(self, data):
+    def train_step(self, _):
         """Une étape complète d'entraînement"""
 
         # Entraînement du discriminateur (critique)
@@ -76,7 +80,7 @@ class WGAN_clip(keras.Model):
                 pred_real = self.discriminator(real_samples, training=True)
                 pred_fake = self.discriminator(fake_samples, training=True)
 
-                d_loss = self.discriminator.loss(pred_real, pred_fake)
+                d_loss = self.discriminator_loss(pred_real, pred_fake)
 
             # Calcul et application des gradients avec clipping
             d_gradients = d_tape.gradient(d_loss, self.discriminator.trainable_variables)
@@ -91,7 +95,7 @@ class WGAN_clip(keras.Model):
             generated_samples = self.get_fake_sample()
             pred_fake = self.discriminator(generated_samples, training=False)
 
-            g_loss = self.generator.loss(pred_fake)
+            g_loss = self.generator_loss(pred_fake)
 
         # Mise à jour des poids du générateur
         g_gradients = g_tape.gradient(g_loss, self.generator.trainable_variables)
