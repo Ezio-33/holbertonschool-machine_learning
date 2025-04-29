@@ -5,7 +5,6 @@ Module WGAN_clip - Implémentation de Wasserstein GAN avec poids clipsés
 import tensorflow as tf
 from tensorflow import keras
 
-
 class WGAN_clip(keras.Model):
     """
     Classe WGAN avec contrainte de clipping des poids [-1, 1]
