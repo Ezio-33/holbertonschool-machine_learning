@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
 """
-Project GAN
-By Ced+
+Projet GAN : Implémentation de Wasserstein GAN avec Gradient Penalty (WGAN-GP)
+
+Ce script définit et entraîne un modèle GAN utilisant la perte de Wasserstein
+avec une pénalité de gradient (WGAN-GP).
+Il inclut la définition des modèles générateur et discriminateur, ainsi
+que le processus d'entraînement avec la pénalité de gradient.
 """
 import tensorflow as tf
 from tensorflow import keras
