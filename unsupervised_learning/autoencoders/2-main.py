@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+import random
+import os
 import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
@@ -8,14 +10,10 @@ autoencoder = __import__('2-convolutional').autoencoder
 
 SEED = 0
 
-import os
 os.environ['PYTHONHASHSEED'] = str(SEED)
-os.environ['TF_ENABLE_ONEDNN_OPTS']= '0'
-import random
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 random.seed(SEED)
-import numpy as np
 np.random.seed(SEED)
-import tensorflow as tf
 tf.random.set_seed(SEED)
 
 (x_train, _), (x_test, _) = tf.keras.datasets.mnist.load_data()
@@ -31,12 +29,12 @@ auto.fit(x_train, x_train, epochs=50, batch_size=256, shuffle=True,
          validation_data=(x_test, x_test))
 encoded = encoder.predict(x_test[:10])
 print(np.mean(encoded))
-reconstructed = decoder.predict(encoded)[:,:,:,0]
+reconstructed = decoder.predict(encoded)[:, :, :, 0]
 
 for i in range(10):
     ax = plt.subplot(2, 10, i + 1)
     ax.axis('off')
-    plt.imshow(x_test[i,:,:,0])
+    plt.imshow(x_test[i, :, :, 0])
     ax = plt.subplot(2, 10, i + 11)
     ax.axis('off')
     plt.imshow(reconstructed[i])

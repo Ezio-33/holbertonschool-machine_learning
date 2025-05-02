@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+import random
+import os
 import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
@@ -8,14 +10,10 @@ autoencoder = __import__('3-variational').autoencoder
 
 SEED = 0
 
-import os
 os.environ['PYTHONHASHSEED'] = str(SEED)
-os.environ['TF_ENABLE_ONEDNN_OPTS']= '0'
-import random
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 random.seed(SEED)
-import numpy as np
 np.random.seed(SEED)
-import tensorflow as tf
 tf.random.set_seed(SEED)
 
 (x_train, _), (x_test, _) = tf.keras.datasets.mnist.load_data()
@@ -42,12 +40,13 @@ for i in range(10):
     plt.imshow(reconstructed[i])
 plt.show()
 
+
 l1 = np.linspace(-3, 3, 25)
 l2 = np.linspace(-3, 3, 25)
 L = np.stack(np.meshgrid(l1, l2, sparse=False, indexing='ij'), axis=2)
 G = decoder.predict(L.reshape((-1, 2)), batch_size=125)
 
-for i in range(25*25):
+for i in range(25 * 25):
     ax = plt.subplot(25, 25, i + 1)
     ax.axis('off')
     plt.imshow(G[i].reshape((28, 28)))

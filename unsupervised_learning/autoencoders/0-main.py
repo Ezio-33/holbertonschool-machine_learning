@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+import random
+import os
 import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
@@ -8,14 +10,10 @@ autoencoder = __import__('0-vanilla').autoencoder
 
 SEED = 0
 
-import os
 os.environ['PYTHONHASHSEED'] = str(SEED)
-os.environ['TF_ENABLE_ONEDNN_OPTS']= '0'
-import random
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 random.seed(SEED)
-import numpy as np
 np.random.seed(SEED)
-import tensorflow as tf
 tf.random.set_seed(SEED)
 
 (x_train, _), (x_test, _) = tf.keras.datasets.mnist.load_data()
