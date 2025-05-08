@@ -26,22 +26,20 @@ class BidirectionalCell:
         self.bhb = np.zeros((1, h))
         self.by = np.zeros((1, o))
 
-
     def forward(self, h_prev: np.ndarray, x_t: np.ndarray) -> np.ndarray:
         """État caché forward d’un pas de temps"""
-        concat = np.concatenate((h_prev, x_t), axis=1)     
-        return np.tanh(concat @ self.Whf + self.bhf)     
+        concat = np.concatenate((h_prev, x_t), axis=1)
+        return np.tanh(concat @ self.Whf + self.bhf)
 
     def backward(self, h_next: np.ndarray, x_t: np.ndarray) -> np.ndarray:
         """État caché backward d’un pas de temps (lecture inverse)"""
-        concat = np.concatenate((h_next, x_t), axis=1)    
-        return np.tanh(concat @ self.Whb + self.bhb)       
-
+        concat = np.concatenate((h_next, x_t), axis=1)
+        return np.tanh(concat @ self.Whb + self.bhb)
 
     @staticmethod
     def _softmax(x: np.ndarray) -> np.ndarray:
         """Soft-max numériquement stable sur le dernier axe"""
-        x_shift = x - x.max(axis=-1, keepdims=True)        
+        x_shift = x - x.max(axis=-1, keepdims=True)
         exp = np.exp(x_shift)
         return exp / exp.sum(axis=-1, keepdims=True)
 
