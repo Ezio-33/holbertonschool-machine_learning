@@ -1,14 +1,5 @@
 #!/usr/bin/env python3
-"""
-4-deep_rnn.py
-Propagation avant d’un RNN profond (plusieurs couches).
-
-Hypothèses :
-- Python 3.9  •  NumPy 1.25.2
-- Seul import autorisé : « import numpy as np »
-- Respect de pycodestyle 2.11.1
-- Docstrings et commentaires en français.
-"""
+"""Propagation avant d’un RNN profond (plusieurs couches)."""
 
 import numpy as np
 
@@ -20,49 +11,54 @@ def deep_rnn(rnn_cells, X, h_0):
     Paramètres
     ----------
     rnn_cells : list
-        Liste ordonnée des cellules RNN (longueur l).
-    X : ndarray shape (t, m, i)
+        Liste ordonnée des cellules RNN (longueur = n_layers).
+    X : ndarray shape (t_steps, m, i)
         Séquences d’entrée :
-          t = nombre de pas de temps,
-          m = taille du batch,
-          i = dimension d’un vecteur d’entrée.
-    h_0 : ndarray shape (l, m, h)
-        États cachés initiaux de chaque couche
-        (h = dimension d’un état caché).
+          t_steps = nombre de pas de temps,
+          m       = taille du batch,
+          i       = dimension d’un vecteur d’entrée.
+    h_0 : ndarray shape (n_layers, m, h_dim)
+        États cachés initiaux pour chaque couche
+        (h_dim = dimension d’un état caché).
 
     Retours
     -------
-    H : ndarray shape (t + 1, l, m, h)
-        États cachés pour tous les pas et toutes les couches
-        (H[0] == h_0).
-    Y : ndarray shape (t, m, o)
-        Sorties du dernier niveau pour chaque pas de temps
-        (o = dimension de sortie d’une cellule).
+    H : ndarray shape (t_steps + 1, n_layers, m, h_dim)
+        Tous les états cachés (H[0] == h_0).
+    Y : ndarray shape (t_steps, m, o_dim)
+        Sorties de la **dernière** couche à chaque pas de temps
+        (o_dim = dimension de sortie d’une cellule).
     """
-    t, m, _ = X.shape
-    l, _, h = h_0.shape
+    # -------- dimensions utiles ---------------------------------------------
+    t_steps, m, _ = X.shape
+    n_layers, _, h_dim = h_0.shape
 
-    # 1) mémoire pour les états cachés
-    H = np.zeros((t + 1, l, m, h))
+    # -------- mémoires -------------------------------------------------------
+    H = np.zeros((t_steps + 1, n_layers, m, h_dim))
     H[0] = h_0
 
-    Y = None
+    _, o_dim = rnn_cells[-1].Wy.shape
+    Y = np.zeros((t_steps, m, o_dim))
 
-    # 2) boucle temporelle
-    for step in range(t):
-        layer_input = X[step]
+    for layer_idx, cell in enumerate(rnn_cells):
 
-        # 2-a) boucle sur les couches
-        for layer in range(l):
-            h_prev = H[step, layer]
-            h_next, y = rnn_cells[layer].forward(h_prev, layer_input)
+        for t in range(1, t_steps + 1):
+            # -------- entrée de la couche courante --------------------------
+            if layer_idx == 0:
+                x_t = X[t - 1]
+            else:
+                x_t = H[t, layer_idx - 1]
 
-            H[step + 1, layer] = h_next
-            layer_input = h_next
+            # -------- état caché précédent de cette couche ------------------
+            h_prev = H[t - 1, layer_idx]
 
-        # 2-b) empilage des sorties (une seule fois pour initialiser Y)
-        if Y is None:
-            o = y.shape[1]
-            Y = np.zeros((t, m, o))
-        Y[step] = y
+            # -------- appel de la cellule -----------------------------------
+            h_next, y = cell.forward(h_prev, x_t)
+
+            H[t, layer_idx] = h_next
+
+            # -------- stocker la sortie finale ------------------------------
+            if layer_idx == n_layers - 1:
+                Y[t - 1] = y
+
     return H, Y
