@@ -22,7 +22,6 @@ def tf_idf(sentences, vocab=None):
             embeddings (numpy.ndarray): Matrice TF-IDF (phrases x mots)
             features (list): Liste triée des mots utilisés
     """
-    # Nettoyage et découpe
     cleaned = [
         [re.sub(r"[.,!?]", "", w).lower() for w in s.split()]
         for s in sentences
