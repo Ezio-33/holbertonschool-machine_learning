@@ -1,10 +1,42 @@
 #!/usr/bin/env python3
 """
-Module qui crée une représentation vectorielle des phrases avec Bag of Words.
+Crée une matrice d'embedding avec la méthode Bag of Words.
 """
 
+import re
 import numpy as np
-import string
+
+
+def formatter(word):
+    """
+    Nettoie un mot en supprimant les possessifs ('s) et ponctuations finales.
+
+    Args:
+        word (str): Mot brut à formater
+
+    Returns:
+        str: Mot nettoyé
+    """
+    # Supprime 's (possessif)
+    word = re.sub(r"(\w+)'s\b", r"\1", word)
+    # Supprime la ponctuation restante
+    word = re.sub(r"[.,!?]", "", word)
+    return word
+
+
+def compter(word, phrase):
+    """
+    Compte les occurrences exactes d'un mot dans une phrase.
+
+    Args:
+        word (str): Mot à chercher
+        phrase (str): Phrase cible
+
+    Returns:
+        int: Nombre d'occurrences du mot
+    """
+    pattern = r'\b' + re.escape(word) + r'\b'
+    return len(re.findall(pattern, phrase, re.IGNORECASE))
 
 
 def bag_of_words(sentences, vocab=None):
@@ -12,36 +44,28 @@ def bag_of_words(sentences, vocab=None):
     Crée une matrice d'embedding selon la méthode Bag of Words.
 
     Args:
-        sentences (list): Liste de phrases (chaînes de caractères).
-        vocab (list, optional): Liste de mots à utiliser comme vocabulaire.
-            Si None, tous les mots des phrases seront utilisés.
+        sentences (list): Liste de phrases
+        vocab (list): Vocabulaire (si None, sera déduit)
 
     Returns:
-        tuple:
-            embeddings (numpy.ndarray): Matrice (phrases x mots)
-            features (list): Liste triée des mots utilisés
+        tuple: (matrice embeddings, liste des features)
     """
-    table = str.maketrans('', '', string.punctuation.replace("'", ""))
-
-    tokenized = []
-    for sentence in sentences:
-        sentence = sentence.lower().replace("'s", "")
-        sentence = sentence.translate(table)
-        words = sentence.split()
-        tokenized.append(words)
-
     if vocab is None:
-        vocab_set = set()
-        for sent in tokenized:
-            vocab_set.update(sent)
-        vocab = sorted(vocab_set)
+        features = set()
+        for sentence in sentences:
+            words = sentence.lower().split()
+            for word in words:
+                clean_word = formatter(word)
+                features.add(clean_word)
+        features = sorted(features)
+    else:
+        features = vocab
 
-    word_to_index = {word: idx for idx, word in enumerate(vocab)}
-    embeddings = np.zeros((len(sentences), len(vocab)), dtype=int)
+    embeddings = np.zeros((len(sentences), len(features)), dtype=int)
 
-    for i, sent in enumerate(tokenized):
-        for word in sent:
-            if word in word_to_index:
-                embeddings[i][word_to_index[word]] += 1
+    for i, sentence in enumerate(sentences):
+        sentence = sentence.lower()
+        for j, word in enumerate(features):
+            embeddings[i, j] = compter(word, sentence)
 
-    return embeddings, vocab
+    return embeddings, np.array(features)
