@@ -21,11 +21,14 @@ def bag_of_words(sentences, vocab=None):
             embeddings (numpy.ndarray): Matrice (phrases x mots)
             features (list): Liste triée des mots utilisés
     """
-    # Nettoyage : suppression ponctuation + passage en minuscules
-    table = str.maketrans('', '', string.punctuation)
-    tokenized = [
-        sentence.lower().translate(table).split() for sentence in sentences
-    ]
+    table = str.maketrans('', '', string.punctuation.replace("'", ""))
+
+    tokenized = []
+    for sentence in sentences:
+        sentence = sentence.lower().replace("'s", "")
+        sentence = sentence.translate(table)
+        words = sentence.split()
+        tokenized.append(words)
 
     if vocab is None:
         vocab_set = set()
@@ -34,8 +37,6 @@ def bag_of_words(sentences, vocab=None):
         vocab = sorted(vocab_set)
 
     word_to_index = {word: idx for idx, word in enumerate(vocab)}
-
-    # Initialisation de la matrice
     embeddings = np.zeros((len(sentences), len(vocab)), dtype=int)
 
     for i, sent in enumerate(tokenized):
