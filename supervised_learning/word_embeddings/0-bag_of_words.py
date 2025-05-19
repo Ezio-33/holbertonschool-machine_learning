@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 """
-Module qui crée une représentation vectorielle des phrases en utilisant la méthode Bag of Words.
+Module qui crée une représentation vectorielle des phrases avec Bag of Words.
 """
 
 import numpy as np
-import re
+import string
 
 
 def bag_of_words(sentences, vocab=None):
     """
-    Crée une matrice d'embedding avec la méthode Bag of Words.
+    Crée une matrice d'embedding selon la méthode Bag of Words.
 
     Args:
         sentences (list): Liste de phrases (chaînes de caractères).
@@ -18,31 +18,29 @@ def bag_of_words(sentences, vocab=None):
 
     Returns:
         tuple:
-            embeddings (numpy.ndarray): Matrice des embeddings (phrases x mots)
-            features (list): Liste des mots/features utilisés
+            embeddings (numpy.ndarray): Matrice (phrases x mots)
+            features (list): Liste triée des mots utilisés
     """
-    # Nettoyage et découpe des phrases
-    tokenized_sentences = [
-        re.findall(r'\b\w+\b', sentence.lower()) for sentence in sentences
+    # Nettoyage : suppression ponctuation + passage en minuscules
+    table = str.maketrans('', '', string.punctuation)
+    tokenized = [
+        sentence.lower().translate(table).split() for sentence in sentences
     ]
 
-    # Création du vocabulaire si non fourni
     if vocab is None:
         vocab_set = set()
-        for sentence in tokenized_sentences:
-            vocab_set.update(sentence)
+        for sent in tokenized:
+            vocab_set.update(sent)
         vocab = sorted(vocab_set)
 
-    # Création d’un mapping mot → index
-    word_index = {word: idx for idx, word in enumerate(vocab)}
+    word_to_index = {word: idx for idx, word in enumerate(vocab)}
 
-    # Initialisation de la matrice d’embedding
+    # Initialisation de la matrice
     embeddings = np.zeros((len(sentences), len(vocab)), dtype=int)
 
-    # Remplissage de la matrice
-    for i, sentence in enumerate(tokenized_sentences):
-        for word in sentence:
-            if word in word_index:
-                embeddings[i][word_index[word]] += 1
+    for i, sent in enumerate(tokenized):
+        for word in sent:
+            if word in word_to_index:
+                embeddings[i][word_to_index[word]] += 1
 
     return embeddings, vocab
