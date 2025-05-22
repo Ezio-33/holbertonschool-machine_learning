@@ -4,6 +4,7 @@ Ce module calcule le score BLEU unigramme pour une phrase donnée.
 """
 
 import numpy as np
+from collections import Counter
 
 
 def uni_bleu(references, sentence):
@@ -17,31 +18,38 @@ def uni_bleu(references, sentence):
     Returns:
         float: Score BLEU unigramme.
     """
-    count = 0
-    for word in sentence:
-        refs = [ref.count(word) for ref in references]
-        count += min(sentence.count(word), max(refs))
+    # Compter les mots de la phrase
+    sentence_counts = Counter(sentence)
 
-    # Précision P1 = nb mots corrects / nb total mots dans la phrase générée
-    P1 = count / len(sentence)
+    # Compter le max de chaque mot parmi les références
+    max_ref_counts = Counter()
+    for ref in references:
+        ref_counter = Counter(ref)
+        for word in ref_counter:
+            max_ref_counts[word] = max(max_ref_counts[word], ref_counter[word])
 
-    # Trouver la référence la plus proche en longueur
+    # Clipping : limiter les doublons à ce que les références autorisent
+    clipped_counts = {word: min(count, max_ref_counts[word])
+                      for word, count in sentence_counts.items()}
+    total_clipped = sum(clipped_counts.values())
+
+    precision = total_clipped / len(sentence)
+
+    # Brevity penalty
     r = find_closest(references, sentence)
-    ref_closest_len = len(references[r])
+    ref_len = len(references[r])
 
-    # Brevity Penalty (BP)
-    if len(sentence) < ref_closest_len:
-        BP = np.exp(1 - (ref_closest_len / len(sentence)))
+    if len(sentence) < ref_len:
+        BP = np.exp(1 - (ref_len / len(sentence)))
     else:
         BP = 1
 
-    return P1 * BP
+    return BP * precision
 
 
 def find_closest(references, sentence):
     """
-    Trouve la référence dont la longueur est la plus proche de la
-    phrase générée.
+    Trouve la référence dont la longueur est la plus proche de la phrase.
 
     Args:
         references (list of list of str): Traductions de référence.
