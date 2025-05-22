@@ -40,7 +40,8 @@ def uni_bleu(references, sentence):
 
 def find_closest(references, sentence):
     """
-    Trouve la référence dont la longueur est la plus proche de la phrase générée.
+    Trouve la référence dont la longueur est la plus proche de la
+    phrase générée.
 
     Args:
         references (list of list of str): Traductions de référence.
