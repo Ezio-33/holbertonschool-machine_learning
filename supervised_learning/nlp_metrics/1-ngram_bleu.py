@@ -23,16 +23,18 @@ def ngram_bleu(references, sentence, n):
         return 0
 
     # Générer les n-grammes pour la phrase
-    ngrams_in_sentence = [tuple(sentence[i:i+n]) for i in range(len(sentence) - n + 1)]
+    ngrams_in_sentence = [tuple(sentence[i:i + n])
+                          for i in range(len(sentence) - n + 1)]
     candidate_counts = Counter(ngrams_in_sentence)
     total_ngrams = sum(candidate_counts.values())
 
     # Compter les n-grammes dans les références (avec max entre références)
     reference_counts = Counter()
     for ref in references:
-        ref_ngrams = [tuple(ref[i:i+n]) for i in range(len(ref) - n + 1)]
+        ref_ngrams = [tuple(ref[i:i + n]) for i in range(len(ref) - n + 1)]
         for ngram in set(ref_ngrams):
-            reference_counts[ngram] = max(reference_counts[ngram], ref_ngrams.count(ngram))
+            reference_counts[ngram] = max(
+                reference_counts[ngram], ref_ngrams.count(ngram))
 
     # Clipping : ne pas dépasser la fréquence max trouvée en référence
     clipped_counts = {ngram: min(count, reference_counts[ngram])
