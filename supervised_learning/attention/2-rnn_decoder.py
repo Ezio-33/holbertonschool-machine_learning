@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Module RNNDecoder pour le projet Attention
+Module RNNDecoder corrigé pour le projet Attention
 """
 
 import tensorflow as tf
@@ -23,6 +23,8 @@ class RNNDecoder(tf.keras.layers.Layer):
             batch (int): taille du batch
         """
         super(RNNDecoder, self).__init__()
+        self.units = units
+        self.batch = batch
         self.embedding = tf.keras.layers.Embedding(vocab, embedding)
         self.gru = tf.keras.layers.GRU(
             units,
@@ -31,7 +33,6 @@ class RNNDecoder(tf.keras.layers.Layer):
             recurrent_initializer='glorot_uniform'
         )
         self.F = tf.keras.layers.Dense(vocab)
-        self.attention = SelfAttention(units)
 
     def call(self, x, s_prev, hidden_states):
         """
@@ -47,16 +48,15 @@ class RNNDecoder(tf.keras.layers.Layer):
             y (tf.Tensor): sortie vocabulaire (batch, vocab)
             s (tf.Tensor): nouvel état caché (batch, units)
         """
+
+        attention = SelfAttention(self.units)
+        context, _ = attention(s_prev, hidden_states)
+
         x = self.embedding(x)
-
-        context, _ = self.attention(s_prev, hidden_states)
-
         context = tf.expand_dims(context, 1)
 
         x = tf.concat([context, x], axis=-1)
-
         x, s = self.gru(x)
-
         x = tf.reshape(x, (-1, x.shape[2]))
 
         y = self.F(x)
