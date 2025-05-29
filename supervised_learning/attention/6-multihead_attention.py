@@ -62,22 +62,16 @@ class MultiHeadAttention(tf.keras.layers.Layer):
             weights (tf.Tensor): poids d’attention
             (batch, h, seq_len_q, seq_len_v)
         """
-        # Projection dans l’espace commun
         Q = self.Wq(Q)
         K = self.Wk(K)
         V = self.Wv(V)
 
-        # Préparer pour multi-head : (batch, h, seq_len, depth)
         Q = self.reshape_tensor(Q, self.h, True)
         K = self.reshape_tensor(K, self.h, True)
         V = self.reshape_tensor(V, self.h, True)
 
-        # Attention multi-tête
-        # out: (batch, h, seq_len_q, depth)
         out, weights = sdp_attention(Q, K, V, mask)
 
-        # Fusion des têtes : (batch, seq_len_q, dm)
         out = self.reshape_tensor(out, self.h, False)
 
-        # Projection finale
         return self.linear(out), weights
