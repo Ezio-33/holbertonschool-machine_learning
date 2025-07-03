@@ -1,0 +1,26 @@
+# Requirements pour Deep Q-Learning avec Atari Breakout
+# Versions testées et compatibles entre elles
+
+# TensorFlow et Keras (versions compatibles avec keras-rl2)
+tensorflow==2.10.0
+keras==2.10.0
+
+# Keras-RL2 pour l'apprentissage par renforcement
+keras-rl2==1.0.5
+
+# Gym pour les environnements Atari (version compatible)
+gym[atari]==0.21.0
+
+# Dépendances pour le traitement d'images
+Pillow==9.5.0
+numpy==1.21.6
+
+# AutoROM pour les ROMs Atari
+autorom[accept-rom-license]==0.4.2
+
+# Utilitaires
+h5py==3.7.0
+matplotlib==3.6.3
+
+# Note: Après installation, vous devrez modifier manuellement le fichier callbacks.py
+# Voir les instructions dans le README ou la documentation du projet
