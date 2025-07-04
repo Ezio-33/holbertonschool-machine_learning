@@ -39,7 +39,6 @@ if __name__ == '__main__':
     dqn.load_weights('policy.h5')
 
     print("=== DÉBUT DU TEST DE L'AGENT ENTRAÎNÉ ===")
-    print(f"Test sur 5 épisodes avec politique greedy...")
     print("Note: Si l'agent semble aléatoire, l'entraînement était insuffisant")
     
     dqn.test(env, nb_episodes=5, visualize=True, verbose=2)

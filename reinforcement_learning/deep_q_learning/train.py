@@ -235,13 +235,12 @@ if __name__ == '__main__':
     dqn.compile(Adam(learning_rate=.00025), metrics=['mae'])
 
     # === ENTRAÎNEMENT DE L'AGENT ===
-    # Entraînement sur 1M d'étapes (minimum recommandé pour Breakout)
     print("=== DÉBUT DE L'ENTRAÎNEMENT ===")
     print("Cela peut prendre plusieurs heures...")
     
     dqn.fit(env,
-            nb_steps=1000000,       # Augmenté de 30500 à 1M
-            log_interval=50000,     # Logs toutes les 50k étapes
+            nb_steps=1000000,
+            log_interval=50000,
             visualize=False,
             verbose=2,
             nb_max_episode_steps=10000)
