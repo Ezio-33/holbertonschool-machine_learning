@@ -18,13 +18,16 @@ def sample_episode(env, policy, max_steps=100):
         SAR_list: Une liste de tuples (état, récompense).
     """
     SAR_list = []
-    observation, _ = env.reset()
-    for _ in range(max_steps):
+    observation = 0
+    env.reset()
+    for j in range(max_steps):
         action = policy(observation)
         new_obs, reward, done, truncated, _ = env.step(action)
         SAR_list.append((observation, reward))
+
         if done or truncated:
             break
+
         observation = new_obs
     return SAR_list
 
@@ -46,16 +49,15 @@ def monte_carlo(env, V, policy, episodes=5000,
     Returns:
         V: Le tableau des estimations de valeur mis à jour.
     """
-    for _ in range(episodes):
-        SAR_list = sample_episode(env, policy, max_steps)
-        G = 0
-        visited_states = set()
 
-        # Parcourir l'épisode à l'envers pour calculer les retours
+    for episode in range(episodes):
+        SAR_list = sample_episode(env, policy, max_steps)
+        SAR_list = np.array(SAR_list, dtype=int)
+
+        G = 0
         for state, reward in reversed(SAR_list):
             G = reward + gamma * G
-            if state not in visited_states:
-                visited_states.add(state)
+            if state not in SAR_list[:episode, 0]:
                 V[state] = V[state] + alpha * (G - V[state])
-
+    env.close()
     return V
