@@ -8,6 +8,7 @@ import numpy as np
 def get_action(state, Q, epsilon):
     """
     Sélectionne une action en utilisant la politique epsilon-greedy.
+
     Args:
         state: État actuel
         Q: Table Q
@@ -24,6 +25,7 @@ def sarsa_lambtha(env, Q, lambtha, episodes=5000, max_steps=100, alpha=0.1,
                   gamma=0.99, epsilon=1, min_epsilon=0.1, epsilon_decay=0.05):
     """
     Implémente l'algorithme SARSA(λ) pour l'apprentissage par renforcement.
+
     Args:
         env: Environnement
         Q: Table Q initiale
@@ -46,20 +48,16 @@ def sarsa_lambtha(env, Q, lambtha, episodes=5000, max_steps=100, alpha=0.1,
     initial_epsilon = epsilon
 
     for episode in range(episodes):
-
         E.fill(0)
-
-        state, _ = env.reset()
+        state = env.reset()[0]
         action = get_action(state, Q, epsilon)
 
         for step in range(max_steps):
-
             next_state, reward, done, truncated, _ = env.step(action)
-
             next_action = get_action(next_state, Q, epsilon)
 
-            delta = reward + gamma * Q[next_state,
-                                       next_action] - Q[state, action]
+            delta = (reward + gamma * Q[next_state, next_action] -
+                     Q[state, action])
 
             E[state, action] += 1
 
@@ -77,15 +75,3 @@ def sarsa_lambtha(env, Q, lambtha, episodes=5000, max_steps=100, alpha=0.1,
                       np.exp(-epsilon_decay * episode))
 
     return Q
-
-
-if __name__ == "__main__":
-    import gymnasium as gym
-    env = gym.make('FrozenLake8x8-v1', is_slippery=False)
-
-    Q = np.zeros((64, 4))
-
-    Q = sarsa_lambtha(env, Q, lambtha=0.9)
-
-    np.set_printoptions(precision=4, suppress=True)
-    print(Q)
