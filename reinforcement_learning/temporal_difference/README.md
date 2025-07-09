@@ -11,8 +11,36 @@ L'apprentissage par différences temporelles (TD) est un concept central en appr
 - **Plateforme**: Ubuntu 20.04 LTS
 - **Version Python**: 3.9
 - **Dépendances**:
-  - numpy (version 1.25.2)
-  - gymnasium (version 0.29.1)
+  - numpy (version ≥1.21.0)
+  - gymnasium (version ≥0.28.0)
+
+## Installation
+
+Pour installer les dépendances nécessaires :
+
+```bash
+pip install -r requirements.txt
+```
+
+Ou manuellement :
+
+```bash
+pip install numpy>=1.21.0 gymnasium>=0.28.0
+```
+
+## Structure du Projet
+
+```
+temporal_difference/
+├── 0-monte_carlo.py      # Implémentation Monte Carlo
+├── 1-td_lambtha.py       # Implémentation TD(λ)
+├── 2-sarsa_lambtha.py    # Implémentation SARSA(λ)
+├── 0-main.py             # Test Monte Carlo
+├── 1-main.py             # Test TD(λ)
+├── 2-main.py             # Test SARSA(λ)
+├── requirements.txt      # Dépendances Python
+└── README.md             # Documentation du projet
+```
 
 ## Fichiers
 
@@ -93,17 +121,19 @@ Implémente l'algorithme SARSA(λ) pour l'apprentissage par renforcement avec po
 
 ## Utilisation
 
-Pour exécuter Monte Carlo :
+### Installation des dépendances
 
-````bash
-python3 0-main.py
-## Utilisation
+```bash
+pip install -r requirements.txt
+```
+
+### Exécution des algorithmes
 
 Pour exécuter Monte Carlo :
 
 ```bash
 python3 0-main.py
-````
+```
 
 Pour exécuter TD(λ) :
 
@@ -115,6 +145,21 @@ Pour exécuter SARSA(λ) :
 
 ```bash
 python3 2-main.py
+```
+
+### Validation du code
+
+Pour vérifier le style de code :
+
+```bash
+pycodestyle *.py
+```
+
+Pour vérifier la documentation :
+
+```bash
+python3 -c "print(__import__('2-sarsa_lambtha').__doc__)"
+python3 -c "print(__import__('2-sarsa_lambtha').sarsa_lambtha.__doc__)"
 ```
 
 ## Concepts Théoriques
