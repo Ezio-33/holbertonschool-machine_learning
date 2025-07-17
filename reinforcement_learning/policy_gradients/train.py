@@ -8,7 +8,7 @@ import gymnasium as gym
 policy_gradient = __import__('policy_gradient').policy_gradient
 
 
-def train(env, nb_episodes, alpha=0.0001, gamma=0.95, show_result=False):
+def train(env, nb_episodes, alpha=0.000045, gamma=0.98, show_result=False):
     """
     Tâche 3, entraînement de l'agent cartpole
     affiche le score à chaque épisode
