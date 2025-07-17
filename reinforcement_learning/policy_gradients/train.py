@@ -41,7 +41,7 @@ def train(env, nb_episodes, alpha=0.000045, gamma=0.98, show_result=False):
             gradients.append(grad)
             rewards.append(reward)
 
-            weights += alpha * sum([grad * (gamma ** t) * reward 
+            weights += alpha * sum([grad * (gamma ** t) * reward
                                    for t, (grad, reward) in enumerate(
                                     zip(gradients, rewards))])
 
