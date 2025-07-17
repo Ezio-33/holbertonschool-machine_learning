@@ -48,13 +48,13 @@ def train(env, nb_episodes, alpha=0.000045, gamma=0.98, show_result=False):
             gradients.append(grad)
             rewards.append(reward)
 
-            weights += alpha * sum([grad * (gamma ** t) * reward for t,
-                                   (grad, reward) in enumerate(
-                                    zip(gradients, rewards))])
-
             # quitter après 500 étapes
             if done:
                 break
+
+        # Mise à jour des poids à la fin de l'épisode (REINFORCE)
+        for t, (grad, reward) in enumerate(zip(gradients, rewards)):
+            weights += alpha * grad * (gamma ** t) * reward
 
         # fermer chaque épisode, fermer la fenêtre
         env.close()
