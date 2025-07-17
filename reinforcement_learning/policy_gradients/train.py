@@ -21,8 +21,6 @@ def train(env, nb_episodes, alpha=0.000045, gamma=0.98, show_result=False):
     # obtenir le nombre d'états et d'actions de l'environnement gymnasium
     n_states, n_actions = env.observation_space.shape[0], env.action_space.n
 
-    # Initialiser la graine pour les poids
-    np.random.seed(0)
     weights = np.random.rand(n_states, n_actions)
 
     for i in range(nb_episodes):
