@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """
 Ce projet concerne le gradient de politique
-Par Ced
 """
 import numpy as np
 import gymnasium as gym
