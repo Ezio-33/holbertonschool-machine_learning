@@ -3,6 +3,7 @@
 Module pour remplir les valeurs manquantes dans un DataFrame pandas.
 """
 
+
 def fill(df):
     """
     Supprime la colonne Weighted_Price et remplit les valeurs manquantes
