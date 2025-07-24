@@ -3,8 +3,6 @@
 Module pour convertir des colonnes d'un DataFrame pandas en tableau numpy.
 """
 
-import pandas as pd
-
 
 def array(df):
     """
