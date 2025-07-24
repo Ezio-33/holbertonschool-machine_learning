@@ -3,8 +3,6 @@
 Module pour découper un DataFrame pandas selon des critères spécifiques.
 """
 
-import pandas as pd
-
 
 def slice(df):
     """

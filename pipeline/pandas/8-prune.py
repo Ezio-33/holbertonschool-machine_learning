@@ -3,8 +3,6 @@
 Module pour nettoyer un DataFrame pandas en supprimant les valeurs NaN.
 """
 
-import pandas as pd
-
 
 def prune(df):
     """

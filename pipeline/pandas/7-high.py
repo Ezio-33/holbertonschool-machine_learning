@@ -3,8 +3,6 @@
 Module pour trier un DataFrame pandas par la colonne High.
 """
 
-import pandas as pd
-
 
 def high(df):
     """

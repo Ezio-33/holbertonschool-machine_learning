@@ -3,8 +3,6 @@
 Module pour inverser et transposer un DataFrame pandas.
 """
 
-import pandas as pd
-
 
 def flip_switch(df):
     """
