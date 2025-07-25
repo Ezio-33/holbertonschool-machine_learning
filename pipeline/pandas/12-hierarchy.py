@@ -3,7 +3,6 @@
 Module pour créer une hiérarchie avec Timestamp comme premier niveau.
 """
 
-import matplotlib.pyplot as plt
 import pandas as pd
 from_file = __import__('2-from_file').from_file
 
