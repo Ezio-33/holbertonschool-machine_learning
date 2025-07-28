@@ -4,8 +4,6 @@ Module pour analyser un DataFrame pandas et calculer des statistiques
 descriptives.
 """
 
-import pandas as pd
-
 
 def analyze(df):
     """
