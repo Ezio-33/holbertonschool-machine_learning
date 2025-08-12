@@ -1,19 +1,21 @@
 #!/usr/bin/env python3
 """
-Randomly change image brightness.
+4-brightness.py
+
+Modifie aléatoirement la luminosité d'une image.
 """
 import tensorflow as tf
 
 
 def change_brightness(image, max_delta):
-    """Randomly change the brightness of an image.
+    """Change la luminosité d'une image de façon aléatoire.
 
     Args:
-        image: A 3D tf.Tensor input image to change.
-        max_delta: float, maximum delta to add/subtract to brightness.
+        image: tf.Tensor 3D HxWxC représentant l'image d'entrée.
+        max_delta: float, variation maximale de luminosité.
 
     Returns:
-        A 3D tf.Tensor with altered brightness (float32 in [0, 1]).
+        tf.Tensor 3D, image avec luminosité ajustée.
     """
-    img = tf.image.convert_image_dtype(image, tf.float32)
-    return tf.image.random_brightness(img, max_delta=max_delta)
+    brightness = tf.image.random_brightness(image, max_delta)
+    return brightness

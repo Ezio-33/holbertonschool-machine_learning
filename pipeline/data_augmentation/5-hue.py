@@ -1,19 +1,21 @@
 #!/usr/bin/env python3
 """
-Change image hue.
+5-hue.py
+
+Modifie la teinte (hue) d'une image.
 """
 import tensorflow as tf
 
 
 def change_hue(image, delta):
-    """Change the hue of an image by a fixed delta.
+    """Change la teinte (hue) d'une image d'un delta donné.
 
     Args:
-        image: A 3D tf.Tensor input image to change.
-        delta: float, amount to shift hue.
+        image: tf.Tensor 3D HxWxC représentant l'image d'entrée.
+        delta: float, quantité de décalage de la teinte.
 
     Returns:
-        A 3D tf.Tensor with hue adjusted (float32 in [0, 1]).
+        tf.Tensor 3D, image avec teinte ajustée.
     """
-    img = tf.image.convert_image_dtype(image, tf.float32)
-    return tf.image.adjust_hue(img, delta)
+    hue = tf.image.adjust_hue(image, delta)
+    return hue

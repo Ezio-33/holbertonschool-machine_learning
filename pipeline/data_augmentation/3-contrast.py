@@ -1,23 +1,22 @@
 #!/usr/bin/env python3
 """
-Randomly adjust image contrast.
+3-contrast.py
+
+Ajuste aléatoirement le contraste d'une image.
 """
 import tensorflow as tf
 
 
 def change_contrast(image, lower, upper):
-    """Randomly adjust the contrast of an image.
+    """Change le contraste d'une image de façon aléatoire.
 
     Args:
-        image: A 3D tf.Tensor input image to adjust the contrast.
-        lower: float, lower bound for random contrast factor.
-        upper: float, upper bound for random contrast factor.
+        image: tf.Tensor 3D HxWxC représentant l'image d'entrée.
+        lower: float, borne basse du facteur de contraste.
+        upper: float, borne haute du facteur de contraste.
 
     Returns:
-        A 3D tf.Tensor of the contrast-adjusted image (float32 in [0, 1]).
+        tf.Tensor 3D, image avec contraste ajusté.
     """
-    img = tf.image.convert_image_dtype(image, tf.float32)
-    factor = tf.random.uniform(
-        shape=[], minval=lower, maxval=upper, dtype=tf.float32
-    )
-    return tf.image.adjust_contrast(img, factor)
+    contrast = tf.image.random_contrast(image, lower, upper)
+    return contrast
