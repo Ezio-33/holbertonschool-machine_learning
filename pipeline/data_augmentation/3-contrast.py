@@ -17,4 +17,5 @@ def change_contrast(image, lower, upper):
         A 3D tf.Tensor of the contrast-adjusted image (float32 in [0, 1]).
     """
     img = tf.image.convert_image_dtype(image, tf.float32)
-    return tf.image.random_contrast(img, lower=lower, upper=upper)
+    factor = tf.random.uniform(shape=[], minval=lower, maxval=upper, dtype=tf.float32)
+    return tf.image.adjust_contrast(img, factor)
